@@ -15,12 +15,12 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 - Paleta oficial: Azul Horizonte `#005a85`, Verde Brote `#72c594`, Amarillo Sol `#ffe22e` y Arena Suave `#edeae1`.
 - Logotipo original extraído del manual facilitado por el equipo; no se ha redibujado. Identidad visual: Gabriela Córdova, 2026.
 - Tipografía web Montserrat. Core Rhino 65 Bold queda pendiente de recibir su archivo y licencia web; no se distribuye una copia no autorizada.
-- Fotografías ilustrativas de [bosque](https://images.unsplash.com/photo-1441974231531-c6227db76b6e) y [colaboración](https://images.unsplash.com/photo-1522071820081-009f0129c71c), servidas localmente y optimizadas desde Unsplash. No representan actividades verificadas del proyecto.
+- Fotografías reales de contexto boliviano: La Paz con el Illimani, conexión por teleférico La Paz–El Alto y artesanas Uru. Créditos y licencias visibles en el pie de página y en `assets/bolivia/credits.json`. No representan actividades verificadas ni participantes del proyecto.
 - Sin formulario ni métricas inventadas. Faltan los canales oficiales de inscripción y contacto, convocatorias y archivos oficiales de co-branding para su aplicación final.
 - Animación GSAP opcional; el contenido y la navegación funcionan sin la biblioteca. Respeta la preferencia de movimiento reducido.
-- Escena «Ahora es más sencillo, con un sistema más inteligente»: palabras que se revelan y subrayado progresivo al hacer scroll, con imágenes de naturaleza, energía y comunidad que se desplazan y se funden entre sí.
-- Reutiliza las tres fotografías WebP de la página, sin descargar nuevos fotogramas para esta escena. Carga al acercarse a 450 px de la sección y conserva solo tres imágenes para la composición en canvas. La secuencia anterior de realidad virtual se mantiene en el historial y sus archivos, pero ya no se utiliza ni se descarga desde la landing.
+- Portada «Tus ideas. El futuro de Bolivia.» con texto completamente visible desde el inicio. El scroll mueve y funde las fotografías y subraya el titular; no reduce la opacidad de las letras.
+- Las tres fotografías WebP se reutilizan en la portada y en las secciones editoriales, sin cargar secuencias de fotogramas adicionales. Los archivos de imágenes anteriores se conservan, pero no se solicitan desde la landing.
 - Una única escena fijada en escritorio; móvil sin pinning. Con movimiento reducido, ahorro de datos o conexión 2G se muestra únicamente el póster. El contenido sigue accesible sin JavaScript.
-- Secciones adicionales: áreas de impacto y ruta para explorar el ecosistema. Son contenido orientativo, no resultados ni proyectos ejecutados.
-- Foto ilustrativa de energía: [fuente Unsplash](https://images.unsplash.com/photo-1508514177221-188b1cf16e9d), optimizada localmente.
+- Orden: presentación del proyecto, explicación de EcoHub, propuesta de formación/acompañamiento/conexiones, contexto boliviano, registro y preguntas frecuentes. Diseño editorial sin tarjetas, indicadores de actividad ni botones repetidos.
+- Una sola llamada principal: «Regístrate». Actualmente dirige a la información de registro. Para habilitar la inscripción real, entregar la URL oficial, sustituir el `href` del botón y actualizar el contenido de `#registro`. No hay formulario ficticio ni recopilación de datos.
 - GSAP y ScrollTrigger 3.12.5 se sirven localmente desde `assets/vendor`, conservando sus avisos de licencia. Biblioteca original: [GSAP](https://gsap.com/); [licencia](https://gsap.com/standard-license/).

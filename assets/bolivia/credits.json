@@ -1,0 +1,29 @@
+[
+  {
+    "file": "la-paz.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Centro_de_La_Paz_y_el_Illimani_al_fondo.jpg",
+    "author": "Matteo Leoni",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "modifications": "Resized and converted to WebP; displayed with responsive cropping.",
+    "description": "View of La Paz’s Miraflores neighborhood with Mount Illimani rising in the background."
+  },
+  {
+    "file": "el-alto.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Telef%C3%A9rico_La_Paz_-_El_Alto_Bolivia_39.jpg",
+    "author": "Arabsalam",
+    "license": "CC BY 4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0",
+    "modifications": "Resized and converted to WebP; displayed with responsive cropping.",
+    "description": "At Teleférico La Paz - El Alto"
+  },
+  {
+    "file": "artesanas.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Artesanas_Uru.jpg",
+    "author": "Luucamay",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP; displayed with responsive cropping.",
+    "description": "Dos mujeres de la comunidad Uru en Bolivia que usan totora y paja para hacer artesanías como sombreros, centros de mesas, cestos y otros.\nArtesanía24"
+  }
+]

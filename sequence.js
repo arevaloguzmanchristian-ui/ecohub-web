@@ -15,14 +15,14 @@ if (window.gsap && window.ScrollTrigger && 'IntersectionObserver' in window) {
     const drawing = canvas?.getContext('2d', { alpha: false });
     if (!drawing) return;
     const mobile = context.conditions.mobile;
-    const sources = ['assets/naturaleza.webp', 'assets/energia.webp', 'assets/comunidad.webp'];
+    const sources = ['assets/bolivia/la-paz.webp', 'assets/bolivia/el-alto.webp', 'assets/bolivia/artesanas.webp'];
     const images = [];
     const loading = [];
     let progress = 0;
     let frameRequest = 0;
     let disposed = false;
     const chapter = section.querySelector('.sequence__chapter');
-    const chapters = ['01 / Conecta con lo que importa', '02 / Activa nuevas posibilidades', '03 / Avanza en comunidad'];
+    const chapters = ['La Paz / Illimani', 'Conexión La Paz — El Alto', 'Saberes y oficios de Bolivia'];
     const state = { progress: 0 };
 
     function paint(image, zoom, alpha) {
@@ -30,7 +30,7 @@ if (window.gsap && window.ScrollTrigger && 'IntersectionObserver' in window) {
       const width = image.naturalWidth * ratio;
       const height = image.naturalHeight * ratio;
       drawing.globalAlpha = alpha;
-      drawing.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
+      drawing.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) * .12, width, height);
     }
 
     function draw() {
@@ -80,7 +80,7 @@ if (window.gsap && window.ScrollTrigger && 'IntersectionObserver' in window) {
       scrollTrigger: {
         trigger: section,
         start: () => mobile ? 'top 65%' : `top top+=${document.querySelector('.header').offsetHeight}`,
-        end: () => mobile ? 'bottom 35%' : `+=${Math.round(innerHeight * 1.8)}`,
+        end: () => mobile ? 'bottom 35%' : `+=${Math.round(innerHeight * 1.1)}`,
         pin: mobile ? false : section.querySelector('.sequence__stage'),
         scrub: .45,
         invalidateOnRefresh: true,
@@ -88,8 +88,8 @@ if (window.gsap && window.ScrollTrigger && 'IntersectionObserver' in window) {
       },
     });
     timeline.to(state, { progress: 1, duration: 1, ease: 'none', onUpdate: update }, 0)
-      .fromTo('.sequence__word', { y: 25, rotation: 2, opacity: .55 }, {
-        y: 0, rotation: 0, opacity: 1, stagger: .115, duration: .22, ease: 'power1.out',
+      .fromTo('.sequence__word', { y: 0 }, {
+        y: -10, stagger: .12, duration: .3, ease: 'none',
       }, 0)
       .to('.sequence__word--accent', { backgroundSize: '100% 3px', duration: .22, ease: 'none' }, .76)
       .to('.sequence__meter > span', { scaleX: 1, duration: 1, ease: 'none' }, 0);
