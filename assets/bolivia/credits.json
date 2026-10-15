@@ -61,5 +61,50 @@
     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
     "modifications": "Resized and converted to WebP; responsive crops and 640px variants retain the original license.",
     "description": "Planta de pepino en la amazonía"
+  },
+  {
+    "file": "panorama.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Panorama_visto_desde_El_Alto_de_la_ciudad_de_La_Paz,_Bolivia.jpg",
+    "author": "Jgbmac",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP with a 640px responsive variant. Crops retain original license.",
+    "description": "Vista panoramica de la zona de Sopocachi en La Paz-Bolivia"
+  },
+  {
+    "file": "universidad.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taller_de_edici%C3%B3n_con_estudiantes_de_la_carrera_de_Comunicaci%C3%B3n_Social_UMSA_03.jpg",
+    "author": "NairaWM BO",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP with a 640px responsive variant. Crops retain original license.",
+    "description": "Jornada en la que estudiantes de la carrera de Comunicación Social de la Universidad Mayor de San Andrés aprendieron a editar artículos en Wikipedia y participaron en Wikimixtura edición Artesanías Bolivianas."
+  },
+  {
+    "file": "ceramica.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Artesan%C3%ADas_bolivianas_de_cer%C3%A1mica_en_Artecampo_-_Santa_Cruz_de_la_Sierra.jpg",
+    "author": "Ruditaly",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP with a 640px responsive variant. Crops retain original license.",
+    "description": "Ceramic crafts made by artisans from the Cotoca Ceramists Association, exhibited at Artecampo, Santa Cruz de la Sierra, Bolivia."
+  },
+  {
+    "file": "vivero.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Freddy_Balderrama_bonsaista_exponiendo_en_su_vivero_Union_Bonsai_Bolivia.jpg",
+    "author": "Lobo730",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP with a 640px responsive variant. Crops retain original license.",
+    "description": "Freddy Balderrama, a bonsai artist, exhibits at his nursery, Unión Bonsái Bolivia."
+  },
+  {
+    "file": "yacuiba.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taller_de_introducci%C3%B3n_a_los_proyectos_Wiki_en_Yacuiba_(Tarija).jpg",
+    "author": "Julia WM Bo",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP with a 640px responsive variant. Crops retain original license.",
+    "description": "Taller de introducción a los proyectos Wiki en Yacuiba, Tarija, en la región del Gran Chaco boliviano."
   }
 ]

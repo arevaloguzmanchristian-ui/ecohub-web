@@ -16,11 +16,14 @@ if (window.gsap && window.ScrollTrigger) {
     if (!hero || !chapters) return;
     function safeZoom(image, preferred) {
       if (!image.naturalWidth) return 1;
-      const fit = Math.max(image.clientWidth / image.naturalWidth, image.clientHeight / image.naturalHeight);
+      // Width-descriptor srcsets report density-corrected naturalWidth, not decoded pixels.
+      const candidate = image.srcset.split(',').map(source => source.trim().split(/\s+/)).find(([url]) => new URL(url, document.baseURI).href === image.currentSrc);
+      const width = candidate?.[1]?.endsWith('w') ? parseFloat(candidate[1]) : image.naturalWidth;
+      const height = image.naturalHeight * width / image.naturalWidth;
+      const fit = Math.max(image.clientWidth / width, image.clientHeight / height);
       return Math.max(1, Math.min(preferred, 1 / fit));
     }
     const landscape = hero.querySelector('.hero__landscape img');
-    const portrait = hero.querySelector('.hero__human-image img');
     hero.classList.add('is-animated');
     const opening = gsap.timeline({
       defaults: { ease: 'none' },
@@ -31,11 +34,8 @@ if (window.gsap && window.ScrollTrigger) {
       },
     });
     opening.fromTo(landscape, { scale: 1 }, { scale: () => safeZoom(landscape, 1.1), duration: 1 }, 0)
-      .fromTo(portrait, { scale: 1 }, { scale: () => safeZoom(portrait, 1.1), duration: 1 }, 0)
-      .to('.hero__human', { borderTopLeftRadius: 32, duration: 1 }, 0)
       .to('.hero__message', { y: -18, opacity: 0, duration: .3 }, .18)
-      .fromTo('.hero__connection', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .3 }, .48)
-      .to('.hero__landscape', { clipPath: 'inset(0% 2% 0% 2% round 35px)', duration: .35 }, .65);
+      .fromTo('.hero__connection', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .3 }, .48);
 
     const panels = [...chapters.querySelectorAll('.chapter')];
     const copies = panels.map(panel => panel.querySelector('.chapter__copy'));
@@ -97,10 +97,10 @@ if (window.gsap && window.ScrollTrigger) {
     journey.fromTo(state, { progress: 0 }, { progress: 1, duration: 1, ease: 'none', onUpdate: renderChapters });
     refreshImages();
     const refresh = () => ScrollTrigger.refresh();
-    [landscape, portrait, ...images].forEach(image => image.addEventListener('load', refresh, { once: true }));
+    [landscape, ...images].forEach(image => image.addEventListener('load', refresh, { once: true }));
     return () => {
       disposed = true;
-      [landscape, portrait, ...images].forEach(image => image.removeEventListener('load', refresh));
+      [landscape, ...images].forEach(image => image.removeEventListener('load', refresh));
       hero.classList.remove('is-animated');
       chapters.classList.remove('is-enhanced');
       copies.forEach(copy => { copy.style.removeProperty('opacity'); });

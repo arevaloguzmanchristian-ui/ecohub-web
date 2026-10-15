@@ -37,6 +37,9 @@ try:
             assert page.locator('h1').is_visible()
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
             assert page.locator('.button').count() == 1
+            assert page.locator('.hero__human').count() == 0
+            assert page.locator('.hero__landscape img').count() == 1
+            assert page.locator('main img[src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>img.getAttribute("src").replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length>=10;}')
             assert page.locator('a[href^="#"]').evaluate_all(
                 '(links) => links.every(a => document.getElementById(a.hash.slice(1)))'
             )
@@ -67,13 +70,13 @@ try:
             selector = '.hero__connection' if progress else '.hero__message'
             page.wait_for_function('selector => Number(getComputedStyle(document.querySelector(selector)).opacity) > .95', arg=selector)
             page.wait_for_function('() => {const t=ScrollTrigger.getById("ecohub-hero"); return Math.abs(t.animation.progress()-t.progress)<.001;}')
-            zoom = page.locator('.hero__human-image img').evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a')
+            zoom = page.locator('.hero__landscape img').evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a')
             page.wait_for_timeout(350)
-            assert abs(page.locator('.hero__human-image img').evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a') - zoom) < .0001
+            assert abs(page.locator('.hero__landscape img').evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a') - zoom) < .0001
             assert 1 <= zoom <= 1.101
             if progress == .98:
                 assert zoom > 1.08
-            assert page.locator('.hero__copy, .hero__human, .button').evaluate_all('(nodes) => nodes.every(el => { const m=new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001; })')
+            assert page.locator('.hero__copy, .button').evaluate_all('(nodes) => nodes.every(el => { const m=new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001; })')
         for progress in (.1, .29, .32, .34, .37, .5, .63, .66, .68, .71, .9, .5, .1):
             page.evaluate('p => { const t = ScrollTrigger.getById("ecohub-chapters"); scrollTo({top: t.start+(t.end-t.start)*p, behavior:"instant"}); }', progress)
             page.wait_for_function('p => Math.abs(Number(document.querySelector(".chapters").dataset.progress) - p) < .002', arg=progress)

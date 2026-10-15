@@ -150,7 +150,10 @@ if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.
   });
   function safeZoom(image, preferred) {
     if (!image.naturalWidth) return 1;
-    const fit = Math.max(image.clientWidth / image.naturalWidth, image.clientHeight / image.naturalHeight);
+    const candidate = image.srcset.split(',').map(source => source.trim().split(/\s+/)).find(([url]) => new URL(url, document.baseURI).href === image.currentSrc);
+    const width = candidate?.[1]?.endsWith('w') ? parseFloat(candidate[1]) : image.naturalWidth;
+    const height = image.naturalHeight * width / image.naturalWidth;
+    const fit = Math.max(image.clientWidth / width, image.clientHeight / height);
     return Math.max(1, Math.min(preferred, 1 / fit));
   }
   gsap.matchMedia().add({ motion: '(prefers-reduced-motion: no-preference)', mobile: '(max-width: 760px)' }, context => {
@@ -176,10 +179,10 @@ if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.
       });
     });
     if (!window.matchMedia('(min-width: 1001px) and (min-height: 760px)').matches) {
-      const portrait = document.querySelector('.hero__human-image img');
-      watched.push(portrait);
-      gsap.fromTo(portrait, { scale: 1 }, {
-        scale: () => safeZoom(portrait, context.conditions.mobile ? 1.025 : 1.04), ease: 'none',
+      const landscape = document.querySelector('.hero__landscape img');
+      watched.push(landscape);
+      gsap.fromTo(landscape, { scale: 1 }, {
+        scale: () => safeZoom(landscape, context.conditions.mobile ? 1.025 : 1.04), ease: 'none',
         scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true, invalidateOnRefresh: true },
       });
     }
