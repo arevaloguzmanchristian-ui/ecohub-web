@@ -9,3 +9,12 @@ Web estática basada en [PRIOR, de RelaxKartikey / Entospark Studios](https://gi
 Para verla localmente, abre `index.html` o ejecuta `npx serve .`. Requiere conexión para cargar recursos externos.
 
 Este repositorio contiene solo la web pública, no las notas del equipo.
+
+## Adaptación de identidad Bolivia EcoHub
+
+- Paleta oficial: Azul Horizonte `#005a85`, Verde Brote `#72c594`, Amarillo Sol `#ffe22e` y Arena Suave `#edeae1`.
+- Logotipo original extraído del manual facilitado por el equipo; no se ha redibujado. Identidad visual: Gabriela Córdova, 2026.
+- Tipografía web Montserrat. Core Rhino 65 Bold queda pendiente de recibir su archivo y licencia web; no se distribuye una copia no autorizada.
+- Fotografías ilustrativas de [bosque](https://images.unsplash.com/photo-1441974231531-c6227db76b6e) y [colaboración](https://images.unsplash.com/photo-1522071820081-009f0129c71c), servidas localmente y optimizadas desde Unsplash. No representan actividades verificadas del proyecto.
+- Sin formulario ni métricas inventadas. Faltan los canales oficiales de inscripción y contacto, convocatorias y archivos oficiales de co-branding para su aplicación final.
+- Animación GSAP opcional; el contenido y la navegación funcionan sin la biblioteca. Respeta la preferencia de movimiento reducido.

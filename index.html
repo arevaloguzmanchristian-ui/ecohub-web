@@ -1,266 +1,106 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es-BO">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PRIOR — GSAP Animated Scroll Effect Modern Website Template | by Entospark Studios</title>
-  <meta name="description" content="PRIOR is a free, open-source GSAP ScrollTrigger animated website template featuring canvas frame-scrub, parallax video, clip-path reveals, and cinematic scroll effects. Built with vanilla HTML, CSS & JS. Designed by RelaxKartikey." />
-  <meta name="keywords" content="GSAP template, ScrollTrigger, scroll animation, website template, parallax video, canvas scroll scrub, clip-path animation, modern website, dark theme template, open source, frontend template, HTML CSS JS, motion design, cinematic web, RelaxKartikey, Entospark Studios" />
-  <meta name="author" content="RelaxKartikey — github.com/RelaxKartikey" />
-  <meta name="robots" content="index, follow" />
-  <meta name="google-site-verification" content="F3xoA6ba2ZY-e7gWviu4Lm_dg6IEItHuXrg77hPJ-9E" />
-  <link rel="canonical" href="https://github.com/RelaxKartikey/agency-site" />
-
+  <title>Bolivia EcoHub — Tu potencial, un futuro más verde</title>
+  <meta name="description" content="Un ecosistema para jóvenes de Bolivia que conecta formación, mentorías y comunidad para transformar ideas en oportunidades de impacto sostenible." />
+  <meta name="theme-color" content="#005a85" />
+  <link rel="canonical" href="https://arevaloguzmanchristian-ui.github.io/ecohub-web/" />
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="PRIOR — GSAP Animated Scroll Effect Modern Website Template" />
-  <meta property="og:description" content="Free open-source template with GSAP ScrollTrigger animations, canvas frame-scrub, parallax video backgrounds, and cinematic scroll effects. Vanilla HTML/CSS/JS — no frameworks, no build tools." />
-  <meta property="og:url" content="https://github.com/RelaxKartikey/agency-site" />
-  <meta property="og:site_name" content="PRIOR by Entospark Studios" />
-
+  <meta property="og:locale" content="es_BO" />
+  <meta property="og:title" content="Bolivia EcoHub — El futuro también lo creas tú" />
+  <meta property="og:description" content="Ideas que conectan. Jóvenes que transforman. Descubre un ecosistema de innovación, comunidad y sostenibilidad en Bolivia." />
+  <meta property="og:url" content="https://arevaloguzmanchristian-ui.github.io/ecohub-web/" />
+  <meta property="og:image" content="https://arevaloguzmanchristian-ui.github.io/ecohub-web/assets/naturaleza.webp" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="PRIOR — GSAP Animated Scroll Effect Modern Website Template" />
-  <meta name="twitter:description" content="Free open-source GSAP ScrollTrigger template. Canvas frame-scrub, parallax video, clip-path reveals. Vanilla HTML/CSS/JS. Designed by RelaxKartikey." />
-
-  <meta name="theme-color" content="#000000" />
-
-  <link rel="stylesheet" href="styles.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
-
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet" />
+  <link rel="preload" as="image" href="assets/naturaleza.webp" />
+  <link rel="stylesheet" href="styles.css" />
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "SoftwareSourceCode",
-    "name": "PRIOR — GSAP Animated Scroll Effect Modern Website Template",
-    "description": "A premium, open-source website template with GSAP ScrollTrigger animations, canvas-based frame scrubbing, parallax video backgrounds, clip-path reveals, and cinematic scroll effects. Built with vanilla HTML, CSS, and JavaScript.",
-    "codeRepository": "https://github.com/RelaxKartikey/agency-site",
-    "programmingLanguage": ["HTML", "CSS", "JavaScript"],
-    "runtimePlatform": "Browser",
-    "author": {
-      "@type": "Person",
-      "name": "RelaxKartikey",
-      "url": "https://github.com/RelaxKartikey"
-    },
-    "license": "https://opensource.org/licenses/MIT",
-    "keywords": "GSAP, ScrollTrigger, scroll animation, website template, parallax, canvas scroll scrub, clip-path, motion design"
-  }
+    {"@context":"https://schema.org","@type":"WebSite","name":"Bolivia EcoHub","url":"https://arevaloguzmanchristian-ui.github.io/ecohub-web/","inLanguage":"es-BO","description":"Ecosistema de innovación, comunidad y sostenibilidad para jóvenes de Bolivia."}
   </script>
 </head>
 <body>
+  <a class="skip-link" href="#contenido">Saltar al contenido</a>
+  <header class="header">
+    <a class="brand" href="#inicio" aria-label="Bolivia EcoHub — Inicio">
+      <img src="assets/bolivia-ecohub.png" alt="Bolivia EcoHub" width="379" height="61" />
+    </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="navigation">Menú <span aria-hidden="true">☰</span></button>
+    <nav id="navigation" class="navigation" aria-label="Navegación principal">
+      <a href="#ecosistema">El ecosistema</a>
+      <a href="#oportunidades">Qué encontrarás</a>
+      <a href="#comunidad">Comunidad</a>
+      <a href="#participar" class="button button--small">Encuentra tu camino <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
 
-  <div class="preloader" id="preloader">
-    <div class="preloader__inner">
-      <div class="preloader__logo">PRIOR<span class="accent">.</span></div>
-      <div class="preloader__bar-wrap">
-        <div class="preloader__bar" id="preloaderBar"></div>
+  <main id="contenido">
+    <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <div class="hero__copy">
+        <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Ideas locales. Impacto sostenible.</p>
+        <h1 id="hero-title">El futuro<br />también lo<br /><span class="highlight">creas tú.</span></h1>
+        <p class="hero__description">Tu potencial merece oportunidades. Conecta con herramientas, personas e ideas para emprender y construir una Bolivia más verde.</p>
+        <div class="hero__actions">
+          <a href="#oportunidades" class="button button--yellow">Descubre EcoHub <span aria-hidden="true">↗</span></a>
+          <a href="#ecosistema" class="text-link">Conoce el ecosistema <span aria-hidden="true">↓</span></a>
+        </div>
+        <div class="hero__footnote"><span class="small-orbit" aria-hidden="true">✳</span><p>Para una generación que no espera el cambio.<br /><strong>Lo hace posible.</strong></p></div>
       </div>
-      <div class="preloader__counter">
-        <span class="preloader__pct" id="preloaderPct">0</span>
-        <span class="preloader__pct-sign">%</span>
+      <div class="hero__visual">
+        <img class="hero__image" src="assets/naturaleza.webp" width="1500" height="1000" alt="Luz del sol atravesando un bosque verde" fetchpriority="high" />
+        <div class="hero__image-shade"></div>
+        <div class="hero__visual-top"><span>BOLIVIA / ECOHUB</span><span aria-hidden="true">↗</span></div>
+        <div class="orbit" aria-hidden="true"><svg viewBox="0 0 400 400"><ellipse cx="200" cy="200" rx="178" ry="90" transform="rotate(-36 200 200)" /><ellipse cx="200" cy="200" rx="178" ry="90" transform="rotate(36 200 200)" /><circle cx="200" cy="200" r="130" /></svg></div>
+        <div class="hero__visual-bottom"><span>Conectamos tu energía<br />con un mundo de posibilidades.</span><span class="round-arrow" aria-hidden="true">↗</span></div>
+        <div class="hero__sticker"><span aria-hidden="true">✳</span> Crecer.<br />Conectar.<br />Transformar.</div>
       </div>
-    </div>
-  </div>
+    </section>
 
-  <nav class="nav">
-    <div class="nav__logo">PRIOR<span class="accent">.</span></div>
-    <div class="nav__links">
-      <a href="#work">Work</a>
-      <a href="#services">Services</a>
-      <a href="https://github.com/RelaxKartikey" target="_blank" rel="noopener" class="nav__cta">Let's Talk</a>
-    </div>
-  </nav>
+    <div class="values-strip" aria-label="Nuestros valores"><span>Sostenibilidad</span><span aria-hidden="true">✳</span><span>Innovación</span><span aria-hidden="true">✳</span><span>Colaboración</span><span aria-hidden="true">✳</span><span>Conectividad</span><span aria-hidden="true">✳</span></div>
 
-  <section class="hero" id="hero">
-    <div class="hero__pin">
-      <canvas class="hero__canvas" id="heroCanvas"></canvas>
-      <div class="hero__overlay"></div>
-      <div class="hero__fade-out"></div>
-      <div class="hero__content">
-        <p class="hero__tag">by Entospark Studios</p>
-        <h1 class="hero__heading">
-          <span class="hero__line">We craft brands</span>
-          <span class="hero__line">that move <em>future</em></span>
-        </h1>
-        <p class="hero__sub">Strategy, identity, and motion — designed to leave a mark.</p>
-        <a href="#contact" class="btn">Start a Project <span class="btn__arrow">&rarr;</span></a>
+    <section class="ecosystem section" id="ecosistema" aria-labelledby="ecosystem-title">
+      <div class="section-heading"><p class="eyebrow">01 / Un espacio para avanzar</p><p class="section-note">Más conexiones.<br />Nuevas posibilidades.</p></div>
+      <div class="ecosystem__grid">
+        <h2 id="ecosystem-title" class="reveal">Las buenas ideas<br />no crecen <em>solas.</em></h2>
+        <div class="ecosystem__copy reveal"><p>Creemos en una generación con talento para transformar su realidad. Y en lo que sucede cuando ese talento encuentra una comunidad que lo acompaña.</p><p>Bolivia EcoHub conecta innovación y sostenibilidad con formación, mentorías y redes de colaboración. Un ecosistema humano y accesible para convertir barreras en posibilidades.</p><a class="text-link text-link--blue" href="#comunidad">Aquí, crecer es colectivo <span aria-hidden="true">↗</span></a></div>
       </div>
-      <div class="hero__scroll-indicator">
-        <span>Scroll</span>
-        <div class="hero__scroll-line"></div>
-      </div>
-    </div>
-  </section>
+      <div class="principles"><div><span>El motor</span><strong>Tu potencial.</strong></div><div><span>El camino</span><strong>En comunidad.</strong></div><div><span>El horizonte</span><strong>Un futuro sostenible.</strong></div></div>
+    </section>
 
-  <section class="video-transition">
-    <div class="video-transition__inner">
-      <div class="video-transition__frame">
-        <canvas id="vtCanvas" class="video-transition__canvas"></canvas>
+    <section class="opportunities section" id="oportunidades" aria-labelledby="opportunities-title">
+      <div class="section-heading"><p class="eyebrow">02 / Herramientas para transformar</p><span class="section-symbol" aria-hidden="true">✳</span></div>
+      <div class="section-intro"><h2 id="opportunities-title">De «tengo una idea»<br />a <em>«puedo hacerlo».</em></h2><p>No tienes que tener todas las respuestas.<br />Explora las conexiones que pueden ayudarte a dar el siguiente paso.</p></div>
+      <div class="opportunity-grid">
+        <article class="opportunity-card reveal"><div class="card-top"><span>01</span><span aria-hidden="true">↗</span></div><span class="card-icon" aria-hidden="true">◎</span><h3>Aprende para<br />hacer realidad.</h3><p>Formación en emprendimiento, sostenibilidad y herramientas digitales para fortalecer tus habilidades.</p><span class="card-tag">Formación y herramientas</span></article>
+        <article class="opportunity-card opportunity-card--green reveal"><div class="card-top"><span>02</span><span aria-hidden="true">↗</span></div><span class="card-icon" aria-hidden="true">↗</span><h3>Tu idea, con<br />acompañamiento.</h3><p>Mentorías y orientación para explorar soluciones, desarrollar tu proyecto y avanzar con más confianza.</p><span class="card-tag">Mentorías y orientación</span></article>
+        <article class="opportunity-card opportunity-card--yellow reveal"><div class="card-top"><span>03</span><span aria-hidden="true">↗</span></div><span class="card-icon" aria-hidden="true">✳</span><h3>Conecta para<br />llegar más lejos.</h3><p>Redes entre jóvenes, aliados e instituciones para compartir conocimientos y acercarte a nuevas oportunidades.</p><span class="card-tag">Comunidad y conexiones</span></article>
       </div>
-      <div class="video-transition__overlay"></div>
-      <div class="video-transition__text">
-        <span class="vt-word">Design</span>
-        <span class="vt-dot"></span>
-        <span class="vt-word">Strategy</span>
-        <span class="vt-dot"></span>
-        <span class="vt-word">Motion</span>
-      </div>
-    </div>
-  </section>
+      <p class="availability-note">Las fechas, requisitos y disponibilidad de cada actividad se comunicarán en sus convocatorias.</p>
+    </section>
 
-  <section class="intro" id="work">
-    <div class="intro__video-wrap">
-      <video class="intro__video" muted playsinline autoplay loop>
-        <source src="https://videos.pexels.com/video-files/7547023/7547023-uhd_3840_2160_25fps.mp4" type="video/mp4" />
-      </video>
-      <div class="intro__overlay"></div>
-    </div>
-    <div class="intro__content">
-      <div class="intro__label">
-        <span class="label-line"></span>
-        <span>About Us</span>
-      </div>
-      <h2 class="intro__heading reveal-text">
-        We don't just design brands —<br />
-        we engineer how people <em>feel</em><br />
-        when they encounter one.
-      </h2>
-      <div class="intro__cols">
-        <div class="intro__col reveal-up">
-          <p>Every project begins with deep strategic thinking. We unpack your audience, your market, and your ambition — then distill it into a brand that resonates on every level.</p>
-        </div>
-        <div class="intro__col reveal-up">
-          <p>From identity systems to motion design, we build every touchpoint with obsessive craft. The result is a brand that doesn't just look premium — it <em>moves</em> premium.</p>
-        </div>
-      </div>
-      <div class="intro__stats">
-        <div class="stat reveal-up">
-          <div class="stat__inner">
-            <span class="stat__number">120<span class="stat__plus">+</span></span>
-            <span class="stat__label">Brands Launched</span>
-          </div>
-        </div>
-        <div class="stat reveal-up">
-          <div class="stat__inner">
-            <span class="stat__number">8</span>
-            <span class="stat__label">Years Running</span>
-          </div>
-        </div>
-        <div class="stat reveal-up">
-          <div class="stat__inner">
-            <span class="stat__number">40<span class="stat__plus">+</span></span>
-            <span class="stat__label">Awards Won</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <section class="community" id="comunidad" aria-labelledby="community-title">
+      <div class="community__image"><img src="assets/comunidad.webp" alt="Personas intercambiando ideas alrededor de una mesa de trabajo" width="1000" height="750" loading="lazy" /><span class="photo-caption">El cambio empieza cuando nos encontramos.</span></div>
+      <div class="community__copy"><p class="eyebrow">03 / El poder de conectar</p><h2 id="community-title" class="reveal">Tu próxima<br />gran conexión<br />empieza <em>aquí.</em></h2><p>Jóvenes, mentores, emprendimientos y organizaciones. Distintas miradas, un propósito compartido: crear oportunidades que cuiden a las personas y al planeta.</p><a class="button button--yellow" href="#participar">Encuentra tu lugar <span aria-hidden="true">↗</span></a><div class="community__tags"><span>Ideas que suman</span><span>Personas que impulsan</span><span>Impacto que importa</span></div></div>
+    </section>
 
-  <section class="services" id="services">
-    <div class="services__bg">
-      <video class="services__video" muted playsinline autoplay loop>
-        <source src="https://videos.pexels.com/video-files/32336468/13794791_1920_1080_30fps.mp4" type="video/mp4" />
-      </video>
-      <div class="services__video-overlay"></div>
-    </div>
-    <div class="services__inner">
-      <div class="services__left">
-        <div class="services__sticky">
-          <span class="services__number">01</span>
-          <h2 class="services__title">Services</h2>
-          <p class="services__desc">A full-spectrum creative partnership — from strategy through execution.</p>
-        </div>
-      </div>
-      <div class="services__right">
-        <div class="service-item" data-index="01">
-          <span class="service-item__index">01</span>
-          <div class="service-item__content">
-            <h3>Brand Strategy &amp; Messaging</h3>
-            <p>Positioning, narrative frameworks, and messaging architecture that give your brand a voice worth listening to.</p>
-          </div>
-        </div>
-        <div class="service-item" data-index="02">
-          <span class="service-item__index">02</span>
-          <div class="service-item__content">
-            <h3>Logo Design</h3>
-            <p>Iconic marks engineered for recognition — from wordmarks to complete symbol systems.</p>
-          </div>
-        </div>
-        <div class="service-item" data-index="03">
-          <span class="service-item__index">03</span>
-          <div class="service-item__content">
-            <h3>Visual Identity</h3>
-            <p>Color, type, photography, illustration — a cohesive visual language that scales across every medium.</p>
-          </div>
-        </div>
-        <div class="service-item" data-index="04">
-          <span class="service-item__index">04</span>
-          <div class="service-item__content">
-            <h3>Brand Guidelines &amp; Frameworks</h3>
-            <p>Comprehensive systems and documentation that keep your brand consistent as it grows.</p>
-          </div>
-        </div>
-        <div class="service-item" data-index="05">
-          <span class="service-item__index">05</span>
-          <div class="service-item__content">
-            <h3>Marketing Materials</h3>
-            <p>Campaign assets, social systems, and collateral designed for impact across digital and print.</p>
-          </div>
-        </div>
-        <div class="service-item" data-index="06">
-          <span class="service-item__index">06</span>
-          <div class="service-item__content">
-            <h3>Motion Design</h3>
-            <p>Animated identities, UI motion, and video content that bring your brand to life in motion.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+    <section class="participate section" id="participar" aria-labelledby="participate-title">
+      <div class="section-heading"><p class="eyebrow">04 / Hay un lugar para ti</p><span class="section-note">Empieza desde donde estás.</span></div>
+      <h2 id="participate-title">¿Qué te mueve<br /><em>a transformar?</em></h2>
+      <div class="path-picker" role="group" aria-label="Elige tu perfil"><button type="button" data-profile="joven" aria-pressed="true">Quiero emprender <span aria-hidden="true">↗</span></button><button type="button" data-profile="mentor" aria-pressed="false">Quiero acompañar <span aria-hidden="true">↗</span></button><button type="button" data-profile="aliado" aria-pressed="false">Quiero colaborar <span aria-hidden="true">↗</span></button></div>
+      <div class="path-result" aria-live="polite" aria-atomic="true"><span class="path-result__symbol" aria-hidden="true">↗</span><div><h3 id="profile-title">Tu idea puede ser el comienzo.</h3><p id="profile-description">Si eres joven y quieres explorar el emprendimiento sostenible, empieza por conocer nuestras áreas de formación, mentoría y comunidad.</p><a class="text-link text-link--blue" id="profile-link" href="#oportunidades">Explorar las oportunidades <span aria-hidden="true">↗</span></a></div></div>
+      <p class="participate__notice">Estamos preparando los canales de inscripción y contacto. Esta página no recibe postulaciones ni recopila datos personales.</p>
+    </section>
 
-  <section class="cinematic" id="break">
-    <div class="cinematic__sticky">
-      <div class="cinematic__video-frame">
-        <video class="cinematic__video" muted playsinline autoplay loop>
-          <source src="https://videos.pexels.com/video-files/36619504/15525739_2560_1440_30fps.mp4" type="video/mp4" />
-        </video>
-      </div>
-      <div class="cinematic__overlay"></div>
-      <div class="cinematic__content">
-        <h2 class="cinematic__heading">
-          <span class="cin-line">Every detail.</span>
-          <span class="cin-line">Considered.</span>
-        </h2>
-      </div>
-      <div class="cinematic__counter">
-        <span class="cinematic__count">00</span>
-        <span class="cinematic__count-label">% revealed</span>
-      </div>
-    </div>
-  </section>
+    <section class="faq section" aria-labelledby="faq-title"><div><p class="eyebrow">Antes de dar el paso</p><h2 id="faq-title">Hablemos<br />con claridad.</h2></div><div class="faq__items"><details><summary>¿Para quién es Bolivia EcoHub?</summary><p>El ecosistema está dirigido principalmente a jóvenes de Bolivia de 16 a 28 años que buscan desarrollar habilidades, emprender y generar impacto sostenible. Cada convocatoria definirá sus requisitos.</p></details><details><summary>¿Necesito tener un emprendimiento?</summary><p>Puedes comenzar explorando una idea o fortaleciendo tus habilidades. Consulta los requisitos de cada actividad cuando se publique su convocatoria.</p></details><details><summary>¿Cómo puedo participar?</summary><p>Los canales oficiales de inscripción aún están pendientes de publicación en esta página. Por ahora puedes explorar el ecosistema y encontrar el camino que se relaciona con tus intereses.</p></details><details><summary>¿Las actividades son virtuales o presenciales?</summary><p>La propuesta combina formación híbrida y conexiones con la comunidad. La modalidad, ubicación y fechas se indicarán en cada convocatoria.</p></details></div></section>
 
-  <section class="contact" id="contact">
-    <div class="contact__content">
-      <div class="contact__label">
-        <span class="label-line"></span>
-        <span>Get in Touch</span>
-      </div>
-      <h2 class="contact__heading reveal-text">
-        Have a project<br />in mind?
-      </h2>
-      <a href="mailto:hello@entospark.com" class="contact__email reveal-up">hello@entospark.com</a>
-      <div class="contact__footer">
-        <div class="contact__copy">&copy; 2026 PRIOR by Entospark Studios. All rights reserved.</div>
-        <div class="contact__socials">
-          <a href="https://github.com/RelaxKartikey" target="_blank" rel="noopener">Designed by RelaxKartikey</a>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollToPlugin.min.js"></script>
-  <script src="main.js"></script>
+    <section class="closing" aria-label="Nuestro propósito"><span class="closing__symbol" aria-hidden="true">✳</span><p>Ideas que conectan.<br /><span>Jóvenes que transforman.</span></p><a href="#inicio" class="round-arrow" aria-label="Volver al inicio">↑</a></section>
+  </main>
+  <footer class="footer"><div class="footer__top"><a class="brand" href="#inicio" aria-label="Bolivia EcoHub — Inicio"><img src="assets/bolivia-ecohub.png" alt="Bolivia EcoHub" width="379" height="61" loading="lazy" /></a><p>Innovación, comunidad y sostenibilidad.<br />Desde Bolivia, hacia lo que viene.</p></div><div class="footer__bottom"><span>© <span id="year">2026</span> Bolivia EcoHub</span><span>Identidad visual: Gabriela Córdova</span><a href="https://github.com/Relaxkartikey/prior-gsap-animation-portfolio-website-template" target="_blank" rel="noopener noreferrer">Base original: PRIOR / RelaxKartikey ↗</a></div></footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="main.js" defer></script>
 </body>
 </html>
