@@ -38,9 +38,15 @@ La fotografía solicitada de jóvenes emprendedores en una terraza de La Paz no 
 
 - `sequence.js` es el único responsable de las dos escenas fijadas: portada breve y propuesta de tres capítulos.
 - La portada comienza completa y legible. Su acercamiento y cambio de mensaje terminan en un encuadre redondeado que continúa con la fotografía del propósito.
-- La propuesta alterna tres capítulos con imagen y texto, y un contador discreto. En móvil, tablet, ventanas bajas, ahorro de datos, conexión 2G o movimiento reducido se muestran bloques verticales completos.
+- Dirección de movimiento: ninguna fotografía, personaje ni contenedor se gira o inclina. Solo se escalan imágenes dentro de sus marcos; los textos, botones y pies de foto no heredan el zoom. La portada llega hasta 1.10, limitado por la resolución nativa para evitar ampliar fuentes insuficientes. Se preserva el foco de los rostros y del Illimani.
+- La imagen de paisaje pasa de amplio a un marco levemente más cerrado; la fotografía del propósito abre una máscara de 3% hasta sus bordes. Son los dos cambios protagonistas de encuadre. Las demás fotos usan 1.04 → 1 en escritorio y 1.02 → 1 en móvil, también limitados por resolución.
+- La propuesta usa un marco estable con tres capas fotográficas. Una imagen base siempre permanece opaca, las nuevas entran por fundido y el zoom máximo es 1.025. Texto, pie y contador se seleccionan desde el mismo progreso suavizado: un solo texto visible, sin huecos ni superposiciones. Cada capítulo se mantiene al detener el scroll y las transiciones se revierten al subir.
+- En móvil, tablet, ventanas bajas, ahorro de datos o movimiento reducido se muestran bloques verticales completos, sin fijaciones prolongadas.
 - `main.js` gestiona navegación, agentes, enlaces profundos y parallax moderado. No duplica las secuencias.
 - No hay canvas renderizado permanentemente, secuencias de cientos de archivos, scroll artificial ni cursores obligatorios.
+- El zoom no tiene una reproducción autónoma: está vinculado al progreso del scroll. El suavizado solo termina de asentarlo al detenerse; no sigue ampliándose por sí solo.
+- Los agentes reservan la altura del perfil más alto para evitar saltos. Se animan por separado el personaje (0.97 → 1 y 8 px), el nombre y la demostración, sin escalar el panel completo ni usar rebotes.
+- Navegación con subrayado de ubicación y `aria-current="location"`; flechas de botones con desplazamiento de 3 px y títulos editoriales por líneas con movimientos breves, manteniendo su legibilidad.
 - Imágenes con dimensiones, `srcset`, variantes pequeñas y carga diferida. La portada no espera fotografías inferiores. Las animaciones finitas se actualizan al desplazarse; no hay un bucle propio de renderizado.
 - Sin JavaScript se conservan el menú, todos los capítulos, los tres ejemplos de agentes, preguntas frecuentes y participación.
 
@@ -52,6 +58,6 @@ La única llamada principal es **Conocer cómo participar**. El enlace oficial d
 
 ## Validación
 
-Se probaron 320, 390, 768, 1024 y 1440 px; scroll reversible; cambios de tamaño; agentes con ratón y teclado; enlaces profundos; recursos fallidos; ausencia de GSAP/JavaScript; ahorro de datos; cambio dinámico de movimiento reducido. Auditoría automática axe-core WCAG A/AA sin infracciones en los tres perfiles visibles. Esto no sustituye una revisión de accesibilidad humana completa.
+Se probaron 320, 390, 768, 1024 y 1440 px; scroll reversible; cambios de tamaño; agentes con ratón y teclado; altura estable entre perfiles; ausencia de giros; fundidos intermedios con imagen base visible; un único texto y contador sincronizados; enlaces profundos y ubicación activa; recursos fallidos; ausencia de GSAP/JavaScript; ahorro de datos; cambio dinámico de movimiento reducido. Auditoría automática axe-core WCAG A/AA sin infracciones en los tres perfiles visibles. Esto no sustituye una revisión de accesibilidad humana completa.
 
 La prueba reproducible `tests/browser_smoke.py` usa Python y Playwright, sin añadir dependencias al sitio ni cambiar su tecnología.
