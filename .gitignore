@@ -1,0 +1,5 @@
+.vscode/
+node_modules/
+notas/.obsidian/workspace*.json
+notas/.obsidian/cache/
+notas/.trash/
