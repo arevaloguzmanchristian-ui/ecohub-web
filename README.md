@@ -18,5 +18,9 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 - Fotografías ilustrativas de [bosque](https://images.unsplash.com/photo-1441974231531-c6227db76b6e) y [colaboración](https://images.unsplash.com/photo-1522071820081-009f0129c71c), servidas localmente y optimizadas desde Unsplash. No representan actividades verificadas del proyecto.
 - Sin formulario ni métricas inventadas. Faltan los canales oficiales de inscripción y contacto, convocatorias y archivos oficiales de co-branding para su aplicación final.
 - Animación GSAP opcional; el contenido y la navegación funcionan sin la biblioteca. Respeta la preferencia de movimiento reducido.
-- Efecto vinculado al scroll: portada fijada con zoom y órbitas en escritorio, parallax suave en móvil y entradas progresivas. Sin secuencias de cientos de imágenes ni desplazamiento horizontal obligatorio.
+- Secuencia real de fotogramas vinculada al scroll en «Tecnología con propósito»: 48 WebP de 896 px en escritorio (511.120 bytes en total) o 24 de 480 px en móvil (117.282 bytes). Derivada de los fotogramas de PRIOR; no se presenta como material de una actividad de EcoHub.
+- Carga al acercarse a 450 px de la sección, máximo 3 peticiones simultáneas y caché de 16 imágenes decodificadas. Solo se precargan los fotogramas vecinos, no toda la secuencia al entrar.
+- Una única escena fijada en escritorio; móvil sin pinning. Con movimiento reducido, ahorro de datos o conexión 2G se muestra únicamente el póster. El contenido sigue accesible sin JavaScript.
+- Secciones adicionales: áreas de impacto y ruta para explorar el ecosistema. Son contenido orientativo, no resultados ni proyectos ejecutados.
+- Foto ilustrativa de energía: [fuente Unsplash](https://images.unsplash.com/photo-1508514177221-188b1cf16e9d), optimizada localmente.
 - GSAP y ScrollTrigger 3.12.5 se sirven localmente desde `assets/vendor`, conservando sus avisos de licencia. Biblioteca original: [GSAP](https://gsap.com/); [licencia](https://gsap.com/standard-license/).

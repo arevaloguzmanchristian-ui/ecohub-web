@@ -142,6 +142,60 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
 .footer__bottom { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 18px; border-top: 1px solid rgb(0 90 133 / 20%); padding-top: 23px; font-size: 9px; }
 .footer__bottom a:hover { text-decoration: underline; }
 
+.sequence { background: var(--blue); color: white; }
+.sequence__stage { position: relative; min-height: 650px; height: 85svh; isolation: isolate; overflow: hidden; }
+.sequence__poster, .sequence__poster img, .sequence__canvas, .sequence__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.sequence__poster img { object-fit: cover; }
+.sequence__canvas { opacity: 0; transition: opacity .2s; }
+.sequence.is-ready .sequence__canvas { opacity: 1; }
+.sequence__shade { background: linear-gradient(90deg, rgb(0 35 55 / 88%), rgb(0 35 55 / 25%) 75%), linear-gradient(0deg, rgb(0 35 55 / 65%), transparent 30%); }
+.sequence__top, .sequence__bottom { position: absolute; left: var(--gutter); right: var(--gutter); display: flex; justify-content: space-between; align-items: center; gap: 25px; }
+.sequence__top { top: 35px; }
+.sequence__hint { font-size: 10px; }
+.sequence__content { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-43%); }
+.sequence__chapter { color: var(--yellow); font-size: 11px; margin-bottom: 22px; }
+.sequence h2 { font-size: clamp(46px, 6.7vw, 100px); max-width: 850px; }
+.sequence h2 em { color: var(--green); }
+.sequence__content > p:last-child { margin-top: 25px; font-size: 12px; }
+.sequence__bottom { bottom: 35px; font-size: 10px; }
+.sequence__meter { width: 160px; height: 2px; background: rgb(255 255 255 / 30%); overflow: hidden; }
+.sequence__meter > span { display: block; width: 100%; height: 100%; background: var(--yellow); transform: scaleX(0); transform-origin: left; }
+.sequence:not(.is-animated) .sequence__hint, .sequence:not(.is-animated) .sequence__meter { display: none; }
+.impact .section-intro em { color: var(--blue); text-decoration: underline; text-decoration-color: var(--green); text-underline-offset: 8px; }
+.impact__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.impact-card { position: relative; min-height: 420px; border-radius: 7px; overflow: hidden; color: white; background: var(--blue); }
+.impact-card > img { position: absolute; height: 100%; width: 100%; object-fit: cover; }
+.impact-card::after { content: ''; position: absolute; inset: 0; background: linear-gradient(0deg, rgb(0 35 55 / 96%) 0%, rgb(0 35 55 / 30%) 70%); }
+.impact-card > div { position: absolute; bottom: 26px; left: 26px; right: 26px; z-index: 1; }
+.impact-card .eyebrow { font-size: 9px; color: var(--yellow); }
+.impact-card h3 { font-size: clamp(27px, 3vw, 40px); margin: 14px 0; }
+.impact-card p { font-size: 11px; }
+.journey { background: var(--blue); color: white; }
+.journey__steps { list-style: none; padding: 0; margin: 55px 0 40px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
+.journey__steps li { border-top: 1px solid rgb(255 255 255 / 35%); padding-top: 24px; }
+.journey__number { font-size: 48px; color: var(--green); font-weight: 300; letter-spacing: -.05em; }
+.journey__steps h3 { font-size: 24px; margin: 22px 0 16px; }
+.journey__steps p { font-size: 12px; }
+
+@media (max-width: 760px) {
+  .sequence__stage { min-height: 570px; height: 78svh; }
+  .sequence__top { top: 25px; }
+  .sequence__hint { font-size: 8px; max-width: 70px; text-align: right; }
+  .sequence h2 { font-size: clamp(42px, 10vw, 65px); }
+  .sequence__content > p:last-child { font-size: 11px; max-width: 260px; }
+  .sequence__bottom { bottom: 25px; font-size: 9px; }
+  .sequence__bottom > span:first-child { max-width: 200px; }
+  .sequence__meter { width: 70px; flex-shrink: 0; }
+  .impact__grid { grid-template-columns: 1fr; gap: 18px; }
+  .impact-card { min-height: 380px; }
+  .impact-card h3 { font-size: 36px; }
+  .impact-card p { max-width: 300px; }
+  .journey__steps { grid-template-columns: 1fr 1fr; gap: 30px 20px; margin-top: 35px; }
+  .journey__number { font-size: 38px; }
+  .journey__steps h3 { font-size: 21px; margin-top: 16px; }
+  .journey__steps p { font-size: 11px; }
+}
+
 @media (min-width: 1600px) { .hero { min-height: 800px; } .hero__copy { padding-top: 85px; } }
 @media (max-width: 1000px) {
   .header { min-height: 85px; }

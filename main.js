@@ -101,8 +101,8 @@ if (window.gsap) {
       scrollTrigger: {
         trigger: '.hero',
         start: () => desktop ? `top top+=${header.offsetHeight}` : 'top top',
-        end: () => desktop ? `+=${Math.round(innerHeight * .85)}` : 'bottom top',
-        pin: desktop,
+        end: 'bottom top',
+        pin: false,
         scrub: .6,
         invalidateOnRefresh: true,
       },
