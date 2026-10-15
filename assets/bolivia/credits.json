@@ -25,5 +25,41 @@
     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
     "modifications": "Resized and converted to WebP; displayed with responsive cropping.",
     "description": "Dos mujeres de la comunidad Uru en Bolivia que usan totora y paja para hacer artesanías como sombreros, centros de mesas, cestos y otros.\nArtesanía24"
+  },
+  {
+    "file": "aprendizaje.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taller_de_edici%C3%B3n_con_j%C3%B3venes_ind%C3%ADgenas_chiquitanos,_Concepci%C3%B3n,_Bolivia.jpg",
+    "author": "Julia WM Bo",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP; responsive crops and 640px variants retain the original license.",
+    "description": "Los jóvenes de la agrupación JUMA participaron en el taller de edición en Wikipedia que realizó WM Bo en Concepción, Bolivia, en junio de 2024."
+  },
+  {
+    "file": "colaboracion.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taller_de_edici%C3%B3n_con_j%C3%B3venes_ind%C3%ADgenas_en_Concepci%C3%B3n,_Bolivia.jpg",
+    "author": "Julia WM Bo",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP; responsive crops and 640px variants retain the original license.",
+    "description": "Los jóvenes de la agrupación JUMA participaron en el taller de edición en Wikipedia que realizó WM Bo en Concepción, Bolivia, en junio de 2024."
+  },
+  {
+    "file": "comunidad.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Taller_con_j%C3%B3venes_chiquitanos_en_Lomerio,_Bolivia.jpg",
+    "author": "Julia WM Bo",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP; responsive crops and 640px variants retain the original license.",
+    "description": "Más de 20 jóvenes de la agrupación JUMA participaron en el taller de edición en Wikipedia que realizó WM Bo en Lomerio, Bolivia, en junio de 2024."
+  },
+  {
+    "file": "cultivo.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Cultivo_de_pepino.jpg",
+    "author": "Edward wong IV",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP; responsive crops and 640px variants retain the original license.",
+    "description": "Planta de pepino en la amazonía"
   }
 ]
