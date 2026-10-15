@@ -6,7 +6,9 @@ Concepto: **Desde nuestras ideas, crece el futuro de Bolivia.**
 
 Orden: territorio en portada → personas, propósito e ideas → aprender, desarrollar y conectar → vista previa de acompañamiento digital → territorio, oficios y recursos naturales → participación.
 
-El Azul Horizonte `#005A85` es el fondo principal. Verde Brote `#72C594` destaca crecimiento y mensajes grandes; Amarillo Sol `#FFE22E` señala la acción principal y la información de participación; Arena Suave `#EDEAE1` da descanso en navegación, agentes y preguntas frecuentes. La tinta auxiliar oscura `#153E50` sirve para texto legible sobre verde; no sustituye los colores oficiales.
+El Azul Horizonte `#005A85` es el fondo principal. Verde Brote `#72C594` destaca crecimiento y mensajes grandes; Amarillo Sol `#FFE22E` señala únicamente la acción principal; Arena Suave `#EDEAE1` da descanso en navegación, propósito, agentes y preguntas frecuentes, y en el panel compacto de participación. La tinta auxiliar oscura `#153E50` sirve para texto legible sobre fondos claros; no sustituye los colores oficiales.
+
+Composición de presentación de producto: cuadrícula editorial de hasta 1280 px, titulares centrados, fotografías amplias y radios coherentes de 24–32 px. El propósito prioriza la colaboración en Concepción; el aprendizaje UMSA abre los capítulos. La cerámica y la explicación secundaria quedan en un desplegable. El territorio alterna una panorámica casi a sangre con dos fotos de tamaños distintos. Los textos se han abreviado y las notas de implementación permanecen fuera del relato principal.
 
 Los encuadres redondeados, personajes digitales y composiciones de conexión son propuestas de interfaz, no modificaciones del logotipo ni elementos oficiales añadidos a la identidad.
 
@@ -15,7 +17,7 @@ Los encuadres redondeados, personajes digitales y composiciones de conexión son
 - Core Rhino 65 Bold: titulares protagonistas y frases de marca, únicamente si está disponible con licencia web. No se ha recibido su archivo; no se descarga ni distribuye una copia.
 - Montserrat Medium (500): alternativa provisional de esos titulares, títulos secundarios, navegación y botones.
 - Montserrat Regular (400): subtítulos y textos sobre fotografía.
-- Montserrat Light (300): párrafos sobre fondos sólidos en escritorio, cuando conservan legibilidad. En móvil se prioriza Regular.
+- Montserrat Light (300): recurso disponible para uso editorial puntual. En esta versión se prioriza Regular en los párrafos para conservar legibilidad.
 - Montserrat Italic (400): énfasis editorial puntual; está disponible, sin sustituirla por DM Sans.
 
 `--display` define la familia principal con fallback a Montserrat. Para incorporar Core Rhino, proporcionar el archivo WOFF2 autorizado y su licencia, declarar un `@font-face` local y mantener este fallback. No bloquear la portada mientras carga la fuente.
@@ -38,15 +40,15 @@ La fotografía solicitada de jóvenes emprendedores en una terraza de La Paz no 
 
 - `sequence.js` es el único responsable de las dos escenas fijadas: portada breve y propuesta de tres capítulos.
 - La portada comienza completa y legible, de borde a borde, sin tarjetas ni recuadros de color. Su primer scroll funciona como una galería de tres tomas: ciudad → atardecer → Illimani de noche. El contador, nombre de la fotografía y tres líneas discretas siguen la imagen realmente disponible.
-- Dirección de movimiento: ninguna fotografía, personaje ni contenedor se gira o inclina. Solo se escalan imágenes dentro de sus marcos; los textos, botones y pies de foto no heredan el zoom. La portada llega hasta 1.10, limitado por los píxeles reales del recurso seleccionado en `srcset`, no por su tamaño natural corregido por densidad.
-- Una foto base permanece siempre opaca. La segunda entra con un fundido corto y abre un encuadre redondeado; la tercera entra por fundido y vuelve suavemente a un marco más recogido, con la fotografía anterior como fondo, nunca un panel azul. Se alternan acercamiento (hasta 1.10), alejamiento (hasta 1.07 → 1) y acercamiento discreto (hasta 1.055). En móvil, las escalas se limitan a 1.025 y las máscaras son menores. Todo revierte al subir, sin giros ni reproducción autónoma.
+- Dirección de movimiento: ninguna fotografía, personaje ni contenedor se gira o inclina. Solo se escalan imágenes dentro de sus marcos; los textos, botones y pies de foto no heredan el zoom. La portada llega hasta 1.08, limitado por los píxeles reales del recurso seleccionado en `srcset`, no por su tamaño natural corregido por densidad.
+- Una foto base permanece siempre opaca. La segunda entra con un fundido corto y abre un encuadre redondeado; la tercera entra por fundido y vuelve suavemente a un marco más recogido, con la fotografía anterior como fondo, nunca un panel azul. Se alternan acercamiento (hasta 1.08), alejamiento (hasta 1.055 → 1) y acercamiento discreto (hasta 1.04). El primer mensaje permanece estable durante el 28% inicial; solo cambia una vez. En móvil, las escalas se limitan a 1.025 y las máscaras son menores. Todo revierte al subir, sin giros ni reproducción autónoma.
 - La fotografía del propósito abre una máscara de 3% hasta sus bordes. Las demás fotos usan 1.04 → 1 en escritorio y 1.02 → 1 en móvil, también limitados por resolución.
 - La propuesta usa un marco estable con tres capas fotográficas. Una imagen base siempre permanece opaca, las nuevas entran por fundido y el zoom máximo es 1.025. Texto, pie y contador se seleccionan desde el mismo progreso suavizado: un solo texto visible, sin huecos ni superposiciones. Cada capítulo se mantiene al detener el scroll y las transiciones se revierten al subir.
-- En móvil, tablet, ventanas bajas, ahorro de datos o movimiento reducido se muestran bloques verticales completos, sin fijaciones prolongadas.
+- Las fijaciones solo se activan desde 1001 px de ancho y 640 px de alto; su escenario se adapta a laptops de poca altura. El recorrido adicional de portada es 1.1 alturas de ventana y el de capítulos 1.25. En móvil, tablet, ventanas más bajas, ahorro de datos o movimiento reducido se muestran bloques verticales completos.
 - `main.js` gestiona navegación, agentes, enlaces profundos y parallax moderado. No duplica las secuencias.
 - No hay canvas renderizado permanentemente, secuencias de cientos de archivos, scroll artificial ni cursores obligatorios.
 - El zoom no tiene una reproducción autónoma: está vinculado al progreso del scroll. El suavizado solo termina de asentarlo al detenerse; no sigue ampliándose por sí solo.
-- Los agentes reservan la altura del perfil más alto para evitar saltos. Se animan por separado el personaje (0.97 → 1 y 8 px), el nombre y la demostración, sin escalar el panel completo ni usar rebotes.
+- Los tres agentes permanecen juntos en una galería; los secundarios mantienen escala 0.92 y el seleccionado 1. El selector compacto tiene un contorno deslizante y contraste estable. Se reserva la altura del perfil más alto para evitar saltos. Se animan por separado el personaje (0.97 → 1 y 5 px), el nombre y las dos burbujas de demostración, sin escalar el panel completo ni usar rebotes. Los acordeones abren y cierran suavemente, con alternativa nativa sin JS y sin movimiento con preferencia reducida.
 - Navegación con subrayado de ubicación y `aria-current="location"`; flechas de botones con desplazamiento de 3 px y títulos editoriales por líneas con movimientos breves, manteniendo su legibilidad.
 - Imágenes con dimensiones, `srcset`, variantes pequeñas y carga diferida. La portada no espera fotografías inferiores. Las animaciones finitas se actualizan al desplazarse; no hay un bucle propio de renderizado.
 - La panorámica dispone de variantes de 640, 1280 y 1920 px; la de 1280 px pesa unos 237 KB y evita descargar la versión grande en la portada vertical de móvil. Las cinco fotografías incorporadas para eliminar repeticiones se sirven como WebP y las inferiores cargan de forma diferida.
@@ -55,7 +57,7 @@ La fotografía solicitada de jóvenes emprendedores en una terraza de La Paz no 
 
 ## Agentes y registro: estado real
 
-Nexo, Impulso y Brújula son personajes SVG originales propuestos para la web. El selector cambia perfil, imagen y conversación escrita; admite flechas, Inicio y Fin mediante un patrón de pestañas accesible. No hay un campo de chat, API de IA, disponibilidad permanente ni agentes oficiales inventados.
+Nexo, Impulso y Brújula son personajes SVG originales propuestos para la web. El selector cambia el protagonismo del personaje, perfil y conversación escrita; admite flechas, Inicio y Fin mediante un patrón de pestañas accesible. Se muestra «Vista previa. El chat aún no está disponible». No hay un campo de chat, API de IA, disponibilidad permanente ni agentes oficiales inventados.
 
 La única llamada principal es **Conocer cómo participar**. El enlace oficial de registro no se ha recibido; no se simula una inscripción. `#registro` y `#participar` comparten destino y respetan el encabezado fijo. Para habilitar inscripciones se necesita confirmar URL, requisitos, fechas y tratamiento de datos.
 
@@ -63,4 +65,4 @@ La única llamada principal es **Conocer cómo participar**. El enlace oficial d
 
 Se probaron 320, 390, 768, 1024 y 1440 px; doce fotografías distintas sin repeticiones entre secciones; portada sin tarjeta; galería de tres fotos, máscaras, capas en orden, etiquetas sincronizadas y scroll reversible; carga diferida sin pedir las dos fotos nuevas al entrar; cambios de tamaño; agentes con ratón y teclado; altura estable entre perfiles; ausencia de giros; fundidos intermedios con imagen base visible; un único texto y contador de capítulos sincronizados; enlaces profundos y ubicación activa; recursos fallidos; ausencia de GSAP/JavaScript; ahorro de datos; cambio dinámico de movimiento reducido. Auditoría automática axe-core WCAG A/AA sin infracciones en los tres perfiles visibles. Esto no sustituye una revisión de accesibilidad humana completa.
 
-La prueba reproducible `tests/browser_smoke.py` usa Python y Playwright, sin añadir dependencias al sitio ni cambiar su tecnología.
+También se verificaron laptops 1366×650, 1280×720 y 1024×600: capítulos visibles en ambas direcciones, sin desbordamiento y acordeones funcionales. La prueba reproducible `tests/browser_smoke.py` usa Python y Playwright, sin añadir dependencias al sitio ni cambiar su tecnología.

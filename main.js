@@ -31,14 +31,19 @@ const selector = agents?.querySelector('.agent-selector');
 if (selector) {
   const tabs = [...selector.querySelectorAll('[data-agent]')];
   const panels = [...agents.querySelectorAll('[data-agent-panel]')];
+  const figures = [...agents.querySelectorAll('[data-agent-figure]')];
   selector.hidden = false;
   selector.setAttribute('role', 'tablist');
   agents.classList.add('is-interactive');
   const stage = agents.querySelector('.agent-panels');
   let previewAnimation;
   function clearPreviewStyles() {
+    figures.forEach(figure => {
+      figure.querySelector('img').style.removeProperty('opacity');
+      figure.querySelector('img').style.removeProperty('transform');
+    });
     panels.forEach(panel => {
-      panel.querySelectorAll('.agent-panel__art img, .agent-panel__copy > .eyebrow, .agent-panel__copy > h3, .conversation').forEach(element => {
+      panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3, .conversation').forEach(element => {
         element.style.removeProperty('opacity');
         element.style.removeProperty('transform');
       });
@@ -73,12 +78,14 @@ if (selector) {
       item.setAttribute('aria-selected', String(selected));
       item.tabIndex = selected ? 0 : -1;
     });
+    selector.style.setProperty('--agent-index', String(tabs.indexOf(tab)));
+    figures.forEach(figure => figure.classList.toggle('is-selected', figure.dataset.agentFigure === tab.dataset.agent));
     panels.forEach(panel => {
       const selected = panel.dataset.agentPanel === tab.dataset.agent;
       panel.hidden = !selected;
       if (selected && window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         previewAnimation = gsap.timeline({ defaults: { ease: 'power1.out', clearProps: 'opacity,transform' } })
-          .fromTo(panel.querySelector('.agent-panel__art img'), { opacity: .65, y: 8, scale: .97 }, { opacity: 1, y: 0, scale: 1, duration: .32 }, 0)
+          .fromTo(figures.find(figure => figure.dataset.agentFigure === tab.dataset.agent).querySelector('img'), { opacity: .85, y: 5, scale: .97 }, { opacity: 1, y: 0, scale: 1, duration: .3 }, 0)
           .fromTo(panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3'), { opacity: .5, y: 6 }, { opacity: 1, y: 0, duration: .25, stagger: .035 }, .04)
           .fromTo(panel.querySelector('.conversation'), { opacity: .4, y: 8 }, { opacity: 1, y: 0, duration: .28 }, .1);
       }
@@ -125,6 +132,40 @@ if (selector) {
     clearPreviewStyles();
   });
 }
+
+// Native details remain the fallback; enhancement animates only the opening height.
+document.querySelectorAll('.faq details, .editorial-details').forEach(details => {
+  const summary = details.querySelector('summary');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let animation;
+  let closing = false;
+  function finish(expanded) {
+    details.open = expanded;
+    details.style.removeProperty('overflow');
+    animation = null;
+    closing = false;
+    if (window.ScrollTrigger) requestAnimationFrame(() => ScrollTrigger.refresh());
+  }
+  summary.addEventListener('click', event => {
+    if (reduced.matches || !details.animate) return;
+    event.preventDefault();
+    const start = details.getBoundingClientRect().height;
+    const expanded = !details.open || closing;
+    animation?.cancel();
+    details.open = true;
+    const end = expanded ? details.scrollHeight : summary.getBoundingClientRect().height + 2;
+    closing = !expanded;
+    details.style.overflow = 'hidden';
+    animation = details.animate({ height: [`${start}px`, `${end}px`] }, { duration: 220, easing: 'ease-out' });
+    animation.onfinish = () => finish(expanded);
+  });
+  reduced.addEventListener('change', event => {
+    if (!event.matches || !animation) return;
+    const expanded = !closing;
+    animation.cancel();
+    finish(expanded);
+  });
+});
 
 const connection = navigator.connection;
 if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.test(connection?.effectiveType || '')) {

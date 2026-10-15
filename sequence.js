@@ -5,7 +5,7 @@ if (window.gsap && window.ScrollTrigger) {
   gsap.registerPlugin(ScrollTrigger);
   const scenes = gsap.matchMedia();
   scenes.add({
-    desktop: '(min-width: 1001px) and (min-height: 760px)',
+    desktop: '(min-width: 1001px) and (min-height: 640px)',
     mobile: '(max-width: 760px)',
     motion: '(prefers-reduced-motion: no-preference)',
   }, context => {
@@ -58,20 +58,20 @@ if (window.gsap && window.ScrollTrigger) {
         if (bounds.bottom > headerHeight() && bounds.top < innerHeight) requestGallery();
       }
       const ready = photos.map(image => image.complete && image.naturalWidth > 0);
-      const firstReveal = clamp((p - .2) / .18);
-      const firstBlend = ready[1] ? clamp((p - .2) / .055) : 0;
-      const secondBlend = ready[2] ? clamp((p - .6) / .06) : 0;
+      const firstReveal = clamp((p - .28) / .18);
+      const firstBlend = ready[1] ? clamp((p - .28) / .055) : 0;
+      const secondBlend = ready[2] ? clamp((p - .66) / .06) : 0;
       slides[0].style.opacity = '1';
       slides[1].style.opacity = String(firstBlend);
       slides[2].style.opacity = String(secondBlend);
-      const openMask = (1 - firstReveal) * (mobile ? 3 : 9);
-      slides[1].style.clipPath = `inset(${openMask}% ${openMask * .8}% round ${(1 - firstReveal) * (mobile ? 20 : 65)}px)`;
-      const closeMask = clamp((p - .8) / .2);
-      slides[2].style.clipPath = `inset(${closeMask * (mobile ? 1 : 4)}% ${closeMask * (mobile ? 1 : 3)}% round ${closeMask * (mobile ? 18 : 48)}px)`;
+      const openMask = (1 - firstReveal) * (mobile ? 2 : 5);
+      slides[1].style.clipPath = `inset(${openMask}% ${openMask * .8}% round ${(1 - firstReveal) * (mobile ? 20 : 32)}px)`;
+      const closeMask = clamp((p - .84) / .16);
+      slides[2].style.clipPath = `inset(${closeMask * (mobile ? 1 : 2.5)}% ${closeMask * (mobile ? 1 : 2)}% round ${closeMask * (mobile ? 20 : 32)}px)`;
       const zooms = [
-        1 + (heroLimits[0] - 1) * clamp(p / .45),
-        1 + (heroLimits[1] - 1) * (1 - clamp((p - .2) / .55)),
-        1 + (heroLimits[2] - 1) * clamp((p - .6) / .4),
+        1 + (heroLimits[0] - 1) * clamp(p / .5),
+        1 + (heroLimits[1] - 1) * (1 - clamp((p - .28) / .55)),
+        1 + (heroLimits[2] - 1) * clamp((p - .66) / .34),
       ];
       photos.forEach((image, index) => { image.style.transform = `scale(${zooms[index]})`; });
       const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
@@ -85,7 +85,7 @@ if (window.gsap && window.ScrollTrigger) {
       hero.dataset.progress = p.toFixed(4);
     }
     function refreshHero() {
-      heroLimits = photos.map((image, index) => safeZoom(image, mobile ? [1.025, 1.02, 1.025][index] : [1.1, 1.07, 1.055][index]));
+      heroLimits = photos.map((image, index) => safeZoom(image, mobile ? [1.025, 1.02, 1.025][index] : [1.08, 1.055, 1.04][index]));
       renderHero();
     }
     hero.classList.add('is-animated');
@@ -93,15 +93,15 @@ if (window.gsap && window.ScrollTrigger) {
       defaults: { ease: 'none' },
       scrollTrigger: {
         id: 'ecohub-hero', trigger: hero, start: () => `top top+=${headerHeight()}`,
-        end: () => `+=${Math.round(desktop ? innerHeight * 1.2 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
+        end: () => `+=${Math.round(desktop ? innerHeight * 1.1 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
         pin: desktop ? hero.querySelector('.hero__stage') : false,
         scrub: desktop ? .3 : true, invalidateOnRefresh: true, onRefresh: refreshHero,
       },
     });
     opening.fromTo(openingState, { progress: 0 }, { progress: 1, duration: 1, onUpdate: renderHero }, 0);
     if (desktop) {
-      opening.to('.hero__message', { y: -18, opacity: 0, duration: .3 }, .18)
-        .fromTo('.hero__connection', { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: .3 }, .48);
+      opening.to('.hero__message', { y: -14, opacity: 0, duration: .22 }, .28)
+        .fromTo('.hero__connection', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .22 }, .5);
     }
     refreshHero();
 
@@ -157,7 +157,7 @@ if (window.gsap && window.ScrollTrigger) {
         scrollTrigger: {
           id: 'ecohub-chapters', trigger: '.chapters__stage',
           start: () => `top top+=${headerHeight() + 8}`,
-          end: () => `+=${Math.round(innerHeight * 1.65)}`,
+          end: () => `+=${Math.round(innerHeight * 1.25)}`,
           pin: true, scrub: .25, invalidateOnRefresh: true, onRefresh: refreshImages,
         },
       });
