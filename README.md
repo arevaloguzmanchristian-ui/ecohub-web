@@ -18,3 +18,5 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 - Fotografías ilustrativas de [bosque](https://images.unsplash.com/photo-1441974231531-c6227db76b6e) y [colaboración](https://images.unsplash.com/photo-1522071820081-009f0129c71c), servidas localmente y optimizadas desde Unsplash. No representan actividades verificadas del proyecto.
 - Sin formulario ni métricas inventadas. Faltan los canales oficiales de inscripción y contacto, convocatorias y archivos oficiales de co-branding para su aplicación final.
 - Animación GSAP opcional; el contenido y la navegación funcionan sin la biblioteca. Respeta la preferencia de movimiento reducido.
+- Efecto vinculado al scroll: portada fijada con zoom y órbitas en escritorio, parallax suave en móvil y entradas progresivas. Sin secuencias de cientos de imágenes ni desplazamiento horizontal obligatorio.
+- GSAP y ScrollTrigger 3.12.5 se sirven localmente desde `assets/vendor`, conservando sus avisos de licencia. Biblioteca original: [GSAP](https://gsap.com/); [licencia](https://gsap.com/standard-license/).

@@ -61,17 +61,68 @@ document.querySelectorAll('[data-profile]').forEach(button => {
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-if (!reducedMotion.matches && window.gsap) {
-  gsap.from('.hero__copy > *', { y: 18, opacity: 0, duration: .75, stagger: .08, ease: 'power2.out', clearProps: 'all' });
-  if ('IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (!entry.isIntersecting) return;
-        gsap.from(entry.target, { y: 25, opacity: .25, duration: .7, ease: 'power2.out', clearProps: 'all' });
-        observer.unobserve(entry.target);
+if (window.gsap) {
+  if (window.ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
+  const motion = gsap.matchMedia();
+
+  motion.add('(prefers-reduced-motion: no-preference)', () => {
+    gsap.from('.hero__copy > *', { y: 18, opacity: 0, duration: .75, stagger: .08, ease: 'power2.out', clearProps: 'all' });
+    if (!window.ScrollTrigger) return;
+
+    document.querySelectorAll('.reveal').forEach(element => {
+      gsap.fromTo(element, { y: 45, opacity: .3 }, {
+        y: 0, opacity: 1, ease: 'none',
+        scrollTrigger: { trigger: element, start: 'top 95%', end: 'top 65%', scrub: true },
       });
-    }, { threshold: .12 });
-    document.querySelectorAll('.reveal').forEach(element => observer.observe(element));
-  }
+    });
+    gsap.to('.values-strip [aria-hidden]', {
+      rotation: 180, ease: 'none',
+      scrollTrigger: { trigger: '.values-strip', start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+    gsap.fromTo('.community__image img', { scale: 1.18, yPercent: -6 }, {
+      scale: 1.04, yPercent: 2, ease: 'none',
+      scrollTrigger: { trigger: '.community', start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+    gsap.fromTo('.closing__symbol', { rotation: -90 }, {
+      rotation: 90, ease: 'none',
+      scrollTrigger: { trigger: '.closing', start: 'top bottom', end: 'bottom top', scrub: true },
+    });
+  });
+
+  motion.add({
+    desktop: '(min-width: 1001px) and (min-height: 720px)',
+    reduced: '(prefers-reduced-motion: reduce)',
+  }, context => {
+    if (context.conditions.reduced || !window.ScrollTrigger) return;
+    const desktop = context.conditions.desktop;
+    const header = document.querySelector('.header');
+    const scene = gsap.timeline({
+      defaults: { ease: 'none' },
+      scrollTrigger: {
+        trigger: '.hero',
+        start: () => desktop ? `top top+=${header.offsetHeight}` : 'top top',
+        end: () => desktop ? `+=${Math.round(innerHeight * .85)}` : 'bottom top',
+        pin: desktop,
+        scrub: .6,
+        invalidateOnRefresh: true,
+      },
+    });
+    scene.to('.hero__image', { scale: desktop ? 1.4 : 1.16 }, 0)
+      .to('.orbit svg', { rotation: 95, scale: 1.2 }, 0)
+      .to('.hero__sticker', { rotation: 8, y: desktop ? -65 : -28 }, 0)
+      .to('.hero__visual', { borderTopLeftRadius: 12 }, 0);
+    if (desktop) {
+      scene.to('.hero__copy', { y: -20 }, 0)
+        .to('.highlight', { color: '#ffe22e' }, 0)
+        .to('.hero__visual-bottom', { y: -18 }, 0);
+    }
+
+    // Recalculate scene positions after fonts and images settle.
+    const refresh = () => ScrollTrigger.refresh();
+    if (document.fonts) document.fonts.ready.then(() => {
+      if (!context.isReverted) refresh();
+    });
+    window.addEventListener('load', refresh, { once: true });
+    return () => window.removeEventListener('load', refresh);
+  });
 }

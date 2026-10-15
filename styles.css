@@ -56,6 +56,9 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
 .hero__footnote { display: flex; gap: 14px; align-items: center; }
 .hero__footnote p { font-size: 10px; line-height: 1.7; }
 .small-orbit { color: var(--green); font-size: 36px; }
+.scroll-cue { display: flex; align-items: center; gap: 12px; font-size: 9px; letter-spacing: .02em; margin-top: 20px; }
+.scroll-cue > span { font-size: 20px; }
+.hero__media { position: absolute; inset: 0; overflow: hidden; border-radius: inherit; }
 .hero__visual { position: relative; isolation: isolate; min-width: 0; margin: 20px 20px 20px 0; border-radius: 180px 8px 8px 8px; }
 .hero__image, .hero__image-shade { position: absolute; inset: 0; height: 100%; width: 100%; object-fit: cover; border-radius: inherit; }
 .hero__image-shade { background: linear-gradient(180deg, rgb(0 90 133 / 12%) 30%, rgb(0 35 38 / 75%) 100%); }
@@ -99,6 +102,7 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
 .availability-note { font-size: 10px; margin-top: 25px; }
 .community { display: grid; grid-template-columns: 1fr 1fr; background: var(--blue); color: white; border-top: 1px solid rgb(255 255 255 / 20%); }
 .community__image { position: relative; min-height: 640px; }
+.community__image { overflow: hidden; }
 .community__image img { position: absolute; width: 100%; height: 100%; object-fit: cover; }
 .community__image::after { content: ''; position: absolute; inset: 40% 0 0; background: linear-gradient(transparent, rgb(0 40 55 / 70%)); }
 .photo-caption { position: absolute; bottom: 30px; left: var(--gutter); right: 20px; z-index: 1; font-size: 11px; }
