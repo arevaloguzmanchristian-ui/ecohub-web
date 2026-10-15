@@ -29,17 +29,21 @@ try:
         browser = playwright.chromium.launch()
         page = browser.new_page()
         errors = []
+        requests = []
         page.on('pageerror', lambda error: errors.append(str(error)))
+        page.on('request', lambda request: requests.append(request.url))
         for width in (320, 390, 768, 1024, 1440):
             page.set_viewport_size({'width': width, 'height': 960})
             page.goto(base, wait_until='networkidle')
+            if width == 320:
+                assert not any('atardecer' in url or 'illimani-noche' in url for url in requests)
             assert page.locator('h1').count() == 1
             assert page.locator('h1').is_visible()
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
             assert page.locator('.button').count() == 1
             assert page.locator('.hero__human').count() == 0
-            assert page.locator('.hero__landscape img').count() == 1
-            assert page.locator('main img[src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>img.getAttribute("src").replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length>=10;}')
+            assert page.locator('.hero__landscape img').count() == 3
+            assert page.locator('main img[src*="/bolivia/"], main img[data-src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>(img.getAttribute("src")||img.dataset.src).replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length>=12;}')
             assert page.locator('a[href^="#"]').evaluate_all(
                 '(links) => links.every(a => document.getElementById(a.hash.slice(1)))'
             )
@@ -70,13 +74,24 @@ try:
             selector = '.hero__connection' if progress else '.hero__message'
             page.wait_for_function('selector => Number(getComputedStyle(document.querySelector(selector)).opacity) > .95', arg=selector)
             page.wait_for_function('() => {const t=ScrollTrigger.getById("ecohub-hero"); return Math.abs(t.animation.progress()-t.progress)<.001;}')
-            zoom = page.locator('.hero__landscape img').evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a')
+            zoom = page.locator('.hero__landscape img').first.evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a')
             page.wait_for_timeout(350)
-            assert abs(page.locator('.hero__landscape img').evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a') - zoom) < .0001
+            assert abs(page.locator('.hero__landscape img').first.evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a') - zoom) < .0001
             assert 1 <= zoom <= 1.101
             if progress == .98:
                 assert zoom > 1.08
             assert page.locator('.hero__copy, .button').evaluate_all('(nodes) => nodes.every(el => { const m=new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001; })')
+        for progress, index in ((.1,0),(.32,1),(.5,1),(.72,2),(.95,2),(.5,1),(.05,0)):
+            page.evaluate('p => {const t=ScrollTrigger.getById("ecohub-hero");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"});}', progress)
+            page.wait_for_function('p => Math.abs(Number(document.querySelector(".hero").dataset.progress)-p)<.002', arg=progress)
+            page.wait_for_function('index => Number(document.querySelector(".hero").dataset.photo)===index', arg=index)
+            assert page.locator('.hero__photo-count').inner_text() == f'0{index+1} / 03'
+            assert page.locator('.hero__slide').first.evaluate('(el)=>getComputedStyle(el).opacity') == '1'
+            assert page.locator('.hero__photo-bars .is-current').count() == 1
+            assert page.locator('.hero__landscape img').evaluate_all('(images)=>images.every(el=>new DOMMatrix(getComputedStyle(el).transform).a<=1.101)')
+        print('PASS three-photo hero gallery, synchronized labels, masks and reverse scrolling')
+        assert page.locator('.hero__landscape').evaluate('(el)=>getComputedStyle(el).isolation') == 'isolate'
+        assert page.locator('.hero__slide').evaluate_all('(slides)=>slides.every((el,index)=>Number(getComputedStyle(el).zIndex)===index)')
         for progress in (.1, .29, .32, .34, .37, .5, .63, .66, .68, .71, .9, .5, .1):
             page.evaluate('p => { const t = ScrollTrigger.getById("ecohub-chapters"); scrollTo({top: t.start+(t.end-t.start)*p, behavior:"instant"}); }', progress)
             page.wait_for_function('p => Math.abs(Number(document.querySelector(".chapters").dataset.progress) - p) < .002', arg=progress)
@@ -110,27 +125,39 @@ try:
         page.wait_for_function('document.querySelectorAll(".pin-spacer").length === 2')
         print('PASS live reduced motion and resize')
 
-        for mode in ('no-js', 'no-gsap', 'failed-images', 'save-data'):
-            context = browser.new_context(java_script_enabled=mode != 'no-js', viewport={'width': 390, 'height': 844})
+        for mode in ('no-js', 'no-gsap', 'failed-images', 'failed-gallery', 'save-data', 'reduced'):
+            context = browser.new_context(java_script_enabled=mode != 'no-js', reduced_motion='reduce' if mode == 'reduced' else 'no-preference', viewport={'width': 390, 'height': 844})
             if mode == 'save-data':
                 context.add_init_script('Object.defineProperty(navigator,"connection",{value:{saveData:true,effectiveType:"4g"}})')
             fallback = context.new_page()
+            extra_requests = []
+            fallback.on('request', lambda request: extra_requests.append(request.url))
             fallback.on('pageerror', lambda error: errors.append(str(error)))
             if mode == 'no-gsap':
                 fallback.route('**/assets/vendor/**', lambda route: route.abort())
             if mode == 'failed-images':
                 fallback.route('**/assets/bolivia/**', lambda route: route.abort())
+            if mode == 'failed-gallery':
+                fallback.route('**/assets/bolivia/atardecer*', lambda route: route.abort())
+                fallback.route('**/assets/bolivia/illimani-noche*', lambda route: route.abort())
             fallback.goto(base, wait_until='networkidle')
             assert fallback.locator('h1').is_visible()
             assert fallback.locator('.button').is_visible()
             assert fallback.locator('.chapter').count() == 3
             assert fallback.locator('.pin-spacer').count() == 0
+            if mode == 'failed-gallery':
+                fallback.evaluate('() => {const t=ScrollTrigger.getById("ecohub-hero");scrollTo({top:t.start+(t.end-t.start)*.85,behavior:"instant"});}')
+                fallback.wait_for_function('Number(document.querySelector(".hero").dataset.progress)>.8')
+                assert fallback.locator('.hero').get_attribute('data-photo') == '0'
+                assert fallback.locator('.hero__slide').first.evaluate('(el)=>getComputedStyle(el).opacity') == '1'
             if mode == 'no-js':
                 assert fallback.locator('.agent-panel:visible').count() == 3
                 assert fallback.locator('#navigation').is_visible()
             else:
                 fallback.locator('#tab-impulso').click()
                 assert fallback.locator('#panel-impulso').is_visible()
+            if mode in ('no-js', 'no-gsap', 'save-data', 'reduced'):
+                assert not any('atardecer' in url or 'illimani-noche' in url for url in extra_requests)
             context.close()
             print('PASS fallback:', mode)
         assert not errors, errors

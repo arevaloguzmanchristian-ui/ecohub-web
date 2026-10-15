@@ -178,14 +178,6 @@ if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.
         scrollTrigger: { trigger: heading, start: 'top 94%', end: 'top 70%', scrub: true },
       });
     });
-    if (!window.matchMedia('(min-width: 1001px) and (min-height: 760px)').matches) {
-      const landscape = document.querySelector('.hero__landscape img');
-      watched.push(landscape);
-      gsap.fromTo(landscape, { scale: 1 }, {
-        scale: () => safeZoom(landscape, context.conditions.mobile ? 1.025 : 1.04), ease: 'none',
-        scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true, invalidateOnRefresh: true },
-      });
-    }
     const refresh = () => ScrollTrigger.refresh();
     watched.forEach(image => image.addEventListener('load', refresh, { once: true }));
     return () => watched.forEach(image => image.removeEventListener('load', refresh));

@@ -106,5 +106,23 @@
     "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
     "modifications": "Resized and converted to WebP with a 640px responsive variant. Crops retain original license.",
     "description": "Taller de introducción a los proyectos Wiki en Yacuiba, Tarija, en la región del Gran Chaco boliviano."
+  },
+  {
+    "file": "atardecer.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Centro_de_La_Paz_al_atardecer.jpg",
+    "author": "EEJCC",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0",
+    "modifications": "Resized and converted to WebP; responsive 640/1280/1920px versions and framing retain original license.",
+    "description": "La Paz downtown at dusk."
+  },
+  {
+    "file": "illimani-noche.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Illimani_de_noche.jpg",
+    "author": "Eneas De Troya",
+    "license": "CC BY 2.0",
+    "license_url": "https://creativecommons.org/licenses/by/2.0",
+    "modifications": "Resized and converted to WebP; responsive 640/1280/1920px versions and framing retain original license.",
+    "description": "We went up to the Killi Killi viewpoint. We drank wine, while the day became night. La Paz lit up, we took some photos.\nI left.\n\nWe never saw each other again."
   }
 ]

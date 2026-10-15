@@ -46,9 +46,15 @@ em { font-style: normal; }
 .anchor-alias { position: absolute; left: 0; top: 0; width: 1px; height: 1px; pointer-events: none; }
 .hero, .registration { position: relative; }
 .hero__stage { position: relative; min-height: 720px; height: calc(100svh - var(--header)); max-height: 1020px; isolation: isolate; overflow: hidden; background: var(--ink); }
-.hero__landscape, .hero__landscape img, .hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
-.hero__landscape { overflow: hidden; }
+.hero__landscape, .hero__slide, .hero__landscape img, .hero__shade { position: absolute; inset: 0; width: 100%; height: 100%; }
+.hero__landscape { overflow: hidden; isolation: isolate; }
+.hero__slide { overflow: hidden; z-index: 0; }
+.hero__slide:nth-child(2) { z-index: 1; }
+.hero__slide:nth-child(3) { z-index: 2; }
+.hero__slide:not(:first-child) { opacity: 0; }
 .hero__landscape img { object-fit: cover; object-position: 52% 42%; transform-origin: 60% 45%; }
+.hero__slide:nth-child(2) img { object-position: 60% 45%; transform-origin: 60% 45%; }
+.hero__slide:nth-child(3) img { object-position: 62% 23%; transform-origin: 62% 25%; }
 .hero__shade { background: linear-gradient(90deg, rgb(8 17 20 / 76%) 0%, rgb(8 17 20 / 45%) 42%, rgb(8 17 20 / 4%) 85%), linear-gradient(0deg, rgb(8 17 20 / 55%), transparent 30%); }
 .hero__copy { position: absolute; top: 48%; left: var(--gutter); width: 65%; transform: translateY(-50%); }
 .hero__copy > .eyebrow { margin-bottom: 24px; }
@@ -63,6 +69,13 @@ em { font-style: normal; }
 .hero__copy .button { margin-top: 28px; }
 .hero__bottom { position: absolute; left: var(--gutter); right: var(--gutter); bottom: 24px; display: flex; justify-content: space-between; gap: 25px; align-items: center; font-size: 11px; line-height: 1.6; }
 .hero__bottom a { min-height: 44px; display: flex; align-items: center; gap: 20px; }
+.hero__gallery-info { display: none; align-items: center; gap: 13px; font-size: 10px; }
+.hero.is-animated .hero__gallery-info { display: flex; }
+.hero__photo-count { white-space: nowrap; font-weight: 500; }
+.hero__photo-label { max-width: 210px; }
+.hero__photo-bars { display: flex; gap: 4px; }
+.hero__photo-bars i { width: 18px; height: 2px; background: rgb(255 255 255 / 40%); }
+.hero__photo-bars i.is-current { background: var(--green); }
 .purpose { overflow: hidden; }
 .purpose__intro { display: grid; grid-template-columns: 1fr 1fr; gap: 25px 9%; }
 .purpose__intro > .eyebrow { grid-column: 1 / -1; color: var(--sand); }
@@ -217,6 +230,7 @@ figcaption span { display: block; font-size: 11px; margin-top: 4px; }
   .hero__shade { background: linear-gradient(90deg, rgb(8 17 20 / 72%), rgb(8 17 20 / 24%)), linear-gradient(0deg, rgb(8 17 20 / 65%), transparent 45%); }
   .hero__bottom { position: relative; left: auto; right: auto; bottom: auto; flex-direction: column; align-items: flex-start; gap: 8px; font-size: 11px; }
   .hero__bottom > span { max-width: 290px; }
+  .hero.is-animated .hero__gallery-info { font-size: 10px; gap: 10px; }
   .hero__copy .button { font-size: 12px; padding: 17px 22px; gap: 30px; }
   .purpose__intro { grid-template-columns: 1fr; gap: 25px; }
   .body-copy { font-size: 16px; font-weight: 400; }
