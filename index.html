@@ -26,7 +26,7 @@
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido</a>
   <header class="header">
-    <a class="brand" href="#inicio" aria-label="Bolivia EcoHub — Inicio">
+    <a class="brand" href="#imagina" aria-label="Bolivia EcoHub — Inicio">
       <img src="assets/bolivia-ecohub.png" alt="Bolivia EcoHub" width="379" height="61" />
     </a>
     <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="navigation">Menú <span aria-hidden="true">☰</span></button>
@@ -39,21 +39,32 @@
   </header>
 
   <main id="contenido">
+    <section class="sequence" id="imagina" aria-labelledby="sequence-title">
+      <div class="sequence__stage">
+        <div class="sequence__poster"><img src="assets/naturaleza.webp" width="1500" height="1000" alt="Bosque verde iluminado por el sol: naturaleza, punto de partida del ecosistema" fetchpriority="high" /></div>
+        <canvas class="sequence__canvas" aria-hidden="true"></canvas>
+        <div class="sequence__shade"></div>
+        <div class="sequence__top"><p class="eyebrow">Tecnología con propósito</p><span class="sequence__hint">Explora con el scroll <span aria-hidden="true">↓</span></span></div>
+        <div class="sequence__content"><p class="sequence__chapter">01 / Conecta con lo que importa</p><h1 id="sequence-title"><span class="sequence__line"><span class="sequence__word">Ahora</span> <span class="sequence__word">es</span></span><span class="sequence__line"><em class="sequence__word">más sencillo,</em></span><span class="sequence__line"><span class="sequence__word">con un</span> <span class="sequence__word">sistema</span></span><span class="sequence__line"><em class="sequence__word sequence__word--accent">más inteligente.</em></span></h1><p>Formación, conexiones y acompañamiento.<br />Un ecosistema para avanzar con propósito.</p></div>
+        <div class="sequence__bottom"><span>Innovación al servicio de las personas y del planeta.</span><span class="sequence__meter" aria-hidden="true"><span></span></span></div>
+      </div>
+    </section>
+
     <section class="hero" id="inicio" aria-labelledby="hero-title">
       <div class="hero__copy">
         <p class="eyebrow"><span class="status-dot" aria-hidden="true"></span> Ideas locales. Impacto sostenible.</p>
-        <h1 id="hero-title">El futuro<br />también lo<br /><span class="highlight">creas tú.</span></h1>
+        <h2 class="hero__heading" id="hero-title">El futuro<br />también lo<br /><span class="highlight">creas tú.</span></h2>
         <p class="hero__description">Tu potencial merece oportunidades. Conecta con herramientas, personas e ideas para emprender y construir una Bolivia más verde.</p>
         <div class="hero__actions">
           <a href="#oportunidades" class="button button--yellow">Descubre EcoHub <span aria-hidden="true">↗</span></a>
           <a href="#ecosistema" class="text-link">Conoce el ecosistema <span aria-hidden="true">↓</span></a>
         </div>
         <div class="hero__footnote"><span class="small-orbit" aria-hidden="true">✳</span><p>Para una generación que no espera el cambio.<br /><strong>Lo hace posible.</strong></p></div>
-        <a class="scroll-cue" href="#imagina"><span aria-hidden="true">↓</span> Descubre la experiencia en movimiento.</a>
+        <a class="scroll-cue" href="#ecosistema"><span aria-hidden="true">↓</span> Conoce lo que podemos construir.</a>
       </div>
       <div class="hero__visual">
         <div class="hero__media">
-        <img class="hero__image" src="assets/naturaleza.webp" width="1500" height="1000" alt="Luz del sol atravesando un bosque verde" fetchpriority="high" />
+        <img class="hero__image" src="assets/naturaleza.webp" width="1500" height="1000" alt="Luz del sol atravesando un bosque verde" loading="lazy" />
         <div class="hero__image-shade"></div>
         </div>
         <div class="hero__visual-top"><span>BOLIVIA / ECOHUB</span><span aria-hidden="true">↗</span></div>
@@ -72,17 +83,6 @@
         <div class="ecosystem__copy reveal"><p>Creemos en una generación con talento para transformar su realidad. Y en lo que sucede cuando ese talento encuentra una comunidad que lo acompaña.</p><p>Bolivia EcoHub conecta innovación y sostenibilidad con formación, mentorías y redes de colaboración. Un ecosistema humano y accesible para convertir barreras en posibilidades.</p><a class="text-link text-link--blue" href="#comunidad">Aquí, crecer es colectivo <span aria-hidden="true">↗</span></a></div>
       </div>
       <div class="principles"><div><span>El motor</span><strong>Tu potencial.</strong></div><div><span>El camino</span><strong>En comunidad.</strong></div><div><span>El horizonte</span><strong>Un futuro sostenible.</strong></div></div>
-    </section>
-
-    <section class="sequence" id="imagina" aria-labelledby="sequence-title">
-      <div class="sequence__stage">
-        <div class="sequence__poster"><img src="assets/naturaleza.webp" width="1500" height="1000" alt="Bosque verde iluminado por el sol: naturaleza, punto de partida del ecosistema" loading="lazy" /></div>
-        <canvas class="sequence__canvas" aria-hidden="true"></canvas>
-        <div class="sequence__shade"></div>
-        <div class="sequence__top"><p class="eyebrow">Tecnología con propósito</p><span class="sequence__hint">Explora con el scroll <span aria-hidden="true">↓</span></span></div>
-        <div class="sequence__content"><p class="sequence__chapter">01 / Conecta con lo que importa</p><h2 id="sequence-title"><span class="sequence__line"><span class="sequence__word">Ahora</span> <span class="sequence__word">es</span></span><span class="sequence__line"><em class="sequence__word">más sencillo,</em></span><span class="sequence__line"><span class="sequence__word">con un</span> <span class="sequence__word">sistema</span></span><span class="sequence__line"><em class="sequence__word sequence__word--accent">más inteligente.</em></span></h2><p>Formación, conexiones y acompañamiento.<br />Un ecosistema para avanzar con propósito.</p></div>
-        <div class="sequence__bottom"><span>Innovación al servicio de las personas y del planeta.</span><span class="sequence__meter" aria-hidden="true"><span></span></span></div>
-      </div>
     </section>
 
     <section class="opportunities section" id="oportunidades" aria-labelledby="opportunities-title">

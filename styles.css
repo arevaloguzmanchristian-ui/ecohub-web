@@ -46,7 +46,7 @@ em { font-style: normal; }
 .status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
 .hero { background: var(--blue); color: white; display: grid; grid-template-columns: 1.05fr 1fr; min-height: min(760px, 85svh); }
 .hero__copy { padding: clamp(50px, 5vw, 85px) 3.5vw 32px var(--gutter); }
-h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26px; line-height: 1.02; }
+.hero__heading { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26px; line-height: 1.02; }
 .highlight { color: var(--green); }
 .hero__description { max-width: 400px; font-size: 13px; font-weight: 400; }
 .hero__actions { display: flex; align-items: center; flex-wrap: wrap; gap: 24px; margin: 30px 0 44px; }
@@ -154,12 +154,12 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
 .sequence__hint { font-size: 10px; }
 .sequence__content { position: absolute; left: var(--gutter); right: var(--gutter); top: 50%; transform: translateY(-43%); }
 .sequence__chapter { color: var(--yellow); font-size: 11px; margin-bottom: 22px; }
-.sequence h2 { font-size: clamp(42px, 5.8vw, 86px); max-width: 1000px; }
-.sequence h2 em { color: var(--green); }
+.sequence h1 { font-size: clamp(42px, 5.8vw, 86px); max-width: 1000px; font-weight: 600; }
+.sequence h1 em { color: var(--green); }
 .sequence__line { display: block; }
 .sequence__word { display: inline-block; transform-origin: left bottom; }
 .sequence:not(.is-animated) .sequence__word { opacity: 1 !important; transform: none !important; }
-.sequence h2 .sequence__word--accent { color: var(--yellow); background: linear-gradient(var(--yellow), var(--yellow)) left bottom / 0% 3px no-repeat; padding-bottom: 9px; }
+.sequence h1 .sequence__word--accent { color: var(--yellow); background: linear-gradient(var(--yellow), var(--yellow)) left bottom / 0% 3px no-repeat; padding-bottom: 9px; }
 .sequence__content > p:last-child { margin-top: 25px; font-size: 12px; }
 .sequence__bottom { bottom: 35px; font-size: 10px; }
 .sequence__meter { width: 160px; height: 2px; background: rgb(255 255 255 / 30%); overflow: hidden; }
@@ -185,7 +185,7 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
   .sequence__stage { min-height: 570px; height: 78svh; }
   .sequence__top { top: 25px; }
   .sequence__hint { font-size: 8px; max-width: 70px; text-align: right; }
-  .sequence h2 { font-size: clamp(34px, 8.8vw, 58px); }
+  .sequence h1 { font-size: clamp(34px, 8.8vw, 58px); }
   .sequence__content > p:last-child { font-size: 11px; max-width: 260px; }
   .sequence__bottom { bottom: 25px; font-size: 9px; }
   .sequence__bottom > span:first-child { max-width: 200px; }
@@ -209,7 +209,7 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
   .brand img { width: 180px; }
   .hero { min-height: 680px; }
   .hero__copy { padding-top: 55px; }
-  h1 { font-size: clamp(60px, 7vw, 78px); }
+  .hero__heading { font-size: clamp(60px, 7vw, 78px); }
   .hero__visual { border-top-left-radius: 130px; }
   .hero__visual-bottom { left: 25px; font-size: 13px; }
   .hero__sticker { left: -20px; width: 125px; height: 125px; font-size: 13px; bottom: 145px; }
@@ -235,7 +235,7 @@ h1 { font-size: clamp(4rem, 6.7vw, 7.2rem); font-weight: 600; margin: 30px 0 26p
   .hero { grid-template-columns: 1fr; min-height: auto; }
   .hero__copy { padding: 45px var(--gutter) 32px; }
   .eyebrow { font-size: 9px; }
-  h1 { font-size: clamp(60px, 12vw, 90px); margin-top: 25px; }
+  .hero__heading { font-size: clamp(60px, 12vw, 90px); margin-top: 25px; }
   .hero__description { font-size: 13px; max-width: 400px; }
   .hero__actions { margin-bottom: 25px; gap: 20px; }
   .hero__footnote { display: none; }
