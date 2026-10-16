@@ -87,6 +87,7 @@ if (window.gsap && window.ScrollTrigger) {
       ];
       photos.forEach((image, index) => { image.style.transform = `scale(${zooms[index]})`; });
       const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
+      hero.classList.toggle('is-last', p >= .86);
       if (currentPhoto !== index) {
         heroCount.textContent = `0${index + 1} / 03`;
         heroLabel.textContent = slides[index].dataset.photoLabel;
@@ -98,6 +99,9 @@ if (window.gsap && window.ScrollTrigger) {
     }
     function refreshHero() {
       heroLimits = photos.map((image, index) => safeZoom(image, mobile ? [1.025, 1.02, 1.01][index] : [1.08, 1.055, 1.02][index]));
+      if (desktop) {
+        hero.style.setProperty('--hero-copy-height', `${Math.ceil(Math.max(...messages.map(message => message.scrollHeight)))}px`);
+      }
       renderHero();
     }
     hero.classList.add('is-animated');
@@ -122,10 +126,19 @@ if (window.gsap && window.ScrollTrigger) {
       if (disposed || !desktop) return;
       const panels = [...chapters.querySelectorAll('.chapter')];
       const copies = panels.map(panel => panel.querySelector('.chapter__copy'));
-      const neededHeight = Math.ceil(Math.max(480, ...copies.map(copy => copy.scrollHeight + 48)));
+      const frame = chapters.querySelector('.chapters__frame');
+      const heading = frame.querySelector('.section-heading');
+      const availability = frame.querySelector('.chapters__availability');
+      chapters.classList.add('is-measuring');
+      let neededHeight = Math.ceil(Math.max(420, ...copies.map(copy => copy.scrollHeight + 24)));
+      const chromeHeight = heading.offsetHeight + parseFloat(getComputedStyle(heading).marginBottom)
+        + availability.offsetHeight + parseFloat(getComputedStyle(availability).marginTop);
+      chapters.classList.remove('is-measuring');
       // Expanded explanations must fit at their real reading size. A low laptop,
       // narrow window or enlarged font keeps every chapter in normal document flow.
-      if (neededHeight > innerHeight - headerHeight() - 40) return;
+      const availableHeight = innerHeight - headerHeight() - 32;
+      if (neededHeight + chromeHeight > availableHeight) return;
+      neededHeight = Math.floor(availableHeight - chromeHeight);
       chapterScene = gsap.context(() => {
         const stage = chapters.querySelector('.chapters__stage');
         stage.style.setProperty('--chapter-height', `${neededHeight}px`);
@@ -176,10 +189,10 @@ if (window.gsap && window.ScrollTrigger) {
         }
         const journey = gsap.timeline({
           scrollTrigger: {
-            id: 'ecohub-chapters', trigger: '.chapters__stage',
+            id: 'ecohub-chapters', trigger: frame,
             start: () => `top top+=${headerHeight() + 8}`,
-            end: () => `+=${Math.round(Math.max(1000, innerHeight * 1.4))}`,
-            pin: true, scrub: true, invalidateOnRefresh: true, onRefresh: refreshImages,
+            end: () => `+=${Math.round(neededHeight * 1.65)}`,
+            pin: frame, scrub: true, invalidateOnRefresh: true, onRefresh: refreshImages,
           },
         });
         journey.fromTo(state, { progress: 0 }, { progress: 1, duration: 1, ease: 'none', onUpdate: renderChapters });
@@ -218,6 +231,39 @@ if (window.gsap && window.ScrollTrigger) {
     }
     window.addEventListener('resize', onResize);
     document.fonts?.ready.then(() => { if (!disposed) queueChapterRebuild(); });
+    // A bounded curtain: the Arena layer retreats inside this scene only.
+    // The photograph and its copy remain together in normal document flow.
+    const territory = document.querySelector('.territory');
+    const territoryImage = territory?.querySelector('.territory__panorama img');
+    let curtainScene;
+    function activateCurtain() {
+      if (disposed || !desktop || !territoryImage || !isReady(territoryImage) || curtainScene) return;
+      territory.classList.add('is-curtain');
+      curtainScene = gsap.context(() => {
+        const scene = territory.querySelector('.territory__scene');
+        const veil = territory.querySelector('.territory__veil');
+        function renderCurtain(self) {
+          // Only cover the portion that has entered the viewport. Covering the
+          // whole off-screen scene would create an empty Arena screen on entry.
+          const visibleHeight = Math.max(0, Math.min(120, scene.offsetHeight, innerHeight - scene.getBoundingClientRect().top));
+          veil.style.height = `${visibleHeight}px`;
+          territory.dataset.curtain = self.progress.toFixed(4);
+        }
+        gsap.fromTo(veil, { yPercent: 0 }, {
+          yPercent: -100, ease: 'none',
+          scrollTrigger: {
+            id: 'ecohub-territory', trigger: scene,
+            start: 'top bottom', end: () => `top top+=${headerHeight()}`, scrub: true,
+            onUpdate: renderCurtain, onRefresh: renderCurtain,
+          },
+        });
+      });
+    }
+    const onTerritoryLoad = () => prepareImage(territoryImage, activateCurtain);
+    if (desktop && territoryImage) {
+      territoryImage.addEventListener('load', onTerritoryLoad);
+      prepareImage(territoryImage, activateCurtain);
+    }
     // Image dimensions are reserved in CSS/HTML. Decoding changes readiness and
     // zoom limits, not pin geometry: never rebuild every pin on a gallery load.
     const onHeroLoad = event => prepareImage(event.currentTarget, refreshHero);
@@ -228,7 +274,13 @@ if (window.gsap && window.ScrollTrigger) {
       window.removeEventListener('resize', onResize);
       cancelAnimationFrame(rebuildFrame);
       chapterScene?.revert();
-      hero.classList.remove('is-animated');
+      curtainScene?.revert();
+      territoryImage?.removeEventListener('load', onTerritoryLoad);
+      territory?.classList.remove('is-curtain');
+      territory?.querySelector('.territory__veil').style.removeProperty('height');
+      if (territory) delete territory.dataset.curtain;
+      hero.classList.remove('is-animated', 'is-last');
+      hero.style.removeProperty('--hero-copy-height');
       slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('clip-path'); });
       photos.forEach(image => { image.style.removeProperty('transform'); });
       messages.forEach(message => { message.style.removeProperty('opacity'); message.style.removeProperty('transform'); });

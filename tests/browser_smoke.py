@@ -40,14 +40,18 @@ try:
             assert page.locator('h1').count() == 1
             assert page.locator('h1').is_visible()
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-            assert page.locator('.button').count() == 1
-            assert page.locator('.agent-lineup .agent-figure:visible').count() == 2
+            assert page.locator('.hero__actions .button:not(.button--secondary)').count() == 1
+            assert page.locator('.hero .button').count() == 3
+            assert page.locator('.hero .button').evaluate_all('(els)=>els.every(el=>!el.hasAttribute("disabled")&&el.getAttribute("aria-disabled")!=="true"&&getComputedStyle(el).backgroundColor!=="rgba(0, 0, 0, 0)")')
+            assert page.locator('.agent-lineup .agent-figure:visible').count() == 1
             assert page.locator('.audience__situations article').count() == 3
             assert page.locator('.chapter__copy li').count() == 9
-            assert page.locator('.section-heading, .reading-copy, .hero__copy').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).textAlign==="center")')
+            assert page.locator('.hero__copy').evaluate('(el)=>getComputedStyle(el).textAlign==="left"')
+            assert page.locator('.hero__copy > .eyebrow').count() == 0
+            assert page.locator('.hero__messages > div').evaluate_all('(els)=>els.every(el=>el.querySelector("p:last-child").textContent.length>120)')
             assert page.locator('.hero__human').count() == 0
             assert page.locator('.hero__landscape img').count() == 3
-            assert page.locator('main img[src*="/bolivia/"], main img[data-src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>(img.getAttribute("src")||img.dataset.src).replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length===13;}')
+            assert page.locator('main img[src*="/bolivia/"], main img[data-src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>(img.getAttribute("src")||img.dataset.src).replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length===14;}')
             assert page.locator('a[href^="#"]').evaluate_all(
                 '(links) => links.every(a => document.getElementById(a.hash.slice(1)))'
             )
@@ -65,17 +69,36 @@ try:
                 assert abs(page.locator('.agent-panels').bounding_box()['height'] - stage_height) < 1
                 assert page.locator(f'#panel-{name}').evaluate('(el) => getComputedStyle(el).transform') == 'none'
                 assert page.locator(f'[data-agent-figure="{name}"]').get_attribute('class').endswith('is-selected')
-                assert page.locator('.agent-selector').evaluate('(el)=>getComputedStyle(el).getPropertyValue("--agent-index").trim()') == str(('hubito','kibo').index(name))
-            page.locator('#tab-hubito').focus()
+                assert page.locator('.agent-selector').evaluate('(el)=>getComputedStyle(el).getPropertyValue("--agent-index").trim()') == str(('kibo','hubito').index(name))
+                assert page.locator('.agent-figure:visible').count() == 1
+                assert page.locator('.agent-figure[hidden][inert]').count() == 1
+                trigger = page.locator(f'#panel-{name} .agent-example-link')
+                trigger.click()
+                assert page.locator('#agent-example').is_visible()
+                assert page.locator('#example-title').inner_text().lower() == name
+                assert page.locator('#agent-example .conversation blockquote > p').count() == 2
+                for key in ('Tab', 'Shift+Tab'):
+                    page.keyboard.press(key)
+                    assert page.evaluate('document.querySelector("#agent-example").contains(document.activeElement)')
+                if name == 'kibo':
+                    assert 'necesidad' in page.locator('#agent-example .conversation__answer').inner_text()
+                    page.keyboard.press('Escape')
+                else:
+                    assert 'entregas' in page.locator('#agent-example .conversation__answer').inner_text()
+                    page.locator('.dialog-close').click()
+                page.wait_for_function('!document.querySelector("#agent-example").open')
+                assert trigger.evaluate('(el)=>el===document.activeElement')
+                assert not page.locator('body').evaluate('(el)=>el.classList.contains("modal-open")')
+            page.locator('#tab-kibo').focus()
             page.keyboard.press('End')
-            assert page.locator('#panel-kibo').is_visible()
-            page.keyboard.press('Home')
             assert page.locator('#panel-hubito').is_visible()
+            page.keyboard.press('Home')
+            assert page.locator('#panel-kibo').is_visible()
             page.wait_for_function('[...document.querySelectorAll(".agent-lineup img")].every(el=>el.naturalWidth>0)')
             assert page.locator('.agent-lineup img').evaluate_all('(els)=>els.every(el=>/hubito|kibo/.test(el.currentSrc))')
             assert page.locator('input, textarea').count() == 0
             assert page.locator('figure, img').evaluate_all('(nodes) => nodes.every(el => { const m = new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.b) < .0001 && Math.abs(m.c) < .0001; })')
-            print(f'PASS {width}px: layout, navigation, agents and keyboard')
+            print(f'PASS {width}px: layout, working buttons, single agent, modal focus and keyboard')
 
         for progress in (0, .98, 0):
             page.evaluate('p => { const t = ScrollTrigger.getById("ecohub-hero"); scrollTo({top: t.start + (t.end-t.start)*p, behavior:"instant"}); }', progress)
@@ -111,23 +134,29 @@ try:
             assert page.locator('.chapters__counter span').inner_text() == f'0{index+1}'
             assert page.locator('.chapters__visual figcaption').inner_text() == page.locator(f'.chapter[data-chapter="{index}"] figcaption').inner_text()
             assert page.locator('.chapters__images img').evaluate_all('(nodes) => nodes.every(el => new DOMMatrix(getComputedStyle(el).transform).a <= 1.026)')
+            assert page.locator('.chapters .section-heading').evaluate('(el)=>{const r=el.getBoundingClientRect();return r.top>=document.querySelector(".header").offsetHeight-2&&r.bottom<innerHeight}')
+            assert page.locator('.chapter__copy').evaluate_all('(els)=>els.filter(el=>Number(getComputedStyle(el).opacity)>.95).every(el=>{const r=el.getBoundingClientRect(),s=document.querySelector(".chapters__stage").getBoundingClientRect();return r.top>=s.top-1&&r.bottom<=s.bottom+1})')
         assert page.locator('.pin-spacer').count() == 2
-        print('PASS reversible photo zoom, continuous image blends and single synchronized text/counter')
+        page.evaluate('()=>{const t=ScrollTrigger.getById("ecohub-chapters");scrollTo({top:t.end+20,behavior:"instant"})}')
+        page.wait_for_timeout(60)
+        assert page.evaluate('()=>{const a=document.querySelector("#para-quien").getBoundingClientRect(),f=document.querySelector(".chapters__frame").getBoundingClientRect();return a.top-f.bottom>=0&&a.top-f.bottom<=56}')
+        print('PASS pinned heading, synchronized chapters, contained copy and clean pin release')
 
-        for anchor in ('registro', 'participar'):
+        for anchor in ('proyecto', 'propuesta', 'para-quien', 'sostenibilidad', 'agentes', 'territorio', 'registro', 'participar'):
             direct = browser.new_page(viewport={'width': 1440, 'height': 960})
             direct.on('pageerror', lambda error: errors.append(str(error)))
             direct.goto(base + '#' + anchor, wait_until='networkidle')
-            direct.wait_for_function('() => { const y=document.querySelector("#registro").getBoundingClientRect().top; const h=document.querySelector(".header").offsetHeight; return y>=h-3 && y<=h+55; }')
-            direct.wait_for_function('document.querySelector(".navigation a[aria-current]")?.getAttribute("href") === "#participar"')
+            target = 'registro' if anchor == 'participar' else anchor
+            direct.wait_for_function('id => { const y=document.getElementById(id).getBoundingClientRect().top; const h=document.querySelector(".header").offsetHeight; return y>=h-3 && y<=h+55; }', arg=target)
+            if anchor in ('registro', 'participar'):
+                direct.wait_for_function('document.querySelector(".navigation a[aria-current]")?.getAttribute("href") === "#participar"')
             direct.close()
-        print('PASS direct registration aliases below header')
+        print('PASS all eight direct section anchors below header')
 
-        for width, height in ((1366, 650), (1280, 720), (1024, 600)):
+        for width, height in ((1366, 768), (1366, 650), (1280, 720), (1024, 600)):
             page.set_viewport_size({'width': width, 'height': height})
             page.goto(base, wait_until='networkidle')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-            assert page.locator('.chapters').evaluate('(el)=>{const need=Math.ceil(Math.max(480,...[...el.querySelectorAll(".chapter__copy")].map(copy=>copy.scrollHeight+48)));return el.classList.contains("is-enhanced")===(innerWidth>=1001&&innerHeight>=640&&need<=innerHeight-document.querySelector(".header").offsetHeight-40)}')
             if page.locator('.chapters.is-enhanced').count():
                 for progress in (0, .5, .95, .5, 0):
                     page.evaluate('p=>{const t=ScrollTrigger.getById("ecohub-chapters");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"});}', progress)
@@ -173,7 +202,7 @@ try:
                 fallback.route('**/assets/bolivia/illimani-noche*', lambda route: route.abort())
             fallback.goto(base, wait_until='networkidle')
             assert fallback.locator('h1').is_visible()
-            assert fallback.locator('.button').is_visible()
+            assert fallback.locator('.hero__actions .button').first.is_visible()
             assert fallback.locator('.chapter').count() == 3
             assert fallback.locator('.purpose__audience').is_visible()
             assert fallback.locator('.purpose__detail img').is_visible()
@@ -186,9 +215,14 @@ try:
             if mode == 'no-js':
                 assert fallback.locator('.agent-panel:visible').count() == 2
                 assert fallback.locator('#navigation').is_visible()
+                assert fallback.locator('.agent-examples').is_visible()
             else:
                 fallback.locator('#tab-kibo').click()
                 assert fallback.locator('#panel-kibo').is_visible()
+                fallback.locator('#panel-kibo .agent-example-link').click()
+                assert fallback.locator('#agent-example').is_visible()
+                fallback.keyboard.press('Escape')
+                fallback.wait_for_function('!document.querySelector("#agent-example").open')
             if mode in ('no-js', 'no-gsap', 'save-data', 'reduced'):
                 assert not any('atardecer' in url or 'illimani-noche' in url for url in extra_requests)
             context.close()

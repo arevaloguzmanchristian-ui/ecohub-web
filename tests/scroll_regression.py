@@ -46,7 +46,7 @@ try:
     with sync_playwright() as p:
         browser = p.chromium.launch()
         errors = []
-        for width, height in ((1440, 900), (1366, 650), (1024, 600), (390, 844), (320, 740)):
+        for width, height in ((1440, 900), (1366, 768), (1366, 650), (1024, 600), (390, 844), (320, 740)):
             page = browser.new_page(viewport={'width': width, 'height': height})
             page.on('pageerror', lambda error: errors.append(str(error)))
             page.goto(base, wait_until='networkidle')
@@ -58,8 +58,8 @@ try:
             page.wait_for_function('document.querySelector(".purpose__detail img").naturalWidth>0')
             assert ceramic.evaluate('(el)=>Math.abs(el.clientWidth/el.clientHeight-.75)<.01 && getComputedStyle(el).transform==="none"')
             if width > 760:
-                assert 320 <= ceramic.bounding_box()['width'] <= 420
-            page.locator('.sustainability__opening').scroll_into_view_if_needed()
+                assert 200 <= ceramic.bounding_box()['width'] <= 320
+            page.locator('.sustainability__gallery').scroll_into_view_if_needed()
             capture(page, f'editorial-{width}')
             page.locator('#propuesta').evaluate('(el)=>el.scrollIntoView({block:"start"})')
             page.wait_for_timeout(100)
@@ -68,7 +68,7 @@ try:
             if width > 760:
                 heading = page.locator('.chapters .section-heading').bounding_box()
                 image = page.locator('.chapters__visual' if page.locator('.chapters.is-enhanced').count() else '.chapter figure').first.bounding_box()
-                assert 24 <= image['y'] - (heading['y'] + heading['height']) <= 36
+                assert 18 <= image['y'] - (heading['y'] + heading['height']) <= 36
                 assert min(image['y'] + image['height'], height) - image['y'] >= image['height'] * .35, (heading, image)
 
             for anchor in ('proyecto', 'participar'):
@@ -101,6 +101,21 @@ try:
                     states.append(page.locator('.hero__slide').evaluate_all('(els)=>els.map(el=>({opacity:getComputedStyle(el).opacity,clip:getComputedStyle(el).clipPath,transform:getComputedStyle(el.querySelector("img")).transform}))'))
                 assert states[0] == states[2]
                 capture(page, f'illimani-{width}')
+                page.locator('#territorio').scroll_into_view_if_needed()
+                page.wait_for_function('!!ScrollTrigger.getById("ecohub-territory")')
+                curtain_states = []
+                for progress in (.15, .9, .5, .15):
+                    page.evaluate('p=>{const t=ScrollTrigger.getById("ecohub-territory");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"})}', progress)
+                    page.wait_for_function('p=>Math.abs(Number(document.querySelector(".territory").dataset.curtain)-p)<.003', arg=progress)
+                    curtain_states.append(page.locator('.territory__veil').evaluate('(el)=>getComputedStyle(el).transform'))
+                    assert page.locator('.territory__panorama img').evaluate('(el)=>getComputedStyle(el).opacity==="1"')
+                    if progress >= .5:
+                        assert page.locator('.territory__veil').evaluate('(el)=>{const r=el.getBoundingClientRect(),s=document.querySelector(".territory__scene").getBoundingClientRect();return Math.min(innerHeight,s.bottom)-r.bottom>60}')
+                assert curtain_states[0] == curtain_states[-1]
+                assert page.locator('.territory__scene').evaluate('(el)=>getComputedStyle(el).borderRadius==="0px"')
+                page.evaluate('()=>{const t=ScrollTrigger.getById("ecohub-territory");scrollTo({top:t.start+(t.end-t.start)*.6,behavior:"instant"})}')
+                page.wait_for_function('Math.abs(Number(document.querySelector(".territory").dataset.curtain)-.6)<.003')
+                capture(page, f'curtain-{width}')
                 # Resize while deep in the page, then return through the pin boundary.
                 page.locator('#registro').scroll_into_view_if_needed()
                 page.set_viewport_size({'width': width - 30, 'height': height + 25})
@@ -152,6 +167,25 @@ try:
         check_hero(page)
         page.close()
         print('PASS delayed gallery: base / decoded dusk / decoded night, stable pin geometry')
+        page = browser.new_page(viewport={'width': 1440, 'height': 900})
+        page.on('pageerror', lambda error: errors.append(str(error)))
+        delayed_territory = []
+        page.route('**/assets/bolivia/el-alto*', lambda route: delayed_territory.append(route))
+        page.goto(base, wait_until='networkidle')
+        page.locator('#territorio').scroll_into_view_if_needed()
+        page.wait_for_timeout(150)
+        assert delayed_territory
+        assert not page.locator('.territory.is-curtain').count()
+        assert page.locator('.territory__veil').evaluate('(el)=>getComputedStyle(el).display==="none"')
+        for route in delayed_territory:
+            route.continue_()
+        page.wait_for_function('!!ScrollTrigger.getById("ecohub-territory")')
+        assert page.locator('.territory__panorama img').evaluate('(el)=>el.complete&&el.naturalWidth>0')
+        page.evaluate('scrollTo({top:0,behavior:"instant"})')
+        page.wait_for_timeout(60)
+        check_hero(page)
+        page.close()
+        print('PASS curtain waits for decoded photo and reveals visible content without a blank screen')
         assert not errors, errors
         browser.close()
 finally:

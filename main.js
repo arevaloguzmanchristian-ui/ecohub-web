@@ -43,7 +43,7 @@ if (selector) {
       figure.querySelector('img').style.removeProperty('transform');
     });
     panels.forEach(panel => {
-      panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3, .conversation').forEach(element => {
+      panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3, .agent-example-link').forEach(element => {
         element.style.removeProperty('opacity');
         element.style.removeProperty('transform');
       });
@@ -79,15 +79,21 @@ if (selector) {
       item.tabIndex = selected ? 0 : -1;
     });
     selector.style.setProperty('--agent-index', String(tabs.indexOf(tab)));
-    figures.forEach(figure => figure.classList.toggle('is-selected', figure.dataset.agentFigure === tab.dataset.agent));
+    figures.forEach(figure => {
+      const selected = figure.dataset.agentFigure === tab.dataset.agent;
+      figure.hidden = !selected;
+      figure.toggleAttribute('inert', !selected);
+      figure.setAttribute('aria-hidden', String(!selected));
+      figure.classList.toggle('is-selected', selected);
+    });
     panels.forEach(panel => {
       const selected = panel.dataset.agentPanel === tab.dataset.agent;
       panel.hidden = !selected;
       if (selected && window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         previewAnimation = gsap.timeline({ defaults: { ease: 'power1.out', clearProps: 'opacity,transform' } })
-          .fromTo(figures.find(figure => figure.dataset.agentFigure === tab.dataset.agent).querySelector('img'), { opacity: .85, y: 5, scale: .97 }, { opacity: 1, y: 0, scale: 1, duration: .3 }, 0)
+          .fromTo(figures.find(figure => figure.dataset.agentFigure === tab.dataset.agent).querySelector('img'), { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .28 }, 0)
           .fromTo(panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3'), { opacity: .5, y: 6 }, { opacity: 1, y: 0, duration: .25, stagger: .035 }, .04)
-          .fromTo(panel.querySelector('.conversation'), { opacity: .4, y: 8 }, { opacity: 1, y: 0, duration: .28 }, .1);
+          .fromTo(panel.querySelector('.agent-example-link'), { opacity: .7, y: 4 }, { opacity: 1, y: 0, duration: .22 }, .08);
       }
     });
     if (focus) tab.focus();
@@ -114,6 +120,11 @@ if (selector) {
   // No transition on first render.
   tabs.forEach((tab, index) => { tab.setAttribute('aria-selected', String(index === 0)); tab.tabIndex = index === 0 ? 0 : -1; });
   panels.forEach((panel, index) => { panel.hidden = index !== 0; });
+  figures.forEach((figure, index) => {
+    figure.hidden = index !== 0;
+    figure.toggleAttribute('inert', index !== 0);
+    figure.setAttribute('aria-hidden', String(index !== 0));
+  });
   reserveAgentHeight();
   if (document.fonts) document.fonts.ready.then(reserveAgentHeight);
   if ('ResizeObserver' in window) {
@@ -130,6 +141,43 @@ if (selector) {
     if (!event.matches) return;
     previewAnimation?.kill();
     clearPreviewStyles();
+  });
+}
+
+// Native dialog provides top-layer isolation; examples remain anchor-linked
+// in the document when JavaScript or dialog support is unavailable.
+const exampleDialog = document.querySelector('#agent-example');
+const exampleArchive = document.querySelector('.agent-examples');
+if (exampleDialog?.showModal && exampleArchive) {
+  exampleArchive.hidden = true;
+  let origin;
+  const close = exampleDialog.querySelector('.dialog-close');
+  document.querySelectorAll('.agent-example-link').forEach(link => {
+    link.addEventListener('click', event => {
+      event.preventDefault();
+      if (exampleDialog.open) return;
+      const source = exampleArchive.querySelector(`[data-example-content="${link.dataset.example}"]`);
+      if (!source) return;
+      origin = link;
+      exampleDialog.querySelector('#example-title').textContent = link.dataset.example === 'kibo' ? 'Kibo' : 'Hubito';
+      exampleDialog.querySelector('.example-content').replaceChildren(source.querySelector('.conversation').cloneNode(true));
+      document.body.classList.add('modal-open');
+      exampleDialog.showModal();
+      close.focus();
+    });
+  });
+  close.addEventListener('click', () => exampleDialog.close());
+  exampleDialog.addEventListener('cancel', event => { event.preventDefault(); exampleDialog.close(); });
+  exampleDialog.addEventListener('close', () => {
+    document.body.classList.remove('modal-open');
+    origin?.focus({ preventScroll: true });
+  });
+  exampleDialog.addEventListener('keydown', event => {
+    if (event.key !== 'Tab') return;
+    const controls = [...exampleDialog.querySelectorAll('button, a[href], input, [tabindex="0"]')].filter(el => !el.disabled && !el.hidden);
+    const first = controls[0], last = controls.at(-1);
+    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
   });
 }
 
@@ -171,57 +219,43 @@ const connection = navigator.connection;
 if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.test(connection?.effectiveType || '')) {
   gsap.registerPlugin(ScrollTrigger);
   // Preserve semantic text while splitting only explicit editorial line breaks.
-  const headings = [...document.querySelectorAll('.purpose h2, .section-heading h2, .registration h2, .faq h2')];
+  const headings = [...document.querySelectorAll('.purpose h2, .audience h2')];
   headings.forEach(heading => {
-    if (!heading.querySelector('br')) return;
     const nodes = [...heading.childNodes];
     heading.replaceChildren();
     let line = document.createElement('span');
     line.className = 'heading-line';
-    heading.appendChild(line);
+    let mask = document.createElement('span');
+    mask.className = 'heading-mask';
+    mask.appendChild(line);
+    heading.appendChild(mask);
     nodes.forEach(node => {
       if (node.nodeName === 'BR') {
         line = document.createElement('span');
         line.className = 'heading-line';
-        heading.appendChild(line);
+        mask = document.createElement('span');
+        mask.className = 'heading-mask';
+        mask.appendChild(line);
+        heading.appendChild(mask);
       } else {
         line.appendChild(node);
       }
     });
   });
-  function safeZoom(image, preferred) {
-    if (!image.naturalWidth) return 1;
-    const candidate = image.srcset.split(',').map(source => source.trim().split(/\s+/)).find(([url]) => new URL(url, document.baseURI).href === image.currentSrc);
-    const width = candidate?.[1]?.endsWith('w') ? parseFloat(candidate[1]) : image.naturalWidth;
-    const height = image.naturalHeight * width / image.naturalWidth;
-    const fit = Math.max(image.clientWidth / width, image.clientHeight / height);
-    return Math.max(1, Math.min(preferred, 1 / fit));
-  }
   gsap.matchMedia().add({ motion: '(prefers-reduced-motion: no-preference)', mobile: '(max-width: 760px)' }, context => {
     if (!context.conditions.motion) return;
-    const intensity = context.conditions.mobile ? 1.02 : 1.04;
-    const watched = [...document.querySelectorAll('.photo-window > img')];
-    watched.forEach(image => {
-      gsap.fromTo(image, { scale: () => safeZoom(image, intensity) }, {
-        scale: 1, ease: 'none',
-        scrollTrigger: { trigger: image.closest('figure'), start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true },
-      });
-    });
-    gsap.fromTo('.purpose__main > img', { clipPath: 'inset(3% 3% 3% 3% round 28px)' }, {
-      clipPath: 'inset(0% 0% 0% 0% round 28px)', ease: 'none',
-      scrollTrigger: { trigger: '.purpose__main', start: 'top 90%', end: 'top 35%', scrub: true },
-    });
     headings.forEach(heading => {
       const lines = heading.querySelectorAll('.heading-line');
       if (!lines.length) return;
-      gsap.fromTo(lines, { y: context.conditions.mobile ? 6 : 10 }, {
-        y: 0, stagger: .04, ease: 'none',
-        scrollTrigger: { trigger: heading, start: 'top 94%', end: 'top 70%', scrub: true },
+      gsap.fromTo(lines, { y: heading.closest('.purpose') ? 24 : 16, opacity: .25 }, {
+        y: 0, opacity: 1, stagger: .07, duration: .5, ease: 'power1.out',
+        scrollTrigger: { trigger: heading, start: 'top 92%', once: true },
       });
     });
-    const refresh = () => ScrollTrigger.refresh();
-    watched.forEach(image => image.addEventListener('load', refresh, { once: true }));
-    return () => watched.forEach(image => image.removeEventListener('load', refresh));
+    gsap.from('.audience__situations article', {
+      y: 10, stagger: .06, duration: .35, ease: 'power1.out',
+      scrollTrigger: { trigger: '.audience__situations', start: 'top 92%', once: true },
+    });
   });
 }
 

@@ -124,5 +124,15 @@
     "license_url": "https://creativecommons.org/licenses/by/2.0",
     "modifications": "Resized and converted to WebP; responsive 640/1280/1920px versions and framing retain original license.",
     "description": "We went up to the Killi Killi viewpoint. We drank wine, while the day became night. La Paz lit up, we took some photos.\nI left.\n\nWe never saw each other again."
+  },
+  {
+    "file": "tejedoras-tumupasa.webp",
+    "source": "https://commons.wikimedia.org/wiki/File:Tejedoras_tacana,_Tumupasa,_La_Paz,_Bolivia.jpg_04.jpg",
+    "author": "N1ny4 t",
+    "license": "CC BY-SA 4.0",
+    "license_url": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "modifications": "EXIF orientation applied; resized to 1600px and 640px and converted to WebP, without cropping the image. Original license retained.",
+    "description": "Dos generaciones de mujeres tejedoras junto a su instrumento de tejido en Tumupasa, provincia Abel Iturralde, departamento de La Paz, Bolivia. Septiembre de 2026. Fotografía de contexto, no actividad ni alianza de EcoHub.",
+    "verified": "2026-10-16; Wikimedia Commons imageinfo/extmetadata: author, location, description and license."
   }
 ]
