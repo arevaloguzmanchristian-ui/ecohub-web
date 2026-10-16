@@ -18,10 +18,11 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 - Doce fotografías reales de contexto boliviano, sin repetirlas entre secciones. La portada recorre La Paz desde El Alto, el centro al atardecer y el Illimani de noche. Las demás escenas incluyen UMSA, cerámica de Cotoca, Concepción, un vivero, Lomerío, artesanas Uru, cultivo amazónico y Yacuiba. Créditos y licencias visibles en el pie y en `assets/bolivia/credits.json`. No representan actividades verificadas ni participantes de EcoHub.
 - Sin formulario ni métricas inventadas. Faltan los canales oficiales de inscripción y contacto, convocatorias y archivos oficiales de co-branding para su aplicación final.
 - Animación GSAP opcional; el contenido y la navegación funcionan sin la biblioteca. Respeta la preferencia de movimiento reducido.
-- Portada «Tus ideas. El futuro de Bolivia.» como galería fotográfica ligada al scroll: tres imágenes, fundidos, zoom/alejamiento y máscaras redondeadas que se abren o recogen. Sin tarjeta superpuesta, giros, panel azul ni reproducción automática. Texto y botón estables, independientes del zoom.
+- Portada «Tus ideas. El futuro de Bolivia.» como galería fotográfica ligada al scroll: tres imágenes a superficie completa, fundidos y zoom/alejamiento, sin máscaras que encojan la última imagen. Sin tarjeta superpuesta, giros, panel azul ni reproducción automática. Texto y botón estables, independientes del zoom. Las imágenes esperan su carga y decodificación.
 - Las dos imágenes adicionales empiezan a cargar al recorrer la portada; sus versiones móviles suman aproximadamente 185 KB. Con movimiento reducido, ahorro de datos, 2G o sin JS/GSAP se mantiene una portada estática sin solicitarlas.
 - Dos escenas fijadas breves en escritorio: portada y tres capítulos de la propuesta. Móvil/tablet muestran capítulos verticales completos y movimiento más discreto, sin fijaciones. Ahorro de datos, 2G y movimiento reducido conservan una versión estática completa. No se cargan secuencias de fotogramas ni un renderizado permanente.
 - Composición editorial de hasta 1280 px, propósito centrado con fotografía amplia, radios de 24–32 px, mensajes breves y cierre compacto. Territorio panorámico y galería asimétrica.
+- Público objetivo y cerámica de Cotoca visibles sin desplegables: fotografía vertical completa de mayor resolución. Propuesta compacta, con nota de convocatoria separada y escenario alineado arriba.
 - Fotografías alineadas, sin giros. Zoom reversible vinculado al scroll: hasta 1.08 en portada, 1.025 en los fundidos de capítulos y 1.04 → 1 en las fotos secundarias (1.02 → 1 en móvil), sin superar la resolución disponible. Solo se escalan imágenes; la interfaz permanece estable.
 - Capítulos con marco compartido, fundidos sin imágenes vacías, un único texto visible y contador sincronizado. Agentes con altura reservada y transiciones independientes del personaje, nombre y conversación. Navegación con indicador de sección actual.
 - Tres agentes digitales originales visibles juntos, con selector accesible, protagonismo del seleccionado y conversaciones en burbujas. Vista previa sin chat conectado. Acordeones suaves y versión nativa sin JavaScript.
@@ -36,6 +37,9 @@ Las decisiones de tipografía, animación, accesibilidad, imágenes, logo y co-b
 python -m pip install playwright
 python -m playwright install chromium
 python tests/browser_smoke.py
+python tests/scroll_regression.py
 ```
 
 No se necesita Python ni Playwright para usar o publicar la landing; solo para ejecutar estas pruebas.
+
+Ejecutarlas secuencialmente. La segunda reproduce los casos de regreso a portada, carga y decodificación lentas, enlaces profundos y refrescos desde posiciones bajas. Causa y solución del bloque azul documentadas en `DESIGN.md`.

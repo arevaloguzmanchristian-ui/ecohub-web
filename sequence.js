@@ -19,6 +19,16 @@ if (window.gsap && window.ScrollTrigger) {
     const chapters = document.querySelector('.chapters');
     if (!hero || !chapters) return;
     let disposed = false;
+    const decodedSources = new WeakMap();
+    const isReady = image => image.complete && image.naturalWidth > 0 && decodedSources.get(image) === image.currentSrc;
+    async function prepareImage(image, render) {
+      if (!image.complete || !image.naturalWidth) return;
+      const source = image.currentSrc;
+      try { if (image.decode) await image.decode(); } catch { return; }
+      if (disposed || source !== image.currentSrc) return;
+      decodedSources.set(image, source);
+      render();
+    }
     function safeZoom(image, preferred) {
       if (!image.naturalWidth) return 1;
       const candidate = image.srcset.split(',').map(source => source.trim().split(/\s+/)).find(([url]) => new URL(url, document.baseURI).href === image.currentSrc);
@@ -57,17 +67,11 @@ if (window.gsap && window.ScrollTrigger) {
         const bounds = hero.getBoundingClientRect();
         if (bounds.bottom > headerHeight() && bounds.top < innerHeight) requestGallery();
       }
-      const ready = photos.map(image => image.complete && image.naturalWidth > 0);
-      const firstReveal = clamp((p - .28) / .18);
-      const firstBlend = ready[1] ? clamp((p - .28) / .055) : 0;
-      const secondBlend = ready[2] ? clamp((p - .66) / .06) : 0;
+      const firstBlend = isReady(photos[1]) ? clamp((p - .28) / .055) : 0;
+      const secondBlend = isReady(photos[2]) ? clamp((p - .66) / .06) : 0;
       slides[0].style.opacity = '1';
       slides[1].style.opacity = String(firstBlend);
       slides[2].style.opacity = String(secondBlend);
-      const openMask = (1 - firstReveal) * (mobile ? 2 : 5);
-      slides[1].style.clipPath = `inset(${openMask}% ${openMask * .8}% round ${(1 - firstReveal) * (mobile ? 20 : 32)}px)`;
-      const closeMask = clamp((p - .84) / .16);
-      slides[2].style.clipPath = `inset(${closeMask * (mobile ? 1 : 2.5)}% ${closeMask * (mobile ? 1 : 2)}% round ${closeMask * (mobile ? 20 : 32)}px)`;
       const zooms = [
         1 + (heroLimits[0] - 1) * clamp(p / .5),
         1 + (heroLimits[1] - 1) * (1 - clamp((p - .28) / .55)),
@@ -85,7 +89,7 @@ if (window.gsap && window.ScrollTrigger) {
       hero.dataset.progress = p.toFixed(4);
     }
     function refreshHero() {
-      heroLimits = photos.map((image, index) => safeZoom(image, mobile ? [1.025, 1.02, 1.025][index] : [1.08, 1.055, 1.04][index]));
+      heroLimits = photos.map((image, index) => safeZoom(image, mobile ? [1.025, 1.02, 1.01][index] : [1.08, 1.055, 1.02][index]));
       renderHero();
     }
     hero.classList.add('is-animated');
@@ -95,18 +99,19 @@ if (window.gsap && window.ScrollTrigger) {
         id: 'ecohub-hero', trigger: hero, start: () => `top top+=${headerHeight()}`,
         end: () => `+=${Math.round(desktop ? innerHeight * 1.1 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
         pin: desktop ? hero.querySelector('.hero__stage') : false,
-        scrub: desktop ? .3 : true, invalidateOnRefresh: true, onRefresh: refreshHero,
+        scrub: true, invalidateOnRefresh: true, onRefresh: refreshHero,
       },
     });
     opening.fromTo(openingState, { progress: 0 }, { progress: 1, duration: 1, onUpdate: renderHero }, 0);
     if (desktop) {
-      opening.to('.hero__message', { y: -14, opacity: 0, duration: .22 }, .28)
-        .fromTo('.hero__connection', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .22 }, .5);
+      opening.to('.hero__message', { y: -14, opacity: 0, duration: .18 }, .4)
+        .fromTo('.hero__connection', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .18 }, .46);
     }
     refreshHero();
 
     let closeChapters = () => {};
     let chapterPhotos = [];
+    let updateChapterImages = () => {};
     if (desktop) {
       const panels = [...chapters.querySelectorAll('.chapter')];
       const copies = panels.map(panel => panel.querySelector('.chapter__copy'));
@@ -132,10 +137,12 @@ if (window.gsap && window.ScrollTrigger) {
       function renderChapters() {
         if (disposed) return;
         const progress = state.progress;
-        const index = progress >= .67 ? 2 : progress >= .33 ? 1 : 0;
+        const firstBlend = isReady(images[1]) ? clamp((progress - .28) / .1) : 0;
+        const secondBlend = isReady(images[2]) ? clamp((progress - .62) / .1) : 0;
+        const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
         images[0].style.opacity = '1';
-        images[1].style.opacity = String(clamp((progress - .28) / .1));
-        images[2].style.opacity = String(clamp((progress - .62) / .1));
+        images[1].style.opacity = String(firstBlend);
+        images[2].style.opacity = String(secondBlend);
         images.forEach((image, imageIndex) => {
           const local = clamp((progress - [0, .28, .62][imageIndex]) / [.38, .44, .38][imageIndex]);
           image.style.transform = `scale(${1 + (limits[imageIndex] - 1) * local})`;
@@ -153,12 +160,13 @@ if (window.gsap && window.ScrollTrigger) {
         limits = images.map(image => safeZoom(image, 1.025));
         renderChapters();
       }
+      updateChapterImages = refreshImages;
       const journey = gsap.timeline({
         scrollTrigger: {
           id: 'ecohub-chapters', trigger: '.chapters__stage',
           start: () => `top top+=${headerHeight() + 8}`,
-          end: () => `+=${Math.round(innerHeight * 1.25)}`,
-          pin: true, scrub: .25, invalidateOnRefresh: true, onRefresh: refreshImages,
+          end: () => `+=${Math.round(Math.max(620, innerHeight * .85))}`,
+          pin: true, scrub: true, invalidateOnRefresh: true, onRefresh: refreshImages,
         },
       });
       journey.fromTo(state, { progress: 0 }, { progress: 1, duration: 1, ease: 'none', onUpdate: renderChapters });
@@ -172,11 +180,16 @@ if (window.gsap && window.ScrollTrigger) {
         counter.textContent = '01';
       };
     }
-    const refresh = () => { if (!disposed) ScrollTrigger.refresh(); };
-    [...photos, ...chapterPhotos].forEach(image => image.addEventListener('load', refresh));
+    // Image dimensions are reserved in CSS/HTML. Decoding changes readiness and
+    // zoom limits, not pin geometry: never rebuild every pin on a gallery load.
+    const onHeroLoad = event => prepareImage(event.currentTarget, refreshHero);
+    const onChapterLoad = event => prepareImage(event.currentTarget, updateChapterImages);
+    photos.forEach(image => { image.addEventListener('load', onHeroLoad); prepareImage(image, refreshHero); });
+    chapterPhotos.forEach(image => { image.addEventListener('load', onChapterLoad); prepareImage(image, updateChapterImages); });
     return () => {
       disposed = true;
-      [...photos, ...chapterPhotos].forEach(image => image.removeEventListener('load', refresh));
+      photos.forEach(image => image.removeEventListener('load', onHeroLoad));
+      chapterPhotos.forEach(image => image.removeEventListener('load', onChapterLoad));
       hero.classList.remove('is-animated');
       slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('clip-path'); });
       photos.forEach(image => { image.style.removeProperty('transform'); });

@@ -134,7 +134,7 @@ if (selector) {
 }
 
 // Native details remain the fallback; enhancement animates only the opening height.
-document.querySelectorAll('.faq details, .editorial-details').forEach(details => {
+document.querySelectorAll('.faq details').forEach(details => {
   const summary = details.querySelector('summary');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   let animation;

@@ -92,7 +92,8 @@ try:
             assert page.locator('.hero__slide').first.evaluate('(el)=>getComputedStyle(el).opacity') == '1'
             assert page.locator('.hero__photo-bars .is-current').count() == 1
             assert page.locator('.hero__landscape img').evaluate_all('(images)=>images.every(el=>new DOMMatrix(getComputedStyle(el).transform).a<=1.081)')
-        print('PASS three-photo hero gallery, synchronized labels, masks and reverse scrolling')
+        assert page.locator('.hero__slide').evaluate_all('(slides)=>slides.every(el=>getComputedStyle(el).clipPath==="none")')
+        print('PASS three-photo hero gallery, synchronized labels, full-frame crossfades and reverse scrolling')
         assert page.locator('.hero__landscape').evaluate('(el)=>getComputedStyle(el).isolation') == 'isolate'
         assert page.locator('.hero__slide').evaluate_all('(slides)=>slides.every((el,index)=>Number(getComputedStyle(el).zIndex)===index)')
         for progress in (.1, .29, .32, .34, .37, .5, .63, .66, .68, .71, .9, .5, .1):
@@ -167,6 +168,8 @@ try:
             assert fallback.locator('h1').is_visible()
             assert fallback.locator('.button').is_visible()
             assert fallback.locator('.chapter').count() == 3
+            assert fallback.locator('.purpose__audience').is_visible()
+            assert fallback.locator('.purpose__detail img').is_visible()
             assert fallback.locator('.pin-spacer').count() == 0
             if mode == 'failed-gallery':
                 fallback.evaluate('() => {const t=ScrollTrigger.getById("ecohub-hero");scrollTo({top:t.start+(t.end-t.start)*.85,behavior:"instant"});}')
