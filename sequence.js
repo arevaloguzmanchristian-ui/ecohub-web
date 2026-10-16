@@ -43,6 +43,7 @@ if (window.gsap && window.ScrollTrigger) {
     const heroCount = hero.querySelector('.hero__photo-count');
     const heroLabel = hero.querySelector('.hero__photo-label');
     const bars = [...hero.querySelectorAll('.hero__photo-bars i')];
+    const messages = [...hero.querySelectorAll('.hero__message, .hero__connection, .hero__community')];
     const openingState = { progress: 0 };
     let heroLimits = [1, 1, 1];
     let galleryRequested = false;
@@ -67,11 +68,18 @@ if (window.gsap && window.ScrollTrigger) {
         const bounds = hero.getBoundingClientRect();
         if (bounds.bottom > headerHeight() && bounds.top < innerHeight) requestGallery();
       }
-      const firstBlend = isReady(photos[1]) ? clamp((p - .28) / .055) : 0;
-      const secondBlend = isReady(photos[2]) ? clamp((p - .66) / .06) : 0;
+      const firstBlend = isReady(photos[1]) ? clamp((p - .36) / .06) : 0;
+      const secondBlend = isReady(photos[2]) ? clamp((p - .68) / .06) : 0;
       slides[0].style.opacity = '1';
       slides[1].style.opacity = String(firstBlend);
       slides[2].style.opacity = String(secondBlend);
+      if (desktop) {
+        const weights = [(1 - firstBlend) * (1 - secondBlend), firstBlend * (1 - secondBlend), secondBlend];
+        messages.forEach((message, index) => {
+          message.style.opacity = String(weights[index]);
+          message.style.transform = `translateY(${(1 - weights[index]) * 8}px)`;
+        });
+      }
       const zooms = [
         1 + (heroLimits[0] - 1) * clamp(p / .5),
         1 + (heroLimits[1] - 1) * (1 - clamp((p - .28) / .55)),
@@ -97,102 +105,133 @@ if (window.gsap && window.ScrollTrigger) {
       defaults: { ease: 'none' },
       scrollTrigger: {
         id: 'ecohub-hero', trigger: hero, start: () => `top top+=${headerHeight()}`,
-        end: () => `+=${Math.round(desktop ? innerHeight * 1.1 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
+        end: () => `+=${Math.round(desktop ? innerHeight * 1.25 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
         pin: desktop ? hero.querySelector('.hero__stage') : false,
         scrub: true, invalidateOnRefresh: true, onRefresh: refreshHero,
       },
     });
     opening.fromTo(openingState, { progress: 0 }, { progress: 1, duration: 1, onUpdate: renderHero }, 0);
-    if (desktop) {
-      opening.to('.hero__message', { y: -14, opacity: 0, duration: .18 }, .4)
-        .fromTo('.hero__connection', { y: 12, opacity: 0 }, { y: 0, opacity: 1, duration: .18 }, .46);
-    }
     refreshHero();
 
     let closeChapters = () => {};
-    let chapterPhotos = [];
-    let updateChapterImages = () => {};
-    if (desktop) {
+    let chapterScene;
+    function rebuildChapters() {
+      chapterScene?.revert();
+      closeChapters();
+      closeChapters = () => {};
+      if (disposed || !desktop) return;
       const panels = [...chapters.querySelectorAll('.chapter')];
       const copies = panels.map(panel => panel.querySelector('.chapter__copy'));
-      const counter = chapters.querySelector('.chapters__counter span');
-      const visual = document.createElement('figure');
-      visual.className = 'chapters__visual';
-      visual.setAttribute('aria-hidden', 'true');
-      const stack = document.createElement('div');
-      stack.className = 'chapters__images';
-      const images = panels.map(panel => {
-        const image = panel.querySelector('img').cloneNode(true);
-        stack.appendChild(image);
-        return image;
-      });
-      chapterPhotos = images;
-      const caption = document.createElement('figcaption');
-      visual.append(stack, caption);
-      chapters.querySelector('.chapters__stage').appendChild(visual);
-      chapters.classList.add('is-enhanced');
-      const state = { progress: 0 };
-      let limits = [1, 1, 1];
-      let current = -1;
-      function renderChapters() {
-        if (disposed) return;
-        const progress = state.progress;
-        const firstBlend = isReady(images[1]) ? clamp((progress - .28) / .1) : 0;
-        const secondBlend = isReady(images[2]) ? clamp((progress - .62) / .1) : 0;
-        const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
-        images[0].style.opacity = '1';
-        images[1].style.opacity = String(firstBlend);
-        images[2].style.opacity = String(secondBlend);
-        images.forEach((image, imageIndex) => {
-          const local = clamp((progress - [0, .28, .62][imageIndex]) / [.38, .44, .38][imageIndex]);
-          image.style.transform = `scale(${1 + (limits[imageIndex] - 1) * local})`;
+      const neededHeight = Math.ceil(Math.max(480, ...copies.map(copy => copy.scrollHeight + 48)));
+      // Expanded explanations must fit at their real reading size. A low laptop,
+      // narrow window or enlarged font keeps every chapter in normal document flow.
+      if (neededHeight > innerHeight - headerHeight() - 40) return;
+      chapterScene = gsap.context(() => {
+        const stage = chapters.querySelector('.chapters__stage');
+        stage.style.setProperty('--chapter-height', `${neededHeight}px`);
+        const counter = chapters.querySelector('.chapters__counter span');
+        const visual = document.createElement('figure');
+        visual.className = 'chapters__visual';
+        visual.setAttribute('aria-hidden', 'true');
+        const stack = document.createElement('div');
+        stack.className = 'chapters__images';
+        const images = panels.map(panel => {
+          const image = panel.querySelector('img').cloneNode(true);
+          stack.appendChild(image);
+          return image;
         });
-        if (index !== current) {
-          copies.forEach((copy, copyIndex) => { copy.style.opacity = copyIndex === index ? '1' : '0'; });
-          caption.textContent = panels[index].querySelector('figcaption').textContent;
-          counter.textContent = `0${index + 1}`;
-          chapters.dataset.chapter = String(index);
-          current = index;
+        const caption = document.createElement('figcaption');
+        visual.append(stack, caption);
+        stage.appendChild(visual);
+        chapters.classList.add('is-enhanced');
+        const state = { progress: 0 };
+        let limits = [1, 1, 1];
+        let current = -1;
+        let chapterDisposed = false;
+        function renderChapters() {
+          if (disposed || chapterDisposed) return;
+          const progress = state.progress;
+          const firstBlend = isReady(images[1]) ? clamp((progress - .28) / .1) : 0;
+          const secondBlend = isReady(images[2]) ? clamp((progress - .62) / .1) : 0;
+          const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
+          images[0].style.opacity = '1';
+          images[1].style.opacity = String(firstBlend);
+          images[2].style.opacity = String(secondBlend);
+          images.forEach((image, imageIndex) => {
+            const local = clamp((progress - [0, .28, .62][imageIndex]) / [.38, .44, .38][imageIndex]);
+            image.style.transform = `scale(${1 + (limits[imageIndex] - 1) * local})`;
+          });
+          if (index !== current) {
+            copies.forEach((copy, copyIndex) => { copy.style.opacity = copyIndex === index ? '1' : '0'; });
+            caption.textContent = panels[index].querySelector('figcaption').textContent;
+            counter.textContent = `0${index + 1}`;
+            chapters.dataset.chapter = String(index);
+            current = index;
+          }
+          chapters.dataset.progress = progress.toFixed(4);
         }
-        chapters.dataset.progress = progress.toFixed(4);
-      }
-      function refreshImages() {
-        limits = images.map(image => safeZoom(image, 1.025));
-        renderChapters();
-      }
-      updateChapterImages = refreshImages;
-      const journey = gsap.timeline({
-        scrollTrigger: {
-          id: 'ecohub-chapters', trigger: '.chapters__stage',
-          start: () => `top top+=${headerHeight() + 8}`,
-          end: () => `+=${Math.round(Math.max(620, innerHeight * .85))}`,
-          pin: true, scrub: true, invalidateOnRefresh: true, onRefresh: refreshImages,
-        },
+        function refreshImages() {
+          limits = images.map(image => safeZoom(image, 1.025));
+          renderChapters();
+        }
+        const journey = gsap.timeline({
+          scrollTrigger: {
+            id: 'ecohub-chapters', trigger: '.chapters__stage',
+            start: () => `top top+=${headerHeight() + 8}`,
+            end: () => `+=${Math.round(Math.max(1000, innerHeight * 1.4))}`,
+            pin: true, scrub: true, invalidateOnRefresh: true, onRefresh: refreshImages,
+          },
+        });
+        journey.fromTo(state, { progress: 0 }, { progress: 1, duration: 1, ease: 'none', onUpdate: renderChapters });
+        refreshImages();
+        const onImageLoad = event => prepareImage(event.currentTarget, refreshImages);
+        images.forEach(image => { image.addEventListener('load', onImageLoad); prepareImage(image, refreshImages); });
+        closeChapters = () => {
+          chapterDisposed = true;
+          images.forEach(image => image.removeEventListener('load', onImageLoad));
+          chapters.classList.remove('is-enhanced');
+          stage.style.removeProperty('--chapter-height');
+          copies.forEach(copy => { copy.style.removeProperty('opacity'); });
+          visual.remove();
+          delete chapters.dataset.chapter;
+          delete chapters.dataset.progress;
+          counter.textContent = '01';
+        };
       });
-      journey.fromTo(state, { progress: 0 }, { progress: 1, duration: 1, ease: 'none', onUpdate: renderChapters });
-      refreshImages();
-      closeChapters = () => {
-        chapters.classList.remove('is-enhanced');
-        copies.forEach(copy => { copy.style.removeProperty('opacity'); });
-        visual.remove();
-        delete chapters.dataset.chapter;
-        delete chapters.dataset.progress;
-        counter.textContent = '01';
-      };
     }
+    rebuildChapters();
+    let rebuildFrame;
+    let lastSize = `${innerWidth}/${innerHeight}`;
+    function queueChapterRebuild() {
+      cancelAnimationFrame(rebuildFrame);
+      rebuildFrame = requestAnimationFrame(() => {
+        if (disposed) return;
+        rebuildChapters();
+        ScrollTrigger.refresh();
+      });
+    }
+    function onResize() {
+      const size = `${innerWidth}/${innerHeight}`;
+      if (size === lastSize) return;
+      lastSize = size;
+      queueChapterRebuild();
+    }
+    window.addEventListener('resize', onResize);
+    document.fonts?.ready.then(() => { if (!disposed) queueChapterRebuild(); });
     // Image dimensions are reserved in CSS/HTML. Decoding changes readiness and
     // zoom limits, not pin geometry: never rebuild every pin on a gallery load.
     const onHeroLoad = event => prepareImage(event.currentTarget, refreshHero);
-    const onChapterLoad = event => prepareImage(event.currentTarget, updateChapterImages);
     photos.forEach(image => { image.addEventListener('load', onHeroLoad); prepareImage(image, refreshHero); });
-    chapterPhotos.forEach(image => { image.addEventListener('load', onChapterLoad); prepareImage(image, updateChapterImages); });
     return () => {
       disposed = true;
       photos.forEach(image => image.removeEventListener('load', onHeroLoad));
-      chapterPhotos.forEach(image => image.removeEventListener('load', onChapterLoad));
+      window.removeEventListener('resize', onResize);
+      cancelAnimationFrame(rebuildFrame);
+      chapterScene?.revert();
       hero.classList.remove('is-animated');
       slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('clip-path'); });
       photos.forEach(image => { image.style.removeProperty('transform'); });
+      messages.forEach(message => { message.style.removeProperty('opacity'); message.style.removeProperty('transform'); });
       bars.forEach(bar => bar.classList.remove('is-current'));
       heroCount.textContent = '01 / 03';
       heroLabel.textContent = slides[0].dataset.photoLabel;

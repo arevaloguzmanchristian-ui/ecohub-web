@@ -59,15 +59,15 @@ try:
             assert ceramic.evaluate('(el)=>Math.abs(el.clientWidth/el.clientHeight-.75)<.01 && getComputedStyle(el).transform==="none"')
             if width > 760:
                 assert 320 <= ceramic.bounding_box()['width'] <= 420
-            page.locator('.purpose__editorial').scroll_into_view_if_needed()
+            page.locator('.sustainability__opening').scroll_into_view_if_needed()
             capture(page, f'editorial-{width}')
             page.locator('#propuesta').evaluate('(el)=>el.scrollIntoView({block:"start"})')
             page.wait_for_timeout(100)
-            assert page.locator('.chapters__note').inner_text() == 'Actividades sujetas a convocatoria.'
+            assert 'Actividades sujetas a convocatoria.' in page.locator('.chapters__note').inner_text()
             capture(page, f'chapters-{width}')
             if width > 760:
                 heading = page.locator('.chapters .section-heading').bounding_box()
-                image = page.locator('.chapters__visual' if height >= 640 else '.chapter figure').first.bounding_box()
+                image = page.locator('.chapters__visual' if page.locator('.chapters.is-enhanced').count() else '.chapter figure').first.bounding_box()
                 assert 24 <= image['y'] - (heading['y'] + heading['height']) <= 36
                 assert min(image['y'] + image['height'], height) - image['y'] >= image['height'] * .35, (heading, image)
 

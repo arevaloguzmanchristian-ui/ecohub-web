@@ -41,10 +41,13 @@ try:
             assert page.locator('h1').is_visible()
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
             assert page.locator('.button').count() == 1
-            assert page.locator('.agent-lineup .agent-figure:visible').count() == 3
+            assert page.locator('.agent-lineup .agent-figure:visible').count() == 2
+            assert page.locator('.audience__situations article').count() == 3
+            assert page.locator('.chapter__copy li').count() == 9
+            assert page.locator('.section-heading, .reading-copy, .hero__copy').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).textAlign==="center")')
             assert page.locator('.hero__human').count() == 0
             assert page.locator('.hero__landscape img').count() == 3
-            assert page.locator('main img[src*="/bolivia/"], main img[data-src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>(img.getAttribute("src")||img.dataset.src).replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length>=12;}')
+            assert page.locator('main img[src*="/bolivia/"], main img[data-src*="/bolivia/"]').evaluate_all('(images) => {const sources=images.filter(img=>!img.closest(".chapters__visual, .agent-measure")).map(img=>(img.getAttribute("src")||img.dataset.src).replace("-small.webp",".webp"));return new Set(sources).size===sources.length && sources.length===13;}')
             assert page.locator('a[href^="#"]').evaluate_all(
                 '(links) => links.every(a => document.getElementById(a.hash.slice(1)))'
             )
@@ -55,26 +58,28 @@ try:
                 assert not page.locator('#navigation').is_visible()
                 assert page.locator('.pin-spacer').count() == 0
             stage_height = page.locator('.agent-panels').bounding_box()['height']
-            for name in ('impulso', 'brujula', 'nexo'):
+            for name in ('kibo', 'hubito'):
                 page.locator(f'#tab-{name}').click()
                 assert page.locator(f'#panel-{name}').is_visible()
                 assert page.locator('[role="tabpanel"]:visible').count() == 1
                 assert abs(page.locator('.agent-panels').bounding_box()['height'] - stage_height) < 1
                 assert page.locator(f'#panel-{name}').evaluate('(el) => getComputedStyle(el).transform') == 'none'
                 assert page.locator(f'[data-agent-figure="{name}"]').get_attribute('class').endswith('is-selected')
-                assert page.locator('.agent-selector').evaluate('(el)=>getComputedStyle(el).getPropertyValue("--agent-index").trim()') == str(('nexo','impulso','brujula').index(name))
-            page.locator('#tab-nexo').focus()
+                assert page.locator('.agent-selector').evaluate('(el)=>getComputedStyle(el).getPropertyValue("--agent-index").trim()') == str(('hubito','kibo').index(name))
+            page.locator('#tab-hubito').focus()
             page.keyboard.press('End')
-            assert page.locator('#panel-brujula').is_visible()
+            assert page.locator('#panel-kibo').is_visible()
             page.keyboard.press('Home')
-            assert page.locator('#panel-nexo').is_visible()
+            assert page.locator('#panel-hubito').is_visible()
+            page.wait_for_function('[...document.querySelectorAll(".agent-lineup img")].every(el=>el.naturalWidth>0)')
+            assert page.locator('.agent-lineup img').evaluate_all('(els)=>els.every(el=>/hubito|kibo/.test(el.currentSrc))')
             assert page.locator('input, textarea').count() == 0
             assert page.locator('figure, img').evaluate_all('(nodes) => nodes.every(el => { const m = new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.b) < .0001 && Math.abs(m.c) < .0001; })')
             print(f'PASS {width}px: layout, navigation, agents and keyboard')
 
         for progress in (0, .98, 0):
             page.evaluate('p => { const t = ScrollTrigger.getById("ecohub-hero"); scrollTo({top: t.start + (t.end-t.start)*p, behavior:"instant"}); }', progress)
-            selector = '.hero__connection' if progress else '.hero__message'
+            selector = '.hero__community' if progress else '.hero__message'
             page.wait_for_function('selector => Number(getComputedStyle(document.querySelector(selector)).opacity) > .95', arg=selector)
             page.wait_for_function('() => {const t=ScrollTrigger.getById("ecohub-hero"); return Math.abs(t.animation.progress()-t.progress)<.001;}')
             zoom = page.locator('.hero__landscape img').first.evaluate('(el) => new DOMMatrix(getComputedStyle(el).transform).a')
@@ -84,11 +89,12 @@ try:
             if progress == .98:
                 assert zoom > 1.065
             assert page.locator('.hero__copy, .button').evaluate_all('(nodes) => nodes.every(el => { const m=new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.a-1)<.0001 && Math.abs(m.d-1)<.0001; })')
-        for progress, index in ((.1,0),(.32,1),(.5,1),(.72,2),(.95,2),(.5,1),(.05,0)):
+        for progress, index in ((.1,0),(.4,1),(.5,1),(.76,2),(.95,2),(.5,1),(.05,0)):
             page.evaluate('p => {const t=ScrollTrigger.getById("ecohub-hero");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"});}', progress)
             page.wait_for_function('p => Math.abs(Number(document.querySelector(".hero").dataset.progress)-p)<.002', arg=progress)
             page.wait_for_function('index => Number(document.querySelector(".hero").dataset.photo)===index', arg=index)
             assert page.locator('.hero__photo-count').inner_text() == f'0{index+1} / 03'
+            assert page.locator(('.hero__message', '.hero__connection', '.hero__community')[index]).evaluate('(el)=>Number(getComputedStyle(el).opacity)>.5')
             assert page.locator('.hero__slide').first.evaluate('(el)=>getComputedStyle(el).opacity') == '1'
             assert page.locator('.hero__photo-bars .is-current').count() == 1
             assert page.locator('.hero__landscape img').evaluate_all('(images)=>images.every(el=>new DOMMatrix(getComputedStyle(el).transform).a<=1.081)')
@@ -121,13 +127,14 @@ try:
             page.set_viewport_size({'width': width, 'height': height})
             page.goto(base, wait_until='networkidle')
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
-            if height >= 640:
+            assert page.locator('.chapters').evaluate('(el)=>{const need=Math.ceil(Math.max(480,...[...el.querySelectorAll(".chapter__copy")].map(copy=>copy.scrollHeight+48)));return el.classList.contains("is-enhanced")===(innerWidth>=1001&&innerHeight>=640&&need<=innerHeight-document.querySelector(".header").offsetHeight-40)}')
+            if page.locator('.chapters.is-enhanced').count():
                 for progress in (0, .5, .95, .5, 0):
                     page.evaluate('p=>{const t=ScrollTrigger.getById("ecohub-chapters");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"});}', progress)
                     page.wait_for_function('p=>Math.abs(Number(document.querySelector(".chapters").dataset.progress)-p)<.002', arg=progress)
                     assert page.locator('.chapter__copy').evaluate_all('(els)=>els.filter(el=>Number(getComputedStyle(el).opacity)>.95).every(el=>{const r=el.getBoundingClientRect();return r.top>=document.querySelector(".header").offsetHeight&&r.bottom<=innerHeight})')
             else:
-                assert page.locator('.pin-spacer').count() == 0
+                assert page.locator('.chapter__copy').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).opacity==="1")')
             summary = page.locator('.faq summary').first
             summary.click()
             page.wait_for_timeout(350)
@@ -177,11 +184,11 @@ try:
                 assert fallback.locator('.hero').get_attribute('data-photo') == '0'
                 assert fallback.locator('.hero__slide').first.evaluate('(el)=>getComputedStyle(el).opacity') == '1'
             if mode == 'no-js':
-                assert fallback.locator('.agent-panel:visible').count() == 3
+                assert fallback.locator('.agent-panel:visible').count() == 2
                 assert fallback.locator('#navigation').is_visible()
             else:
-                fallback.locator('#tab-impulso').click()
-                assert fallback.locator('#panel-impulso').is_visible()
+                fallback.locator('#tab-kibo').click()
+                assert fallback.locator('#panel-kibo').is_visible()
             if mode in ('no-js', 'no-gsap', 'save-data', 'reduced'):
                 assert not any('atardecer' in url or 'illimani-noche' in url for url in extra_requests)
             context.close()

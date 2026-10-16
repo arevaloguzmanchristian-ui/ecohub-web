@@ -25,7 +25,7 @@ if (toggle && navigation) {
 
 document.querySelector('#year').textContent = new Date().getFullYear();
 
-// Progressive enhancement: without JavaScript all three previews remain readable.
+// Progressive enhancement: without JavaScript both previews remain readable.
 const agents = document.querySelector('.agents');
 const selector = agents?.querySelector('.agent-selector');
 if (selector) {
