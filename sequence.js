@@ -48,6 +48,7 @@ if (window.gsap && window.ScrollTrigger) {
     let heroLimits = [1, 1, 1];
     let galleryRequested = false;
     let currentPhoto = -1;
+    let heroPinned = false;
     photos.slice(1).forEach(image => { image.sizes = mobile ? '1100px' : '100vw'; });
 
     function requestGallery() {
@@ -64,30 +65,40 @@ if (window.gsap && window.ScrollTrigger) {
     function renderHero() {
       if (disposed) return;
       const p = openingState.progress;
-      if (p > .015 && !galleryRequested) {
+      const galleryMotion = !hero.classList.contains('is-flow');
+      if (galleryMotion && p > .015 && !galleryRequested) {
         const bounds = hero.getBoundingClientRect();
         if (bounds.bottom > headerHeight() && bounds.top < innerHeight) requestGallery();
       }
-      const firstBlend = isReady(photos[1]) ? clamp((p - .36) / .06) : 0;
-      const secondBlend = isReady(photos[2]) ? clamp((p - .68) / .06) : 0;
+      const firstBlend = galleryMotion && isReady(photos[1]) ? clamp((p - .36) / .06) : 0;
+      const secondBlend = galleryMotion && isReady(photos[2]) ? clamp((p - .68) / .06) : 0;
       slides[0].style.opacity = '1';
       slides[1].style.opacity = String(firstBlend);
       slides[2].style.opacity = String(secondBlend);
-      if (desktop) {
-        const weights = [(1 - firstBlend) * (1 - secondBlend), firstBlend * (1 - secondBlend), secondBlend];
-        messages.forEach((message, index) => {
-          message.style.opacity = String(weights[index]);
-          message.style.transform = `translateY(${(1 - weights[index]) * 8}px)`;
+      const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
+      if (heroPinned) {
+        // Photographs blend; copy changes at dominance, never as two overlapping
+        // paragraphs or an empty midpoint where the reader can stop scrolling.
+        messages.forEach((message, messageIndex) => {
+          message.style.opacity = messageIndex === index ? '1' : '0';
+          message.style.removeProperty('transform');
         });
+      } else {
+        messages.forEach((message, index) => { message.style.opacity = index === 0 ? '1' : '0'; message.style.removeProperty('transform'); });
       }
+      messages.forEach((message, messageIndex) => {
+        if (!galleryMotion) message.removeAttribute('aria-hidden');
+        else {
+          const hidden = String(messageIndex !== (heroPinned ? index : 0));
+          if (message.getAttribute('aria-hidden') !== hidden) message.setAttribute('aria-hidden', hidden);
+        }
+      });
       const zooms = [
         1 + (heroLimits[0] - 1) * clamp(p / .5),
         1 + (heroLimits[1] - 1) * (1 - clamp((p - .28) / .55)),
         1 + (heroLimits[2] - 1) * clamp((p - .66) / .34),
       ];
-      photos.forEach((image, index) => { image.style.transform = `scale(${zooms[index]})`; });
-      const index = secondBlend >= .5 ? 2 : firstBlend >= .5 ? 1 : 0;
-      hero.classList.toggle('is-last', p >= .86);
+      photos.forEach((image, index) => { image.style.transform = `scale(${galleryMotion ? zooms[index] : 1})`; });
       if (currentPhoto !== index) {
         heroCount.textContent = `0${index + 1} / 03`;
         heroLabel.textContent = slides[index].dataset.photoLabel;
@@ -99,31 +110,49 @@ if (window.gsap && window.ScrollTrigger) {
     }
     function refreshHero() {
       heroLimits = photos.map((image, index) => safeZoom(image, mobile ? [1.025, 1.02, 1.01][index] : [1.08, 1.055, 1.02][index]));
-      if (desktop) {
+      if (heroPinned) {
         hero.style.setProperty('--hero-copy-height', `${Math.ceil(Math.max(...messages.map(message => message.scrollHeight)))}px`);
-      }
+      } else hero.style.removeProperty('--hero-copy-height');
       renderHero();
     }
     hero.classList.add('is-animated');
-    const opening = gsap.timeline({
-      defaults: { ease: 'none' },
-      scrollTrigger: {
-        id: 'ecohub-hero', trigger: hero, start: () => `top top+=${headerHeight()}`,
-        end: () => `+=${Math.round(desktop ? innerHeight * 1.25 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
-        pin: desktop ? hero.querySelector('.hero__stage') : false,
-        scrub: true, invalidateOnRefresh: true, onRefresh: refreshHero,
-      },
-    });
-    opening.fromTo(openingState, { progress: 0 }, { progress: 1, duration: 1, onUpdate: renderHero }, 0);
-    refreshHero();
+    let heroScene;
+    let heroSignature = '';
+    function rebuildHero() {
+      hero.classList.remove('is-flow');
+      const contentHeight = Math.max(...messages.map(message => message.scrollHeight));
+      const actionsHeight = hero.querySelector('.hero__actions').offsetHeight;
+      const available = innerHeight - headerHeight();
+      const fits = desktop && contentHeight + actionsHeight + 28 + 96 <= available;
+      const flow = !mobile && (!desktop || !fits);
+      const signature = [innerWidth, innerHeight, headerHeight(), contentHeight, actionsHeight, fits].join('/');
+      hero.classList.toggle('is-flow', flow);
+      if (signature === heroSignature) return false;
+      heroSignature = signature;
+      heroScene?.revert();
+      heroPinned = fits;
+      heroScene = gsap.context(() => {
+        const opening = gsap.timeline({
+          defaults: { ease: 'none' },
+          scrollTrigger: {
+            id: 'ecohub-hero', trigger: hero, start: () => `top top+=${headerHeight()}`,
+            end: () => `+=${Math.round(heroPinned ? innerHeight * 1.25 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
+            pin: heroPinned ? hero.querySelector('.hero__stage') : false,
+            scrub: true, invalidateOnRefresh: true, onRefresh: refreshHero,
+          },
+        });
+        opening.fromTo(openingState, { progress: 0 }, { progress: 1, duration: 1, onUpdate: renderHero }, 0);
+      });
+      refreshHero();
+      return true;
+    }
+    rebuildHero();
 
     let closeChapters = () => {};
     let chapterScene;
+    let chapterSignature = '';
     function rebuildChapters() {
-      chapterScene?.revert();
-      closeChapters();
-      closeChapters = () => {};
-      if (disposed || !desktop) return;
+      if (disposed || !desktop) return false;
       const panels = [...chapters.querySelectorAll('.chapter')];
       const copies = panels.map(panel => panel.querySelector('.chapter__copy'));
       const frame = chapters.querySelector('.chapters__frame');
@@ -137,7 +166,13 @@ if (window.gsap && window.ScrollTrigger) {
       // Expanded explanations must fit at their real reading size. A low laptop,
       // narrow window or enlarged font keeps every chapter in normal document flow.
       const availableHeight = innerHeight - headerHeight() - 32;
-      if (neededHeight + chromeHeight > availableHeight) return;
+      const signature = [frame.clientWidth, availableHeight, neededHeight, chromeHeight].join('/');
+      if (signature === chapterSignature) return false;
+      chapterSignature = signature;
+      chapterScene?.revert();
+      closeChapters();
+      closeChapters = () => {};
+      if (neededHeight + chromeHeight > availableHeight) return true;
       neededHeight = Math.floor(availableHeight - chromeHeight);
       chapterScene = gsap.context(() => {
         const stage = chapters.querySelector('.chapters__stage');
@@ -211,59 +246,79 @@ if (window.gsap && window.ScrollTrigger) {
           counter.textContent = '01';
         };
       });
+      return true;
     }
     rebuildChapters();
     let rebuildFrame;
     let lastSize = `${innerWidth}/${innerHeight}`;
-    function queueChapterRebuild() {
+    let layoutDirty = false;
+    function queueSceneRebuild(event) {
+      if (event?.type === 'resize' || event?.type === 'ecohub:layout' || event?.type === 'fonts') layoutDirty = true;
       cancelAnimationFrame(rebuildFrame);
       rebuildFrame = requestAnimationFrame(() => {
         if (disposed) return;
-        rebuildChapters();
-        ScrollTrigger.refresh();
+        const heroChanged = rebuildHero();
+        const chaptersChanged = rebuildChapters();
+        const territoryChanged = updateTerritory();
+        if (layoutDirty || heroChanged || chaptersChanged || territoryChanged) ScrollTrigger.refresh();
+        layoutDirty = false;
       });
     }
     function onResize() {
       const size = `${innerWidth}/${innerHeight}`;
       if (size === lastSize) return;
       lastSize = size;
-      queueChapterRebuild();
+      queueSceneRebuild({ type: 'resize' });
     }
     window.addEventListener('resize', onResize);
-    document.fonts?.ready.then(() => { if (!disposed) queueChapterRebuild(); });
-    // A bounded curtain: the Arena layer retreats inside this scene only.
-    // The photograph and its copy remain together in normal document flow.
+    window.addEventListener('ecohub:layout', queueSceneRebuild);
+    document.fonts?.ready.then(() => { if (!disposed) queueSceneRebuild({ type: 'fonts' }); });
+    // One positioning strategy: native sticky, bounded by a three-row grid.
+    // Both opaque sheets retain real rows; no margins, extra pin or global fixed layer.
     const territory = document.querySelector('.territory');
+    const stack = document.querySelector('.territory-stack');
+    const agents = document.querySelector('.agents');
+    const continuation = document.querySelector('.territory__continuation');
     const territoryImage = territory?.querySelector('.territory__panorama img');
-    let curtainScene;
-    function activateCurtain() {
-      if (disposed || !desktop || !territoryImage || !isReady(territoryImage) || curtainScene) return;
-      territory.classList.add('is-curtain');
-      curtainScene = gsap.context(() => {
-        const scene = territory.querySelector('.territory__scene');
-        const veil = territory.querySelector('.territory__veil');
-        function renderCurtain(self) {
-          // Only cover the portion that has entered the viewport. Covering the
-          // whole off-screen scene would create an empty Arena screen on entry.
-          const visibleHeight = Math.max(0, Math.min(120, scene.offsetHeight, innerHeight - scene.getBoundingClientRect().top));
-          veil.style.height = `${visibleHeight}px`;
-          territory.dataset.curtain = self.progress.toFixed(4);
-        }
-        gsap.fromTo(veil, { yPercent: 0 }, {
-          yPercent: -100, ease: 'none',
-          scrollTrigger: {
-            id: 'ecohub-territory', trigger: scene,
-            start: 'top bottom', end: () => `top top+=${headerHeight()}`, scrub: true,
-            onUpdate: renderCurtain, onRefresh: renderCurtain,
-          },
-        });
+    let territoryTrack;
+    let territorySignature = '';
+    function updateTerritory() {
+      if (disposed || !stack || !territoryImage) return false;
+      const available = innerHeight - headerHeight();
+      const textHeight = territory.querySelector('.territory__copy').offsetHeight;
+      const fits = desktop && innerHeight >= 740 && isReady(territoryImage) && textHeight <= available;
+      const entry = agents.offsetHeight;
+      const signature = [fits, available, textHeight, entry].join('/');
+      if (signature === territorySignature) return false;
+      territorySignature = signature;
+      territoryTrack?.kill();
+      stack.classList.toggle('is-layered', fits);
+      if (!fits) {
+        stack.style.removeProperty('--territory-entry');
+        delete territory.dataset.curtain;
+        return true;
+      }
+      stack.style.setProperty('--territory-entry', `${agents.offsetHeight}px`);
+      // Tracking only: CSS owns positioning and the sheets do all the revealing.
+      territoryTrack = ScrollTrigger.create({
+        id: 'ecohub-territory', trigger: territory.querySelector('.territory__anchor'),
+        start: 'top bottom', endTrigger: continuation, end: () => `top top+=${headerHeight()}`,
+        onUpdate: self => { territory.dataset.curtain = self.progress.toFixed(4); },
+        onRefresh: self => { territory.dataset.curtain = self.progress.toFixed(4); },
       });
+      return true;
     }
-    const onTerritoryLoad = () => prepareImage(territoryImage, activateCurtain);
+    const onTerritoryLoad = () => prepareImage(territoryImage, queueSceneRebuild);
     if (desktop && territoryImage) {
       territoryImage.addEventListener('load', onTerritoryLoad);
-      prepareImage(territoryImage, activateCurtain);
+      prepareImage(territoryImage, queueSceneRebuild);
     }
+    let layoutObserver;
+    if ('ResizeObserver' in window) {
+      layoutObserver = new ResizeObserver(() => queueSceneRebuild());
+      [...messages, hero.querySelector('.hero__actions'), ...chapters.querySelectorAll('.chapter__copy'), territory?.querySelector('.territory__copy'), agents].filter(Boolean).forEach(element => layoutObserver.observe(element));
+    }
+    queueSceneRebuild({ type: 'fonts' });
     // Image dimensions are reserved in CSS/HTML. Decoding changes readiness and
     // zoom limits, not pin geometry: never rebuild every pin on a gallery load.
     const onHeroLoad = event => prepareImage(event.currentTarget, refreshHero);
@@ -272,18 +327,21 @@ if (window.gsap && window.ScrollTrigger) {
       disposed = true;
       photos.forEach(image => image.removeEventListener('load', onHeroLoad));
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('ecohub:layout', queueSceneRebuild);
+      layoutObserver?.disconnect();
       cancelAnimationFrame(rebuildFrame);
+      heroScene?.revert();
       chapterScene?.revert();
-      curtainScene?.revert();
+      territoryTrack?.kill();
       territoryImage?.removeEventListener('load', onTerritoryLoad);
-      territory?.classList.remove('is-curtain');
-      territory?.querySelector('.territory__veil').style.removeProperty('height');
+      stack?.classList.remove('is-layered');
+      stack?.style.removeProperty('--territory-entry');
       if (territory) delete territory.dataset.curtain;
-      hero.classList.remove('is-animated', 'is-last');
+      hero.classList.remove('is-animated', 'is-flow');
       hero.style.removeProperty('--hero-copy-height');
       slides.forEach(slide => { slide.style.removeProperty('opacity'); slide.style.removeProperty('clip-path'); });
       photos.forEach(image => { image.style.removeProperty('transform'); });
-      messages.forEach(message => { message.style.removeProperty('opacity'); message.style.removeProperty('transform'); });
+      messages.forEach(message => { message.style.removeProperty('opacity'); message.style.removeProperty('transform'); message.removeAttribute('aria-hidden'); });
       bars.forEach(bar => bar.classList.remove('is-current'));
       heroCount.textContent = '01 / 03';
       heroLabel.textContent = slides[0].dataset.photoLabel;

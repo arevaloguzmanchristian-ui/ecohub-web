@@ -58,8 +58,8 @@ try:
             page.wait_for_function('document.querySelector(".purpose__detail img").naturalWidth>0')
             assert ceramic.evaluate('(el)=>Math.abs(el.clientWidth/el.clientHeight-.75)<.01 && getComputedStyle(el).transform==="none"')
             if width > 760:
-                assert 200 <= ceramic.bounding_box()['width'] <= 320
-            page.locator('.sustainability__gallery').scroll_into_view_if_needed()
+                assert 200 <= ceramic.bounding_box()['width'] <= 380
+            ceramic.scroll_into_view_if_needed()
             capture(page, f'editorial-{width}')
             page.locator('#propuesta').evaluate('(el)=>el.scrollIntoView({block:"start"})')
             page.wait_for_timeout(100)
@@ -101,21 +101,36 @@ try:
                     states.append(page.locator('.hero__slide').evaluate_all('(els)=>els.map(el=>({opacity:getComputedStyle(el).opacity,clip:getComputedStyle(el).clipPath,transform:getComputedStyle(el.querySelector("img")).transform}))'))
                 assert states[0] == states[2]
                 capture(page, f'illimani-{width}')
-                page.locator('#territorio').scroll_into_view_if_needed()
-                page.wait_for_function('!!ScrollTrigger.getById("ecohub-territory")')
-                curtain_states = []
-                for progress in (.15, .9, .5, .15):
-                    page.evaluate('p=>{const t=ScrollTrigger.getById("ecohub-territory");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"})}', progress)
-                    page.wait_for_function('p=>Math.abs(Number(document.querySelector(".territory").dataset.curtain)-p)<.003', arg=progress)
-                    curtain_states.append(page.locator('.territory__veil').evaluate('(el)=>getComputedStyle(el).transform'))
-                    assert page.locator('.territory__panorama img').evaluate('(el)=>getComputedStyle(el).opacity==="1"')
-                    if progress >= .5:
-                        assert page.locator('.territory__veil').evaluate('(el)=>{const r=el.getBoundingClientRect(),s=document.querySelector(".territory__scene").getBoundingClientRect();return Math.min(innerHeight,s.bottom)-r.bottom>60}')
-                assert curtain_states[0] == curtain_states[-1]
-                assert page.locator('.territory__scene').evaluate('(el)=>getComputedStyle(el).borderRadius==="0px"')
-                page.evaluate('()=>{const t=ScrollTrigger.getById("ecohub-territory");scrollTo({top:t.start+(t.end-t.start)*.6,behavior:"instant"})}')
-                page.wait_for_function('Math.abs(Number(document.querySelector(".territory").dataset.curtain)-.6)<.003')
-                capture(page, f'curtain-{width}')
+                if height >= 740:
+                    page.locator('#territorio').scroll_into_view_if_needed()
+                    page.wait_for_function('document.querySelector(".territory-stack").classList.contains("is-layered")')
+                    geometry = page.evaluate('()=>{const marker=document.querySelector("#territorio"),cover=document.querySelector(".territory__continuation"),header=document.querySelector(".header").offsetHeight;return {marker:marker.getBoundingClientRect().top+scrollY,cover:cover.getBoundingClientRect().top+scrollY,header,H:innerHeight-header}}')
+                    entry = geometry['marker'] - geometry['header'] - geometry['H'] * .55
+                    opened = geometry['marker'] - geometry['header'] + geometry['H'] * .1
+                    exit_y = geometry['cover'] - geometry['header'] - geometry['H'] * .55
+                    covered = geometry['cover'] - geometry['header'] + geometry['H'] * .05
+                    page.evaluate('window.sceneRefreshes=0;ScrollTrigger.addEventListener("refresh",()=>window.sceneRefreshes++)')
+                    states = []
+                    for name, y in (('entry', entry), ('open', opened), ('exit', exit_y), ('covered', covered), ('exit-back', exit_y), ('open-back', opened), ('entry-back', entry)):
+                        page.evaluate('y=>scrollTo({top:y,behavior:"instant"})', y)
+                        page.wait_for_timeout(45)
+                        rect = page.locator('.territory__scene').bounding_box()
+                        if name != 'covered':
+                            assert abs(rect['y'] - geometry['header']) < 1
+                            assert abs(rect['height'] - geometry['H']) < 1
+                        assert page.locator('.territory__scene').evaluate('(el)=>getComputedStyle(el).position==="sticky"&&getComputedStyle(el).borderRadius==="0px"&&!el.closest(".pin-spacer")')
+                        assert page.evaluate('!ScrollTrigger.getById("ecohub-territory").pin')
+                        region = '.agents' if name.startswith('entry') else '.territory__continuation' if name == 'covered' else '.territory'
+                        point = .2 if name.startswith('entry') else .8 if name.startswith('exit') else .5
+                        if name.startswith('exit'):
+                            region = '.territory__continuation'
+                        assert page.evaluate('({region,point})=>!!document.elementFromPoint(innerWidth*.9,document.querySelector(".header").offsetHeight+(innerHeight-document.querySelector(".header").offsetHeight)*point)?.closest(region)', {'region': region, 'point': point})
+                        states.append(rect)
+                        capture(page, f'curtain-{name}-{width}')
+                    assert states[0] == states[-1]
+                    assert page.evaluate('window.sceneRefreshes') == 0
+                    assert page.evaluate('()=>Math.abs((document.querySelector("#territorio").getBoundingClientRect().top)-(document.querySelector(".agents").getBoundingClientRect().bottom))<1')
+                    assert page.locator('.territory__panorama img').evaluate('(el)=>el.complete&&el.naturalWidth>0&&getComputedStyle(el).opacity==="1"')
                 # Resize while deep in the page, then return through the pin boundary.
                 page.locator('#registro').scroll_into_view_if_needed()
                 page.set_viewport_size({'width': width - 30, 'height': height + 25})
@@ -126,6 +141,7 @@ try:
                 assert abs(page.evaluate('ScrollTrigger.getById("ecohub-hero").start')) < 2
             page.emulate_media(reduced_motion='reduce')
             page.wait_for_function('!document.querySelector(".pin-spacer")')
+            assert page.locator('.territory-stack.is-layered').count() == 0
             page.evaluate('scrollTo({top:0,behavior:"instant"})')
             page.wait_for_timeout(100)
             check_hero(page)
@@ -175,8 +191,7 @@ try:
         page.locator('#territorio').scroll_into_view_if_needed()
         page.wait_for_timeout(150)
         assert delayed_territory
-        assert not page.locator('.territory.is-curtain').count()
-        assert page.locator('.territory__veil').evaluate('(el)=>getComputedStyle(el).display==="none"')
+        assert not page.locator('.territory-stack.is-layered').count()
         for route in delayed_territory:
             route.continue_()
         page.wait_for_function('!!ScrollTrigger.getById("ecohub-territory")')
@@ -185,7 +200,7 @@ try:
         page.wait_for_timeout(60)
         check_hero(page)
         page.close()
-        print('PASS curtain waits for decoded photo and reveals visible content without a blank screen')
+        print('PASS scoped sticky curtain waits for decoded photo; opaque sheets reveal and cover it')
         assert not errors, errors
         browser.close()
 finally:

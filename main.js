@@ -7,6 +7,9 @@ if (toggle && navigation) {
   const closeMenu = () => {
     toggle.setAttribute('aria-expanded', 'false');
     navigation.classList.remove('is-open');
+    // Native anchor navigation runs before ResizeObserver's next delivery.
+    // Commit the closed height now, not the expanded menu's scroll padding.
+    document.documentElement.style.setProperty('--header-offset', `${toggle.closest('.header').offsetHeight}px`);
   };
   toggle.addEventListener('click', () => {
     const open = toggle.getAttribute('aria-expanded') !== 'true';
@@ -134,6 +137,12 @@ if (selector) {
       lastWidth = stage.clientWidth;
       reserveAgentHeight();
     }).observe(stage);
+    let heightFrame;
+    const textObserver = new ResizeObserver(() => {
+      cancelAnimationFrame(heightFrame);
+      heightFrame = requestAnimationFrame(reserveAgentHeight);
+    });
+    panels.forEach(panel => textObserver.observe(panel.querySelector('.agent-panel__copy')));
   } else {
     window.addEventListener('resize', reserveAgentHeight);
   }
@@ -153,6 +162,8 @@ if (exampleDialog?.showModal && exampleArchive) {
   let origin;
   const close = exampleDialog.querySelector('.dialog-close');
   document.querySelectorAll('.agent-example-link').forEach(link => {
+    link.setAttribute('aria-haspopup', 'dialog');
+    link.setAttribute('aria-controls', exampleDialog.id);
     link.addEventListener('click', event => {
       event.preventDefault();
       if (exampleDialog.open) return;
@@ -256,8 +267,61 @@ if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.
       y: 10, stagger: .06, duration: .35, ease: 'power1.out',
       scrollTrigger: { trigger: '.audience__situations', start: 'top 92%', once: true },
     });
+    const image = document.querySelector('.purpose__main img');
+    function photoLimit() {
+      if (!image?.naturalWidth) return 1;
+      const candidate = image.srcset.split(',').map(source => source.trim().split(/\s+/)).find(([url]) => new URL(url, document.baseURI).href === image.currentSrc);
+      const width = candidate?.[1]?.endsWith('w') ? parseFloat(candidate[1]) : image.naturalWidth;
+      const height = image.naturalHeight * width / image.naturalWidth;
+      return Math.max(1, Math.min(context.conditions.mobile ? 1.01 : 1.025, 1 / Math.max(image.clientWidth / width, image.clientHeight / height)));
+    }
+    const depth = gsap.fromTo(image, { scale: 1 }, {
+      scale: photoLimit, ease: 'none',
+      scrollTrigger: { trigger: '.purpose__scene', start: 'top bottom', end: 'bottom top', scrub: true, invalidateOnRefresh: true },
+    });
+    const refreshPhoto = () => { depth.invalidate(); depth.scrollTrigger?.refresh(); };
+    image?.addEventListener('load', refreshPhoto);
+    return () => image?.removeEventListener('load', refreshPhoto);
   });
 }
+
+// A screen is a minimum presentation size, never a clipping height. Measure
+// interior content so enlarged text can return to natural flow immediately.
+const screenScenes = [...document.querySelectorAll('.purpose, .audience, .agents, .gallery-piece, .registration')];
+let screenFrame;
+function updateScreenScenes() {
+  const available = innerHeight - document.querySelector('.header').offsetHeight;
+  let changed = false;
+  screenScenes.forEach(scene => {
+    const style = getComputedStyle(scene);
+    const children = [...scene.children].filter(child => {
+      const css = getComputedStyle(child);
+      return !child.hidden && css.display !== 'none' && css.position !== 'absolute';
+    });
+    const heights = children.map(child => {
+      const css = getComputedStyle(child);
+      return child.offsetHeight + parseFloat(css.marginTop) + parseFloat(css.marginBottom);
+    });
+    const content = scene.classList.contains('gallery-piece') ? Math.max(0, ...heights) : heights.reduce((sum, height) => sum + height, 0);
+    const natural = content + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
+    const fits = innerWidth >= 1001 && innerHeight >= 740 && natural <= available + 1;
+    if (scene.classList.contains('is-screen') === fits) return;
+    scene.classList.toggle('is-screen', fits);
+    changed = true;
+  });
+  if (changed) window.dispatchEvent(new Event('ecohub:layout'));
+}
+function queueScreenScenes() {
+  cancelAnimationFrame(screenFrame);
+  screenFrame = requestAnimationFrame(updateScreenScenes);
+}
+window.addEventListener('resize', queueScreenScenes);
+if (document.fonts) document.fonts.ready.then(queueScreenScenes);
+if ('ResizeObserver' in window) {
+  const contentObserver = new ResizeObserver(queueScreenScenes);
+  screenScenes.forEach(scene => [...scene.children].forEach(child => contentObserver.observe(child)));
+}
+queueScreenScenes();
 
 // A section-location underline, not an activity or availability indicator.
 if (navigation) {

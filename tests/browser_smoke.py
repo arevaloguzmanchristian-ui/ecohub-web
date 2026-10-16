@@ -41,7 +41,9 @@ try:
             assert page.locator('h1').is_visible()
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
             assert page.locator('.hero__actions .button:not(.button--secondary)').count() == 1
-            assert page.locator('.hero .button').count() == 3
+            assert page.locator('.hero .button').count() == 2
+            assert page.locator('.hero a[href="#proyecto"]').count() == 1
+            assert 'Seguir explorando' not in page.locator('.hero').inner_text()
             assert page.locator('.hero .button').evaluate_all('(els)=>els.every(el=>!el.hasAttribute("disabled")&&el.getAttribute("aria-disabled")!=="true"&&getComputedStyle(el).backgroundColor!=="rgba(0, 0, 0, 0)")')
             assert page.locator('.agent-lineup .agent-figure:visible').count() == 1
             assert page.locator('.audience__situations article').count() == 3
@@ -61,6 +63,10 @@ try:
                 page.keyboard.press('Escape')
                 assert not page.locator('#navigation').is_visible()
                 assert page.locator('.pin-spacer').count() == 0
+                page.locator('.menu-toggle').click()
+                page.locator('#navigation a[href="#proyecto"]').click()
+                page.wait_for_function('()=>{const top=document.querySelector("#proyecto").getBoundingClientRect().top,h=document.querySelector(".header").offsetHeight;return top>=h-2&&top<=h+55}')
+                assert not page.locator('#navigation').is_visible()
             stage_height = page.locator('.agent-panels').bounding_box()['height']
             for name in ('kibo', 'hubito'):
                 page.locator(f'#tab-{name}').click()
@@ -122,6 +128,10 @@ try:
             assert page.locator('.hero__photo-bars .is-current').count() == 1
             assert page.locator('.hero__landscape img').evaluate_all('(images)=>images.every(el=>new DOMMatrix(getComputedStyle(el).transform).a<=1.081)')
         assert page.locator('.hero__slide').evaluate_all('(slides)=>slides.every(el=>getComputedStyle(el).clipPath==="none")')
+        for progress in (.37, .385, .39, .395, .41, .69, .71, .72, .735):
+            page.evaluate('p=>{const t=ScrollTrigger.getById("ecohub-hero");scrollTo({top:t.start+(t.end-t.start)*p,behavior:"instant"})}', progress)
+            page.wait_for_function('p=>Math.abs(Number(document.querySelector(".hero").dataset.progress)-p)<.002', arg=progress)
+            assert page.locator('.hero__messages > div').evaluate_all('(els)=>els.filter(el=>Number(getComputedStyle(el).opacity)>.05).length===1&&els.some(el=>Number(getComputedStyle(el).opacity)>.95)')
         print('PASS three-photo hero gallery, synchronized labels, full-frame crossfades and reverse scrolling')
         assert page.locator('.hero__landscape').evaluate('(el)=>getComputedStyle(el).isolation') == 'isolate'
         assert page.locator('.hero__slide').evaluate_all('(slides)=>slides.every((el,index)=>Number(getComputedStyle(el).zIndex)===index)')
@@ -185,6 +195,23 @@ try:
         page.wait_for_function('document.querySelectorAll(".pin-spacer").length === 2')
         print('PASS live reduced motion and resize')
 
+        for width, height in ((1440, 900), (1366, 768)):
+            reflow = browser.new_page(viewport={'width': width, 'height': height})
+            reflow.on('pageerror', lambda error: errors.append(str(error)))
+            reflow.goto(base, wait_until='networkidle')
+            reflow.wait_for_function('[...document.querySelectorAll(".purpose,.audience,.agents,.gallery-piece")].every(el=>el.classList.contains("is-screen"))')
+            assert reflow.locator('.is-screen').evaluate_all('(els)=>els.every(el=>el.offsetHeight<=innerHeight-document.querySelector(".header").offsetHeight+2)')
+            assert reflow.locator('.gallery-piece').evaluate_all('(els)=>els.every(el=>{const p=el.getBoundingClientRect();return [...el.children].every(child=>{const r=child.getBoundingClientRect();return r.top>=p.top&&r.bottom<=p.bottom})})')
+            reflow.locator('#territorio').scroll_into_view_if_needed()
+            reflow.wait_for_function('document.querySelector(".territory-stack").classList.contains("is-layered")')
+            reflow.evaluate('()=>{const nodes=[...document.querySelectorAll("p,li,h1,h2,h3,figcaption,a.button,button")].map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);nodes.forEach(([el,size])=>el.style.fontSize=`${size*2}px`)}')
+            reflow.wait_for_function('!document.querySelector(".pin-spacer")&&!document.querySelector(".territory-stack.is-layered")&&document.querySelector(".hero.is-flow")')
+            assert reflow.evaluate('document.documentElement.scrollWidth<=innerWidth')
+            assert reflow.locator('.purpose,.audience,.agents,.gallery-copy').evaluate_all('(els)=>els.every(el=>!["hidden","clip","scroll"].includes(getComputedStyle(el).overflowY))')
+            assert reflow.locator('.chapter__copy').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).opacity==="1"&&el.scrollHeight<=el.clientHeight+1)')
+            reflow.close()
+        print('PASS useful-screen compositions and 200% text: automatic flow, no clipping or extra pins')
+
         for mode in ('no-js', 'no-gsap', 'failed-images', 'failed-gallery', 'save-data', 'reduced'):
             context = browser.new_context(java_script_enabled=mode != 'no-js', reduced_motion='reduce' if mode == 'reduced' else 'no-preference', viewport={'width': 390, 'height': 844})
             if mode == 'save-data':
@@ -216,6 +243,9 @@ try:
                 assert fallback.locator('.agent-panel:visible').count() == 2
                 assert fallback.locator('#navigation').is_visible()
                 assert fallback.locator('.agent-examples').is_visible()
+                fallback.locator('#navigation a[href="#proyecto"]').click()
+                assert fallback.locator('.header').evaluate('(el)=>el.getBoundingClientRect().bottom<=0')
+                assert fallback.locator('#proyecto').evaluate('(el)=>el.getBoundingClientRect().top>=0')
             else:
                 fallback.locator('#tab-kibo').click()
                 assert fallback.locator('#panel-kibo').is_visible()
@@ -224,6 +254,8 @@ try:
                 fallback.keyboard.press('Escape')
                 fallback.wait_for_function('!document.querySelector("#agent-example").open')
             if mode in ('no-js', 'no-gsap', 'save-data', 'reduced'):
+                assert fallback.locator('.hero__messages > div').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).display!=="none"&&Number(getComputedStyle(el).opacity)>.95)')
+                assert fallback.locator('.hero__messages > div[aria-hidden="true"]').count() == 0
                 assert not any('atardecer' in url or 'illimani-noche' in url for url in extra_requests)
             context.close()
             print('PASS fallback:', mode)
