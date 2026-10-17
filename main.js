@@ -1,5 +1,7 @@
 'use strict';
 
+document.documentElement.classList.add('visual-ready');
+
 const toggle = document.querySelector('.menu-toggle');
 const navigation = document.querySelector('#navigation');
 if (toggle && navigation) {
@@ -205,40 +207,8 @@ document.querySelectorAll('.faq details').forEach(details => {
 const connection = navigator.connection;
 if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.test(connection?.effectiveType || '')) {
   gsap.registerPlugin(ScrollTrigger);
-  // Preserve semantic text while splitting only explicit editorial line breaks.
-  const headings = [...document.querySelectorAll('.purpose h2, .audience h2')];
-  headings.forEach(heading => {
-    const nodes = [...heading.childNodes];
-    heading.replaceChildren();
-    let line = document.createElement('span');
-    line.className = 'heading-line';
-    let mask = document.createElement('span');
-    mask.className = 'heading-mask';
-    mask.appendChild(line);
-    heading.appendChild(mask);
-    nodes.forEach(node => {
-      if (node.nodeName === 'BR') {
-        line = document.createElement('span');
-        line.className = 'heading-line';
-        mask = document.createElement('span');
-        mask.className = 'heading-mask';
-        mask.appendChild(line);
-        heading.appendChild(mask);
-      } else {
-        line.appendChild(node);
-      }
-    });
-  });
   gsap.matchMedia().add({ motion: '(prefers-reduced-motion: no-preference)', mobile: '(max-width: 760px)' }, context => {
     if (!context.conditions.motion) return;
-    headings.forEach(heading => {
-      const lines = heading.querySelectorAll('.heading-line');
-      if (!lines.length) return;
-      gsap.fromTo(lines, { y: heading.closest('.purpose') ? 24 : 16, opacity: .25 }, {
-        y: 0, opacity: 1, stagger: .07, duration: .5, ease: 'power1.out',
-        scrollTrigger: { trigger: heading, start: 'top 92%', once: true },
-      });
-    });
     gsap.from('.audience__situations article', {
       y: 10, stagger: .06, duration: .35, ease: 'power1.out',
       scrollTrigger: { trigger: '.audience__situations', start: 'top 92%', once: true },
@@ -298,6 +268,74 @@ if ('ResizeObserver' in window) {
   screenScenes.forEach(scene => [...scene.children].forEach(child => contentObserver.observe(child)));
 }
 queueScreenScenes();
+
+// The header overlays the photograph, then becomes opaque at the project.
+// Only transform/attributes change during scroll; no geometry refresh is needed.
+const header = document.querySelector('.header');
+const readingProgress = header.querySelector('.reading-progress');
+let readingFrame;
+function updateReadingPosition() {
+  readingFrame = 0;
+  const projectTop = document.querySelector('#proyecto').getBoundingClientRect().top;
+  header.classList.toggle('is-solid', projectTop <= header.offsetHeight + 16);
+  const extent = document.documentElement.scrollHeight - innerHeight;
+  const progress = extent > 0 ? Math.max(0, Math.min(1, scrollY / extent)) : 0;
+  readingProgress.querySelector('span').style.transform = `scaleX(${progress})`;
+  const value = String(Math.round(progress * 100));
+  if (readingProgress.getAttribute('aria-valuenow') !== value) readingProgress.setAttribute('aria-valuenow', value);
+}
+function queueReadingPosition() { if (!readingFrame) readingFrame = requestAnimationFrame(updateReadingPosition); }
+window.addEventListener('scroll', queueReadingPosition, { passive: true });
+window.addEventListener('resize', queueReadingPosition);
+window.addEventListener('load', queueReadingPosition, { once: true });
+window.addEventListener('ecohub:layout', queueReadingPosition);
+if ('ResizeObserver' in window) new ResizeObserver(queueReadingPosition).observe(document.body);
+queueReadingPosition();
+
+// Opt-in button travel only: never global smooth scrolling or wheel interception.
+let buttonTravel;
+function cancelButtonTravel() {
+  if (!buttonTravel) return;
+  cancelAnimationFrame(buttonTravel.frame);
+  buttonTravel.link.classList.remove('is-travelling');
+  buttonTravel = null;
+}
+['wheel', 'touchstart', 'pointerdown', 'keydown', 'resize', 'popstate'].forEach(type => window.addEventListener(type, cancelButtonTravel, { passive: true }));
+document.querySelectorAll('.hero__actions a[href^="#"]').forEach(link => {
+  link.addEventListener('click', event => {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const target = document.querySelector(link.getAttribute('href'));
+    if (!target) return;
+    event.preventDefault();
+    cancelButtonTravel();
+    const from = scrollY;
+    const destination = () => Math.max(0, Math.min(document.documentElement.scrollHeight - innerHeight, target.getBoundingClientRect().top + scrollY - header.offsetHeight - 16));
+    const to = destination();
+    const started = performance.now();
+    const duration = Math.min(850, 420 + Math.abs(to - from) * .045);
+    const travel = { link, frame: 0 };
+    buttonTravel = travel;
+    link.classList.add('is-travelling');
+    history.pushState(null, '', link.hash);
+    function step(now) {
+      if (buttonTravel !== travel) return;
+      const progress = Math.min(1, (now - started) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      scrollTo({ top: from + (to - from) * eased, behavior: 'instant' });
+      if (progress < 1) { travel.frame = requestAnimationFrame(step); return; }
+      scrollTo({ top: destination(), behavior: 'instant' });
+      cancelButtonTravel();
+      const hadTabindex = target.hasAttribute('tabindex');
+      if (!hadTabindex) {
+        target.tabIndex = -1;
+        target.addEventListener('blur', () => target.removeAttribute('tabindex'), { once: true });
+      }
+      target.focus({ preventScroll: true });
+    }
+    travel.frame = requestAnimationFrame(step);
+  });
+});
+matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', cancelButtonTravel);
 
 // A section-location underline, not an activity or availability indicator.
 if (navigation) {

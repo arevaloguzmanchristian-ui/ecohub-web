@@ -108,6 +108,7 @@ try:
 
         for progress in (0, .98, 0):
             page.evaluate('p => { const t = ScrollTrigger.getById("ecohub-hero"); scrollTo({top: t.start + (t.end-t.start)*p, behavior:"instant"}); }', progress)
+            page.wait_for_function('p=>Math.abs(Number(document.querySelector(".hero").dataset.progress)-p)<.002', arg=progress)
             selector = '.hero__community' if progress else '.hero__message'
             page.wait_for_function('selector => Number(getComputedStyle(document.querySelector(selector)).opacity) > .95', arg=selector)
             page.wait_for_function('() => {const t=ScrollTrigger.getById("ecohub-hero"); return Math.abs(t.animation.progress()-t.progress)<.001;}')
@@ -234,6 +235,7 @@ try:
             reflow.wait_for_function('document.querySelector(".territory-stack").classList.contains("is-layered")')
             reflow.evaluate('()=>{const nodes=[...document.querySelectorAll("p,li,h1,h2,h3,figcaption,a.button,button")].map(el=>[el,parseFloat(getComputedStyle(el).fontSize)]);nodes.forEach(([el,size])=>el.style.fontSize=`${size*2}px`)}')
             reflow.wait_for_function('!document.querySelector(".pin-spacer")&&!document.querySelector(".territory-stack.is-layered")&&document.querySelector(".hero.is-flow")')
+            reflow.wait_for_function('!document.querySelector(".sustainability__gallery.is-curtain")')
             assert reflow.evaluate('document.documentElement.scrollWidth<=innerWidth')
             assert reflow.locator('.purpose,.audience,.agents,.gallery-copy').evaluate_all('(els)=>els.every(el=>!["hidden","clip","scroll"].includes(getComputedStyle(el).overflowY))')
             assert reflow.locator('.chapter__copy').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).opacity==="1"&&el.scrollHeight<=el.clientHeight+1)')

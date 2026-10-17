@@ -135,7 +135,7 @@ if (window.gsap && window.ScrollTrigger) {
         const opening = gsap.timeline({
           defaults: { ease: 'none' },
           scrollTrigger: {
-            id: 'ecohub-hero', trigger: hero, start: () => `top top+=${headerHeight()}`,
+            id: 'ecohub-hero', trigger: hero, start: () => document.documentElement.classList.contains('visual-ready') ? 'top top' : `top top+=${headerHeight()}`,
             end: () => `+=${Math.round(heroPinned ? innerHeight * 1.25 : hero.querySelector('.hero__stage').offsetHeight * .6)}`,
             pin: heroPinned ? hero.querySelector('.hero__stage') : false,
             scrub: true, invalidateOnRefresh: true, onRefresh: refreshHero,

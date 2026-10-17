@@ -30,16 +30,22 @@ def capture(page, name):
 
 def check_hero(page):
     # Test actual coverage of the visible hero, not just image opacity off-screen.
-    assert page.evaluate('''() => {
+    state = page.evaluate('''() => {
       const hero=document.querySelector('.hero').getBoundingClientRect();
       const stage=document.querySelector('.hero__stage').getBoundingClientRect();
       const header=document.querySelector('.header').offsetHeight;
       const top=Math.max(header,hero.top), bottom=Math.min(innerHeight,hero.bottom);
-      if(bottom<=top+2) return true;
+      if(bottom<=top+2) return {ok:true};
       const base=document.querySelector('.hero__slide');
-      return stage.top<=top+2 && stage.bottom>=bottom-2 &&
-        getComputedStyle(base).opacity==='1' && getComputedStyle(base).clipPath==='none';
+      const trigger=window.ScrollTrigger?.getById('ecohub-hero');
+      return {ok:stage.top<=top+2 && stage.bottom>=bottom-2 &&
+        getComputedStyle(base).opacity==='1' && getComputedStyle(base).clipPath==='none',
+        scroll:scrollY,hero:hero.toJSON(),stage:stage.toJSON(),start:trigger?.start,end:trigger?.end,
+        pin:getComputedStyle(document.querySelector('.hero__stage')).position};
     }''')
+    if not state['ok']:
+        capture(page, f'failed-hero-{page.viewport_size["width"]}')
+    assert state['ok'], state
 
 
 try:
