@@ -6,7 +6,7 @@
 
 Web estática basada en [PRIOR, de RelaxKartikey / Entospark Studios](https://github.com/Relaxkartikey/prior-gsap-animation-portfolio-website-template). Documentación y créditos originales: [README.template.md](README.template.md).
 
-Para verla localmente, abre `index.html` o ejecuta `npx serve .`. Requiere conexión para cargar recursos externos.
+Para verla localmente con todos sus efectos, ejecuta `npx serve .` (los módulos requieren HTTP). Al abrir `index.html` directamente se conserva el contenido sin los efectos opcionales de Motion. Requiere conexión para cargar recursos externos como las fuentes.
 
 Este repositorio contiene solo la web pública, no las notas del equipo.
 
@@ -18,6 +18,7 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 - Catorce fotografías reales de contexto boliviano, sin repetirlas. Incluye una nueva imagen de tejedoras tacana en Tumupasa, La Paz, de N1ny4 t (CC BY-SA 4.0), con procedencia y licencia verificadas. Créditos en el pie y en `assets/bolivia/credits.json`. No representan actividades verificadas ni participantes de EcoHub.
 - Sin formulario ni métricas inventadas. Faltan los canales oficiales de inscripción y contacto, convocatorias y archivos oficiales de co-branding para su aplicación final.
 - Animación GSAP opcional; el contenido y la navegación funcionan sin la biblioteca. Respeta la preferencia de movimiento reducido.
+- Motion Mini 14.3.0 local (MIT): galería editorial escalonada, selección de agentes y apertura de ejemplos. Sin React ni nuevos pins; efectos cancelables que respetan movimiento reducido y ahorro de datos. Skiper UI es referencia visual, no dependencia instalada; Manus no está integrado.
 - Portada «Tus ideas. El futuro de Bolivia.» como galería fotográfica ligada al scroll: tres imágenes a superficie completa, fundidos y zoom/alejamiento, sin máscaras que encojan la última imagen. Sin tarjeta superpuesta, giros, panel azul ni reproducción automática. Texto y botón estables, independientes del zoom. Las imágenes esperan su carga y decodificación.
 - Las dos imágenes adicionales empiezan a cargar al recorrer la portada; sus versiones móviles suman aproximadamente 185 KB. Con movimiento reducido, ahorro de datos, 2G o sin JS/GSAP se mantiene una portada estática sin solicitarlas.
 - Portada con tres mensajes sincronizados: «Tus ideas. El futuro de Bolivia», «Una idea puede empezar contigo» y «Y crecer con otras personas». Capítulos con explicaciones completas y tres puntos por etapa: solo se fijan si todo cabe con tipografía legible; laptops bajas muestran flujo vertical. Móvil/tablet, ahorro de datos, 2G y movimiento reducido conservan contenido completo sin fijaciones.

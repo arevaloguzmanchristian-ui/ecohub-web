@@ -2,6 +2,14 @@
 
 ## Relato y sistema visual
 
+### Efectos con Motion (2026-10-17)
+
+Se mantiene HTML/CSS/JS, sin migración a React. `effects.js` importa Motion Mini 14.3.0 desde un módulo local autónomo (~13 KB sin compresión), con licencia MIT en `assets/vendor`. Añade entradas fotográficas/editoriales escalonadas a las tres piezas de sostenibilidad, transiciones de selección de agente y apertura suave del diálogo. Los cambios de agente sustituyen su transición GSAP anterior, no la duplican. No hay escala de texto, rebotes, giros ni cambios en la geometría de scroll.
+
+Las entradas son breves, con desplazamiento y opacidad, y dejan el contenido estable. No se oculta nada esperando a IntersectionObserver: si falla el módulo, la web sigue siendo legible y funcional. Cambios rápidos de agente, cierre del modal y activación de movimiento reducido cancelan y limpian las animaciones. Ahorro de datos omite los efectos. GSAP conserva la coreografía de scroll y CSS el sticky de territorio.
+
+Skiper UI se consultó como referencia visual para patrones de entrada; no se instalaron componentes React ni se copió código premium. Manus es un servicio externo, no una biblioteca de animaciones: no se conectó ni se enviaron archivos del proyecto. Se mantiene esa distinción para no presentar referencias como dependencias integradas.
+
 Concepto: **Desde nuestras ideas, crece el futuro de Bolivia.**
 
 Orden: portada → qué es EcoHub → aprender, desarrollar y conectar → público y puntos de partida → sostenibilidad práctica → Kibo y Hubito → comunidad y territorio → preguntas frecuentes → participación.

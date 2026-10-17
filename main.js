@@ -39,19 +39,6 @@ if (selector) {
   selector.setAttribute('role', 'tablist');
   agents.classList.add('is-interactive');
   const stage = agents.querySelector('.agent-panels');
-  let previewAnimation;
-  function clearPreviewStyles() {
-    figures.forEach(figure => {
-      figure.querySelector('img').style.removeProperty('opacity');
-      figure.querySelector('img').style.removeProperty('transform');
-    });
-    panels.forEach(panel => {
-      panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3, .agent-example-link').forEach(element => {
-        element.style.removeProperty('opacity');
-        element.style.removeProperty('transform');
-      });
-    });
-  }
   function reserveAgentHeight() {
     if (!stage.clientWidth) return;
     const measure = document.createElement('div');
@@ -74,8 +61,6 @@ if (selector) {
     if (window.ScrollTrigger) requestAnimationFrame(() => ScrollTrigger.refresh());
   }
   function selectAgent(tab, focus = false) {
-    previewAnimation?.kill();
-    clearPreviewStyles();
     tabs.forEach(item => {
       const selected = item === tab;
       item.setAttribute('aria-selected', String(selected));
@@ -92,13 +77,8 @@ if (selector) {
     panels.forEach(panel => {
       const selected = panel.dataset.agentPanel === tab.dataset.agent;
       panel.hidden = !selected;
-      if (selected && window.gsap && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        previewAnimation = gsap.timeline({ defaults: { ease: 'power1.out', clearProps: 'opacity,transform' } })
-          .fromTo(figures.find(figure => figure.dataset.agentFigure === tab.dataset.agent).querySelector('img'), { opacity: 0, scale: .96 }, { opacity: 1, scale: 1, duration: .28 }, 0)
-          .fromTo(panel.querySelectorAll('.agent-panel__copy > .eyebrow, .agent-panel__copy > h3'), { opacity: .5, y: 6 }, { opacity: 1, y: 0, duration: .25, stagger: .035 }, .04)
-          .fromTo(panel.querySelector('.agent-example-link'), { opacity: .7, y: 4 }, { opacity: 1, y: 0, duration: .22 }, .08);
-      }
     });
+    document.dispatchEvent(new CustomEvent('ecohub:agent', { detail: { agent: tab.dataset.agent } }));
     if (focus) tab.focus();
   }
   tabs.forEach((tab, index) => {
@@ -146,11 +126,6 @@ if (selector) {
   } else {
     window.addEventListener('resize', reserveAgentHeight);
   }
-  window.matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', event => {
-    if (!event.matches) return;
-    previewAnimation?.kill();
-    clearPreviewStyles();
-  });
 }
 
 // Native dialog provides top-layer isolation; examples remain anchor-linked
@@ -174,6 +149,7 @@ if (exampleDialog?.showModal && exampleArchive) {
       exampleDialog.querySelector('.example-content').replaceChildren(source.querySelector('.conversation').cloneNode(true));
       document.body.classList.add('modal-open');
       exampleDialog.showModal();
+      document.dispatchEvent(new Event('ecohub:example'));
       close.focus();
     });
   });
