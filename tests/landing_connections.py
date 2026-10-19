@@ -64,7 +64,9 @@ try:
             photo.focus()
             credit.locator('.image-credit__body').wait_for(state='visible')
             page.wait_for_function('document.querySelector(".purpose__main .image-credit").textContent.includes("Julia WM Bo")')
-            assert credit.locator('a').count() == 2
+            assert credit.locator('a').count() == 3
+            assert 'Adaptación WebP y encuadre para la web.' not in credit.inner_text()
+            assert credit.locator('a').first.get_attribute('href').startswith('assets/bolivia/credits.json#')
             page.keyboard.press('Escape')
             credit.locator('.image-credit__body').wait_for(state='hidden')
             page.locator('#territorio').evaluate('(el)=>el.scrollIntoView({block:"start",behavior:"instant"})')

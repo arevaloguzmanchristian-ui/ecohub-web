@@ -66,9 +66,16 @@
       const license = document.createElement('a');
       license.href = item.license_url;
       license.textContent = item.license;
-      const modifications = document.createElement('small');
-      modifications.textContent = item.illustration ? 'Silueta extraída y adaptada a WebP.' : 'Adaptación WebP y encuadre para la web.';
-      body.replaceChildren(document.createTextNode(item.illustration ? 'Ilustración: ' : 'Foto: '), author, document.createTextNode(' · '), license, modifications);
+      const details = document.createElement('a');
+      details.href = item.illustration ? 'assets/agents/concept-sources.json' : `assets/bolivia/credits.json#${file}`;
+      details.textContent = item.illustration ? 'Ilustración:' : 'Foto:';
+      details.setAttribute('aria-label', 'Detalles y procedencia de esta imagen');
+      body.replaceChildren(details, document.createTextNode(' '), author, document.createTextNode(' · '), license);
+      if (item.illustration) {
+        const modifications = document.createElement('small');
+        modifications.textContent = 'Silueta extraída y adaptada a WebP.';
+        body.appendChild(modifications);
+      }
     });
   }
   window.ecohubMedia = { setCredit };
