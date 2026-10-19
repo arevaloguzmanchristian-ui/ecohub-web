@@ -4,6 +4,8 @@
 
 Estas decisiones sustituyen las referencias anteriores a modales, avisos extensos y créditos en el pie:
 
+Refinamiento de créditos: se elimina por completo el icono/botón circular. La propia imagen permite mostrar los créditos mediante hover, foco o toque; Escape los cierra. El degradado inferior pasa del 96% al 65% de opacidad, con sombra tipográfica discreta para conservar legibilidad. Fuente, licencia y adaptación siguen enlazadas.
+
 - «Prerregistro» sustituye a «Descubre cómo participar». Su acceso al bloque final aparece en el encabezado cuando termina la portada y desaparece al entrar el bloque de prerregistro, también al retroceder. Se reserva el espacio del botón para no alterar la altura ni la geometría de los pins. El formulario externo no se modifica.
 - Menú, botones de portada y enlaces del footer comparten desplazamiento finito e interrumpible. Una nube decorativa de baja opacidad acompaña el viaje sin interceptar clics. Rueda, toque, teclado y resize cancelan el efecto; movimiento reducido conserva el salto nativo. Nunca se activa scroll suave global.
 - La propuesta tiene marco y escenario con anchura explícita, título y textos centrados y una cuadrícula fotográfica/textual equilibrada. El heading permanece en el pin. En flujo automático, las columnas se alinean arriba para evitar huecos al crecer el texto.

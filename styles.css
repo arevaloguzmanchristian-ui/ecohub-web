@@ -386,8 +386,7 @@ html:not(.visual-ready) .reading-progress { display:none; }
 .image-shell > img { position:relative; z-index:1; }
 .scene-photo__frame > img,.chapters__images > img { position:absolute; }
 .image-credit { position:absolute; inset:auto 0 0; z-index:5; color:var(--sand); pointer-events:none; }
-.image-credit__toggle { position:absolute; right:12px; bottom:12px; display:grid; place-items:center; width:44px; height:44px; border:1px solid rgb(255 255 255 / 45%); border-radius:50%; background:rgb(5 18 24 / 86%); color:var(--sand); font-size:18px; pointer-events:auto; }
-.image-credit__body { display:block; min-height:64px; padding:28px 64px 18px 20px; background:linear-gradient(transparent,rgb(5 18 24 / 96%) 24%); font-size:12px; line-height:1.65; opacity:0; visibility:hidden; transform:translateY(8px); pointer-events:none; transition:opacity .2s,transform .2s,visibility .2s; }
+.image-credit__body { display:block; min-height:56px; padding:28px 20px 16px; background:linear-gradient(transparent,rgb(5 18 24 / 65%) 30%); font-size:12px; line-height:1.65; text-shadow:0 1px 3px rgb(0 0 0 / 55%); opacity:0; visibility:hidden; transform:translateY(8px); pointer-events:none; transition:opacity .2s,transform .2s,visibility .2s; }
 .image-credit__body a { text-decoration:underline; text-underline-offset:3px; }
 .image-credit__body small { display:block; font-size:10px; color:var(--sand); }
 .image-shell:is(:hover,:focus-within) > .image-credit:not(.is-dismissed) .image-credit__body,.image-credit.is-open .image-credit__body { opacity:1; visibility:visible; transform:none; pointer-events:auto; }
@@ -395,6 +394,7 @@ html:not(.visual-ready) .reading-progress { display:none; }
 .hero__stage:hover > .image-credit:not(.is-dismissed) .image-credit__body,.territory__scene:hover > .image-credit:not(.is-dismissed) .image-credit__body { opacity:1; visibility:visible; transform:none; pointer-events:auto; }
 .registration > .image-credit { left:auto; max-width:440px; width:100%; }
 .image-credit:focus-within:not(.is-dismissed) .image-credit__body { opacity:1; visibility:visible; transform:none; pointer-events:auto; }
+.hero__stage:focus-within > .image-credit:not(.is-dismissed) .image-credit__body,.territory__scene:focus-within > .image-credit:not(.is-dismissed) .image-credit__body,.registration:focus-within > .image-credit:not(.is-dismissed) .image-credit__body { opacity:1; visibility:visible; transform:none; pointer-events:auto; }
 .media-loading::before { content:''; position:absolute; inset:0; z-index:0; border-radius:inherit; background:linear-gradient(110deg,rgb(114 197 148 / 18%) 20%,rgb(237 234 225 / 45%) 45%,rgb(114 197 148 / 18%) 70%); background-size:220% 100%; animation:skeleton-shimmer 1.5s linear infinite; animation-play-state:var(--skeleton-play,paused); }
 .media-loading > img { opacity:0; }
 .agent-figure { position:relative; }

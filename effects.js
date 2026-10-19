@@ -50,6 +50,10 @@ titleStyles.forEach((style, selector) => {
     const semantic = title.cloneNode(true);
     semantic.querySelectorAll('br').forEach(br => br.replaceWith(' '));
     title.setAttribute('aria-label', (title.innerText || semantic.textContent).replace(/\s+/g, ' ').trim());
+    if (title.matches('.hero__headline')) {
+      title.setAttribute('role', 'heading');
+      title.setAttribute('aria-level', '2');
+    }
     title.dataset.letterEffect = style;
     const walker = document.createTreeWalker(title, NodeFilter.SHOW_TEXT);
     const nodes = [];

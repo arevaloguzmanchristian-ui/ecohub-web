@@ -59,11 +59,12 @@ try:
 
             page.locator('#proyecto').evaluate('(el)=>el.scrollIntoView({block:"start",behavior:"instant"})')
             credit = page.locator('.purpose__main .image-credit')
-            credit.locator('button').focus()
+            photo = page.locator('.purpose__main .scene-photo__frame')
+            assert credit.locator('button').count() == 0
+            photo.focus()
             credit.locator('.image-credit__body').wait_for(state='visible')
             page.wait_for_function('document.querySelector(".purpose__main .image-credit").textContent.includes("Julia WM Bo")')
             assert credit.locator('a').count() == 2
-            credit.locator('button').click()
             page.keyboard.press('Escape')
             credit.locator('.image-credit__body').wait_for(state='hidden')
             page.locator('#territorio').evaluate('(el)=>el.scrollIntoView({block:"start",behavior:"instant"})')
@@ -103,10 +104,10 @@ try:
         failed.close()
         touch = browser.new_page(viewport={'width': 390, 'height': 844}, is_mobile=True, has_touch=True)
         touch.goto(base + '#sostenibilidad', wait_until='networkidle')
-        toggle = touch.locator('.gallery-piece--ceramic .image-credit__toggle')
-        toggle.tap()
+        photo = touch.locator('.gallery-piece--ceramic .image-shell')
+        photo.tap(position={'x': 20, 'y': 20})
         touch.locator('.gallery-piece--ceramic .image-credit__body').wait_for(state='visible')
-        toggle.tap()
+        photo.tap(position={'x': 20, 'y': 20})
         touch.locator('.gallery-piece--ceramic .image-credit__body').wait_for(state='hidden')
         touch.close()
         assert not errors, errors

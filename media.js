@@ -19,44 +19,35 @@
     if (!control) {
       control = document.createElement('div');
       control.className = 'image-credit';
-      const toggle = document.createElement('button');
-      toggle.type = 'button';
-      toggle.className = 'image-credit__toggle';
-      toggle.textContent = 'ⓘ';
-      toggle.setAttribute('aria-label', 'Créditos de esta imagen');
-      toggle.setAttribute('aria-expanded', 'false');
       const body = document.createElement('div');
       body.className = 'image-credit__body';
       body.id = `image-credit-${++creditId}`;
-      toggle.setAttribute('aria-controls', body.id);
-      control.append(toggle, body);
+      control.appendChild(body);
       host.appendChild(control);
-      toggle.addEventListener('click', () => {
+      if (!host.hasAttribute('tabindex')) host.tabIndex = 0;
+      host.setAttribute('aria-describedby', body.id);
+      host.addEventListener('click', event => {
+        if (event.target.closest('a,button,input,summary')) return;
         const open = !control.classList.contains('is-open');
         control.classList.toggle('is-open', open);
         control.classList.toggle('is-dismissed', !open);
-        toggle.setAttribute('aria-expanded', String(open));
       });
-      control.addEventListener('keydown', event => {
+      host.addEventListener('keydown', event => {
         if (event.key !== 'Escape') return;
         control.classList.remove('is-open');
         control.classList.add('is-dismissed');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.focus({ preventScroll: true });
+        host.focus({ preventScroll: true });
       });
       host.addEventListener('pointerleave', () => {
         if (host.contains(document.activeElement)) return;
         control.classList.remove('is-dismissed', 'is-open');
-        toggle.setAttribute('aria-expanded', 'false');
       });
-      control.addEventListener('focusout', event => {
-        if (control.contains(event.relatedTarget)) return;
+      host.addEventListener('focusout', event => {
+        if (host.contains(event.relatedTarget)) return;
         control.classList.remove('is-dismissed', 'is-open');
-        toggle.setAttribute('aria-expanded', 'false');
       });
     }
     control.classList.remove('is-open', 'is-dismissed');
-    control.querySelector('button').setAttribute('aria-expanded', 'false');
     const body = control.querySelector('.image-credit__body');
     const fallback = document.createElement('a');
     fallback.href = 'assets/bolivia/credits.json';
