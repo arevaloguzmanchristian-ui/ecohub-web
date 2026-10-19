@@ -2,6 +2,8 @@
 
 ## Actualización de interfaz · 2026-10-19
 
+Corrección de nombres y diferenciación: los nombres públicos son **Pablito** y **Luca**, no Kibo/Hubito. Pablito conserva «Amigo» (guiño, sudadera verde y pulgar arriba, respaldo verde); Luca pasa a «Analítico» (gafas, chaleco oscuro y portátil, respaldo azul tenue). La diferencia se obtiene de las poses originales de las láminas, sin alterar rasgos faciales ni inventar anatomía. Selector, nombres del chat, textos y alternativas de imagen están actualizados. Las claves internas antiguas se mantienen solo por compatibilidad técnica.
+
 Agentes, segunda versión conceptual: se sustituyen los exploradores chibi por retratos humanos ilustrados de `pablito (2).png` («Amigo», Kibo) y `luca (2).png` («Mentor», Hubito). Se extraen bustos individuales, con transparencia y respaldo verde translúcido; no se generan anatomía ni cuerpo completo. Nuevos nombres de archivo `*-v2.webp` para evitar caché de los anteriores. Se conservan roles, tamaño menor de Kibo, selector y conversaciones inline. Los archivos previos permanecen archivados. Detalles y hashes vigentes en `assets/agents/concept-sources.json`.
 
 Estas decisiones sustituyen las referencias anteriores a modales, avisos extensos y créditos en el pie:

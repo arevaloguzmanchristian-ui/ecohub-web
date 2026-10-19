@@ -1,30 +1,34 @@
 {
   "updated": "2026-10-19",
-  "version": 2,
+  "version": 3,
   "rights": "User-supplied concept artwork for this website. Author and redistribution license not specified; no Creative Commons license inferred.",
-  "processing": "Individual illustrated human busts extracted using GrabCut segmentation and edge feathering. Original source portrait boundaries retained; no missing anatomy or full bodies generated. Conventional Lanczos resampling on a transparent 640x800 canvas with a subtle translucent green backing. No generative redraw or recolouring. Small versions are 320x400.",
+  "processing": "Individual illustrated human busts extracted using GrabCut segmentation and edge feathering. Original portrait boundaries retained; no missing anatomy or full bodies generated. Conventional Lanczos resampling on transparent 640x800 canvases. Pablito has a subtle green backing; Luca has a subtle blue backing. No generative redraw or recolouring of the characters. Small versions are 320x400.",
   "agents": [
     {
-      "public_name": "Kibo",
+      "public_name": "Pablito",
+      "legacy_internal_key": "kibo",
       "source_character": "Pablito",
       "source_file": "pablito (2).png",
       "source_dimensions": [1122, 1402],
       "source_sha256": "842e629a98f580b96700e4bbbea3112b18e03bea3c6e2b44b1e0f353e2369c9f",
       "pose": "Upper-left Amigo portrait, smiling and giving a thumbs-up",
       "crop_xyxy": [10, 185, 390, 579],
-      "outputs": ["kibo-pablito-v2.webp", "kibo-pablito-v2-small.webp"],
-      "previous_outputs_retained": ["kibo-pablito.webp", "kibo-pablito-small.webp", "kibo.webp", "kibo-small.webp"]
+      "visual_characteristics": ["Green hoodie and backpack", "Winking smile", "Thumbs-up", "Green translucent backing"],
+      "outputs": ["pablito.webp", "pablito-small.webp"],
+      "previous_outputs_retained": ["kibo-pablito-v2.webp", "kibo-pablito-v2-small.webp", "kibo-pablito.webp", "kibo-pablito-small.webp", "kibo.webp", "kibo-small.webp"]
     },
     {
-      "public_name": "Hubito",
+      "public_name": "Luca",
+      "legacy_internal_key": "hubito",
       "source_character": "Luca",
       "source_file": "luca (2).png",
       "source_dimensions": [1122, 1402],
       "source_sha256": "07dd6e77c7e615ec29ac24fc0a45e81eba0526ecc1a2f0f857c71801254acd33",
-      "pose": "Lower-centre Mentor portrait, light jacket and green scarf, explaining with open hands",
-      "crop_xyxy": [407, 718, 748, 1080],
-      "outputs": ["hubito-luca-v2.webp", "hubito-luca-v2-small.webp"],
-      "previous_outputs_retained": ["hubito-luca.webp", "hubito-luca-small.webp", "hubito.webp", "hubito-small.webp"]
+      "pose": "Lower-right Analitico portrait, glasses and dark vest, reflecting in front of a laptop",
+      "crop_xyxy": [745, 718, 1118, 1075],
+      "visual_characteristics": ["Glasses", "Dark vest and green shirt", "Thoughtful posture with laptop", "Blue translucent backing"],
+      "outputs": ["luca.webp", "luca-small.webp"],
+      "previous_outputs_retained": ["hubito-luca-v2.webp", "hubito-luca-v2-small.webp", "hubito-luca.webp", "hubito-luca-small.webp", "hubito.webp", "hubito-small.webp"]
     }
   ]
 }

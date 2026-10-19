@@ -74,6 +74,10 @@ try:
             stage_height = page.locator('.agent-panels').bounding_box()['height']
             for name in ('kibo', 'hubito'):
                 page.locator(f'#tab-{name}').click()
+                public_name = 'Pablito' if name == 'kibo' else 'Luca'
+                assert page.locator(f'#tab-{name}').inner_text() == public_name
+                assert page.locator(f'#panel-{name} .agent-chat__heading strong').inner_text() == public_name
+                assert page.locator(f'[data-agent-figure="{name}"] img').get_attribute('alt').startswith(public_name + ',')
                 assert page.locator(f'#panel-{name}').is_visible()
                 assert page.locator('[role="tabpanel"]:visible').count() == 1
                 assert abs(page.locator('.agent-panels').bounding_box()['height'] - stage_height) < 1
@@ -94,9 +98,12 @@ try:
             page.keyboard.press('Home')
             assert page.locator('#panel-kibo').is_visible()
             page.wait_for_function('[...document.querySelectorAll(".agent-lineup img")].every(el=>el.naturalWidth>0)')
-            assert page.locator('.agent-lineup img').evaluate_all('(els)=>els.every(el=>/hubito|kibo/.test(el.currentSrc))')
-            assert page.locator('[data-agent-figure="kibo"] img').get_attribute('src') == 'assets/agents/kibo-pablito-v2.webp'
-            assert page.locator('[data-agent-figure="hubito"] img').get_attribute('src') == 'assets/agents/hubito-luca-v2.webp'
+            assert page.locator('.agent-lineup img').evaluate_all('(els)=>els.every(el=>/pablito|luca/.test(el.currentSrc))')
+            assert page.locator('[data-agent-figure="kibo"] img').get_attribute('src') == 'assets/agents/pablito.webp'
+            assert page.locator('[data-agent-figure="hubito"] img').get_attribute('src') == 'assets/agents/luca.webp'
+            assert page.locator('#tab-kibo').inner_text() == 'Pablito'
+            assert page.locator('#tab-hubito').inner_text() == 'Luca'
+            assert 'Kibo' not in page.locator('#agentes').inner_text() and 'Hubito' not in page.locator('#agentes').inner_text()
             assert page.locator('.agent-lineup img').evaluate_all('''(els)=>els.every(el=>{
                 const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
                 const context=canvas.getContext('2d');context.drawImage(el,0,0);

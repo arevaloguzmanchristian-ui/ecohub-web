@@ -29,6 +29,9 @@ def capture(page, name):
 
 
 def check_hero(page):
+    # A 16 ms timer can expire before the next native scroll/render frame.
+    # Observe a completed frame, without forcing ScrollTrigger.update/refresh.
+    page.evaluate('()=>new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)))')
     # Test actual coverage of the visible hero, not just image opacity off-screen.
     state = page.evaluate('''() => {
       const hero=document.querySelector('.hero').getBoundingClientRect();

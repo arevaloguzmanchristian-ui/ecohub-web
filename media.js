@@ -55,7 +55,7 @@
     body.replaceChildren(fallback);
     credits.then(items => {
       if (!host.isConnected || host.dataset.creditFile !== file) return;
-      const item = /^(kibo-pablito|hubito-luca)/.test(file) ? {
+      const item = /^(pablito|luca|kibo-pablito|hubito-luca)/.test(file) ? {
         author: 'Concepto facilitado por el equipo', source: 'assets/agents/README.md',
         license: 'Procedencia', license_url: 'assets/agents/concept-sources.json', illustration: true,
       } : items.get(file);
