@@ -44,7 +44,7 @@ try:
             assert page.locator('.hero .button').count() == 2
             assert page.locator('.hero a[href="#proyecto"]').count() == 1
             assert 'Seguir explorando' not in page.locator('.hero').inner_text()
-            assert page.locator('.registration__information .button').get_attribute('href') == 'https://ecohub.mittril.com/'
+            assert page.locator('.registration__information .button').get_attribute('href') == 'https://ecohub.mittril.com/form/'
             assert 'prerregistro en el sistema' in page.locator('.registration__information').inner_text().lower()
             assert 'no confirma la participación' in page.locator('.registration__information').inner_text()
             assert 'El registro todavía no está disponible.' not in page.locator('.registration__information').inner_text()

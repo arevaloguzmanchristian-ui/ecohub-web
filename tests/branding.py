@@ -53,9 +53,9 @@ try:
             page.close()
             print('PASS branding, constant header geometry, centered proposal and carousel:', width)
         live = browser.new_page(viewport={'width':390,'height':844})
-        live.goto('https://ecohub.mittril.com/?branding-check=20261019', wait_until='networkidle')
+        live.goto('https://ecohub.mittril.com/form/?branding-check=20261019', wait_until='networkidle')
         logo = live.locator('.marca img')
-        assert logo.get_attribute('src') == 'assets/ecohub-ue-02.webp'
+        assert logo.get_attribute('src') == '/assets/ecohub-ue-02.webp'
         assert logo.evaluate('(el)=>el.complete&&el.naturalWidth===1684')
         assert live.evaluate('document.documentElement.scrollWidth<=innerWidth')
         assert live.locator('script[src*="pablito-chat"]').count() == 1

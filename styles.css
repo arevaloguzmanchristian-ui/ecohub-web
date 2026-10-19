@@ -42,6 +42,10 @@ html:not(.visual-ready) .reading-progress { display:none; }
 .header:is(.is-solid,:has(.navigation.is-open)) > .brand .brand__primary { opacity:1; }
 .header:is(.is-solid,:has(.navigation.is-open)) > .brand .brand__cobrand { opacity:0; }
 .navigation { display:flex; align-items:center; gap:clamp(20px,3vw,42px); padding-right:24px; }
+@media(min-width:761px) {
+  .header > .navigation { margin-left:auto; padding-right:0; }
+  .header__action-slot:has(.header__preregister[hidden]) { display:none; }
+}
 .navigation a { position:relative; padding:14px 0; font-size:12px; font-weight:500; }
 .navigation a::after { content:''; position:absolute; bottom:5px; left:0; right:0; height:2px; background:currentColor; transform:scaleX(0); transform-origin:left; transition:transform .2s; }
 .navigation a:hover::after,.navigation a[aria-current="location"]::after { transform:scaleX(1); }
