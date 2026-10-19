@@ -45,7 +45,7 @@ try:
                 else:
                     assert page.locator('.header__preregister').is_visible()
                 if actual == 'propuesta':
-                    assert page.locator('#chapters-title').evaluate('(el)=>{const r=el.getBoundingClientRect(),f=document.querySelector(".chapters__frame").getBoundingClientRect();return Math.abs((r.left+r.right-f.left-f.right)/2)<2&&getComputedStyle(el).justifyContent==="center"||innerWidth<=760}')
+                    assert page.locator('#chapters-title').evaluate('(el)=>{const r=el.getBoundingClientRect(),f=document.querySelector(".chapters__frame").getBoundingClientRect();return Math.abs((r.left+r.right-f.left-f.right)/2)<2&&["center","space-evenly"].includes(getComputedStyle(el).justifyContent)}')
                 if actual == 'agentes':
                     for name in ('kibo', 'hubito'):
                         page.locator('#tab-' + name).click()
@@ -64,9 +64,9 @@ try:
             photo.focus()
             credit.locator('.image-credit__body').wait_for(state='visible')
             page.wait_for_function('document.querySelector(".purpose__main .image-credit").textContent.includes("Julia WM Bo")')
-            assert credit.locator('a').count() == 3
+            assert credit.locator('a').count() == 0
             assert 'Adaptación WebP y encuadre para la web.' not in credit.inner_text()
-            assert credit.locator('a').first.get_attribute('href').startswith('assets/bolivia/credits.json#')
+            assert 'CC BY-SA 4.0' in credit.inner_text()
             page.keyboard.press('Escape')
             credit.locator('.image-credit__body').wait_for(state='hidden')
             page.locator('#territorio').evaluate('(el)=>el.scrollIntoView({block:"start",behavior:"instant"})')

@@ -127,3 +127,11 @@ Se reprodujo antes de editar: con `scroll-behavior: smooth` global, un `ScrollTr
 Se aisló comparando el mismo refresco con scroll global `smooth` y `auto`. La corrección usa scroll nativo inmediato para que la medición/restauración del pin sea síncrona, y elimina los refrescos globales innecesarios por carga de imágenes de la galería. No se cambia el fondo ni el orden de capas para esconder el hueco. Se mantienen los refrescos necesarios para cambios reales de geometría.
 
 `tests/scroll_regression.py` comprueba cobertura geométrica real de la portada, no solo opacidad, incluyendo refresh forzado a 500 y 2200 px. Incluye carga retenida de las dos fotos y decodificación retrasada del Illimani: la anterior permanece visible hasta estar lista. Verificado en Chromium a 1440×900, 1366×768, 1366×650, 1024×600, 390×844 y 320×740. Ejecutar las pruebas secuencialmente, no en paralelo.
+# Actualización de identidad institucional · 19 octubre 2026
+
+- Se incorpora el co-branding oficial UE-02 completo a la cabecera sobre la portada; al entrar en el proyecto se muestra nuevamente el logo habitual. Ambas imágenes comparten una caja estable para no alterar la geometría de ScrollTrigger. El menú móvil abierto usa el logo habitual.
+- La propuesta reparte Aprende / Desarrolla / Conecta a lo ancho de su encabezado y conserva las explicaciones centradas y el pin medido de los tres capítulos.
+- Los créditos superpuestos son ahora texto plano, por petición del equipo. Autoría y licencia permanecen visibles al interactuar con la imagen; enlaces completos de procedencia y licencia se conservan en `assets/bolivia/credits.json`.
+- Nueva franja de siete organizaciones sobre el footer: AHK, ASCAE, Barnfonden, CAINCO El Alto, Diaconía, Educo y Misión Alianza. Carrusel manual sin avance automático. Fuentes y transformaciones en `assets/branding/README.md`.
+- El frontend de prerregistro separado recibió únicamente el logo UE-02 (src, alt y dimensiones intrínsecas de su imagen de cabecera); se mantienen Pablito y todo el formulario. Copia previa y comprobante local en `AppData/Local/Temp/opencode/ecohub-form-avatar/cobrand-backup/`.
+- Pruebas específicas: `python tests/branding.py`, además de las suites de navegador y scroll. Revisión de capturas de portada, propuesta y franja institucional en escritorio/móvil.

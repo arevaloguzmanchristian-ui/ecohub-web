@@ -49,9 +49,8 @@
     }
     control.classList.remove('is-open', 'is-dismissed');
     const body = control.querySelector('.image-credit__body');
-    const fallback = document.createElement('a');
-    fallback.href = 'assets/bolivia/credits.json';
-    fallback.textContent = 'Fuente y licencia de la imagen';
+    const fallback = document.createElement('span');
+    fallback.textContent = 'Crédito de imagen';
     body.replaceChildren(fallback);
     credits.then(items => {
       if (!host.isConnected || host.dataset.creditFile !== file) return;
@@ -60,28 +59,13 @@
         license: 'Procedencia', license_url: 'assets/agents/concept-sources.json', illustration: true,
       } : items.get(file);
       if (!item) return;
-      const author = document.createElement('a');
-      author.href = item.source;
-      author.textContent = item.author;
-      const license = document.createElement('a');
-      license.href = item.license_url;
-      license.textContent = item.license;
-      const details = document.createElement('a');
-      details.href = item.illustration ? 'assets/agents/concept-sources.json' : `assets/bolivia/credits.json#${file}`;
-      details.textContent = item.illustration ? 'Ilustración:' : 'Foto:';
-      details.setAttribute('aria-label', 'Detalles y procedencia de esta imagen');
-      body.replaceChildren(details, document.createTextNode(' '), author, document.createTextNode(' · '), license);
-      if (item.illustration) {
-        const modifications = document.createElement('small');
-        modifications.textContent = 'Silueta extraída y adaptada a WebP.';
-        body.appendChild(modifications);
-      }
+      body.textContent = item.illustration ? 'Ilustración: concepto facilitado por el equipo' : `Foto: ${item.author} · ${item.license}`;
     });
   }
   window.ecohubMedia = { setCredit };
 
   function enhanceImage(image) {
-    if (handled.has(image) || image.closest('.brand,.agent-measure')) return;
+    if (handled.has(image) || image.closest('.brand,.agent-measure,.partners')) return;
     handled.add(image);
     let host = image.parentElement;
     const isHero = !!image.closest('.hero__slide');

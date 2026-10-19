@@ -12,11 +12,13 @@ if (toggle && navigation) {
     // Native anchor navigation runs before ResizeObserver's next delivery.
     // Commit the closed height now, not the expanded menu's scroll padding.
     document.documentElement.style.setProperty('--header-offset', `${toggle.closest('.header').offsetHeight}px`);
+    queueReadingPosition();
   };
   toggle.addEventListener('click', () => {
     const open = toggle.getAttribute('aria-expanded') !== 'true';
     toggle.setAttribute('aria-expanded', String(open));
     navigation.classList.toggle('is-open', open);
+    queueReadingPosition();
   });
   navigation.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
   document.addEventListener('keydown', event => {
@@ -243,7 +245,11 @@ let readingFrame;
 function updateReadingPosition() {
   readingFrame = 0;
   const projectTop = document.querySelector('#proyecto').getBoundingClientRect().top;
-  header.classList.toggle('is-solid', projectTop <= header.offsetHeight + 16);
+  header.classList.toggle('is-solid', projectTop <= header.offsetHeight + 18);
+  const coBrandVisible = !header.classList.contains('is-solid') && !navigation.classList.contains('is-open');
+  header.querySelector('.brand__cobrand').setAttribute('aria-hidden', String(!coBrandVisible));
+  header.querySelector('.brand__primary').setAttribute('aria-hidden', String(coBrandVisible));
+  header.querySelector('.brand').setAttribute('aria-label', coBrandVisible ? 'Bolivia EcoHub, financiado por la Unión Europea — Inicio' : 'Bolivia EcoHub — Inicio');
   const heroBottom = document.querySelector('.hero').getBoundingClientRect().bottom;
   const registrationTop = document.querySelector('#registro').getBoundingClientRect().top;
   const showPreregister = heroBottom <= header.offsetHeight + 18 && registrationTop >= innerHeight;
@@ -316,6 +322,26 @@ document.querySelectorAll('.hero__actions a[href^="#"], #navigation a[href^="#"]
   });
 });
 matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', cancelButtonTravel);
+
+// A user-controlled horizontal logo carousel, never an automatic ticker.
+const partnerTrack = document.querySelector('.partners__track');
+if (partnerTrack) {
+  document.querySelector('.partners__controls').hidden = false;
+  function movePartners(direction) {
+    const max = partnerTrack.scrollWidth - partnerTrack.clientWidth;
+    const step = Math.max(partnerTrack.firstElementChild.offsetWidth + 20, partnerTrack.clientWidth * .7);
+    let left = partnerTrack.scrollLeft + direction * step;
+    if (direction > 0 && partnerTrack.scrollLeft >= max - 2) left = 0;
+    if (direction < 0 && partnerTrack.scrollLeft <= 2) left = max;
+    partnerTrack.scrollTo({ left, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  }
+  document.querySelectorAll('[data-partner-direction]').forEach(button => button.addEventListener('click', () => movePartners(Number(button.dataset.partnerDirection))));
+  partnerTrack.addEventListener('keydown', event => {
+    if (event.target !== partnerTrack || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    movePartners(event.key === 'ArrowRight' ? 1 : -1);
+  });
+}
 
 // A section-location underline, not an activity or availability indicator.
 if (navigation) {
