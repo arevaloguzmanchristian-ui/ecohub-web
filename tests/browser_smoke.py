@@ -95,8 +95,8 @@ try:
             assert page.locator('#panel-kibo').is_visible()
             page.wait_for_function('[...document.querySelectorAll(".agent-lineup img")].every(el=>el.naturalWidth>0)')
             assert page.locator('.agent-lineup img').evaluate_all('(els)=>els.every(el=>/hubito|kibo/.test(el.currentSrc))')
-            assert page.locator('[data-agent-figure="kibo"] img').get_attribute('src') == 'assets/agents/kibo-pablito.webp'
-            assert page.locator('[data-agent-figure="hubito"] img').get_attribute('src') == 'assets/agents/hubito-luca.webp'
+            assert page.locator('[data-agent-figure="kibo"] img').get_attribute('src') == 'assets/agents/kibo-pablito-v2.webp'
+            assert page.locator('[data-agent-figure="hubito"] img').get_attribute('src') == 'assets/agents/hubito-luca-v2.webp'
             assert page.locator('.agent-lineup img').evaluate_all('''(els)=>els.every(el=>{
                 const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
                 const context=canvas.getContext('2d');context.drawImage(el,0,0);
