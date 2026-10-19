@@ -302,6 +302,7 @@ html:not(.visual-ready) .reading-progress { display:none; }
 .registration__information h3 { font-size:18px; letter-spacing:-.02em; margin-bottom:12px; }
 .registration__information p { font-size:14px; color:var(--ink); }
 .registration__information .eyebrow { margin-bottom:14px; font-size:11px; }
+.registration__information .button { margin-top:18px; }
 .registration__copy > p.registration__motto { font-size:24px; line-height:1.5; }
 .faq { text-align:center; }
 .faq h2 { margin-bottom:36px; }
