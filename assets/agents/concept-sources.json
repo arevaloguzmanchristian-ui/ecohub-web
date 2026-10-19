@@ -1,0 +1,27 @@
+{
+  "updated": "2026-10-19",
+  "rights": "User-supplied concept artwork for this website. Author and redistribution license not specified; no Creative Commons license inferred.",
+  "processing": "Single complete pose extracted using GrabCut segmentation, edge feathering, conventional Lanczos resampling, transparent 640x800 canvas with a soft contact shadow. No generative redraw or recolouring. Small versions are 320x400.",
+  "agents": [
+    {
+      "public_name": "Kibo",
+      "source_character": "Pablito",
+      "source_file": "pablito.png",
+      "source_dimensions": [1448, 1086],
+      "source_sha256": "dbf64d2f2706cd3945f8bd0c85e7ad4c209f1d183b9fe58a9944b2e56d82f0a1",
+      "pose": "Upper-left greeting pose",
+      "crop_xyxy": [50, 115, 500, 505],
+      "outputs": ["kibo-pablito.webp", "kibo-pablito-small.webp"]
+    },
+    {
+      "public_name": "Hubito",
+      "source_character": "Luca",
+      "source_file": "luca.png",
+      "source_dimensions": [1536, 1024],
+      "source_sha256": "d141f9d63d58a3b86dfeed35b45fd1ab40beb4006a3901ab7479087e878c33b9",
+      "pose": "Lower-left full-body El guia concept",
+      "crop_xyxy": [12, 574, 303, 915],
+      "outputs": ["hubito-luca.webp", "hubito-luca-small.webp"]
+    }
+  ]
+}

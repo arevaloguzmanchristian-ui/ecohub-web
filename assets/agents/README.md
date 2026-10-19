@@ -2,8 +2,11 @@
 
 Kibo y Hubito sustituyen los personajes provisionales Nexo, Impulso y Brújula en la landing.
 
-- Fuentes facilitadas por el usuario: `Downloads/kibo.png` (1254×1254, fondo original) y `Downloads/hubito.png` (1122×1402, transparencia original).
-- Derivados web: WebP de 800 y 400 px de ancho, sin recorte, redibujo ni cambio de colores. Se conserva la transparencia de Hubito y el fondo de Kibo.
+- Actualización 2026-10-19: el usuario asignó **Pablito → Kibo** y **Luca → Hubito**. Se mantienen los nombres públicos Kibo y Hubito y sus roles actuales.
+- Fuentes nuevas: `Downloads/pablito.png` (1448×1086, lámina con seis poses) y `Downloads/luca.png` (1536×1024, lámina de conceptos). De Pablito se seleccionó el saludo superior izquierdo; de Luca, la pose completa inferior izquierda «El guía». Las otras láminas de Luca se revisaron, pero no se usan ni se mezclan estilos.
+- Derivados activos: `kibo-pablito.webp`, `hubito-luca.webp` (640×800) y variantes `-small.webp` (320×400), con transparencia. Se extrajo cada silueta mediante segmentación del fondo, se limpiaron contornos y se añadió una sombra de apoyo suave sobre un lienzo común. No se redibujan personajes, se cambian colores ni se generan anatomía o detalles nuevos. Se excluyen títulos, fichas, otras poses y paisajes conceptuales de las láminas. La ampliación es un remuestreo convencional, no una generación de mayor detalle; la nitidez está limitada por las poses incluidas en las fuentes.
+- Procedencia, SHA-256 de los originales y coordenadas de extracción: `concept-sources.json`.
+- Los derivados antiguos `kibo.webp` / `hubito.webp` y sus variantes pequeñas permanecen conservados, pero ya no se solicitan en la landing. Procedían de `Downloads/kibo.png` (1254×1254) y `Downloads/hubito.png` (1122×1402).
 - No se ha facilitado autoría o licencia específica. No se les asigna una licencia Creative Commons ni se presentan como recursos oficiales del manual de identidad. El equipo debe confirmar los derechos de los originales para cualquier reutilización fuera de esta web.
 - Roles actualizados según el equipo, sustituyendo la distribución anterior: **Kibo** es el más pequeño, cercano a la persona individual, para orientarse sobre EcoHub y ordenar los primeros pasos. **Hubito** se dirige a empresas y emprendimientos: organización, comunicación y desarrollo del negocio. Son enfoques de una vista previa, no capacidades operativas ya conectadas.
 - Se muestra únicamente el personaje seleccionado; Kibo conserva un tamaño de presentación menor. Sus ejemplos se abren manualmente en un modal accesible. Sin JavaScript, los perfiles y ejemplos permanecen como contenido del documento.

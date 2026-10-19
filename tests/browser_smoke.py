@@ -106,6 +106,13 @@ try:
             assert page.locator('#panel-kibo').is_visible()
             page.wait_for_function('[...document.querySelectorAll(".agent-lineup img")].every(el=>el.naturalWidth>0)')
             assert page.locator('.agent-lineup img').evaluate_all('(els)=>els.every(el=>/hubito|kibo/.test(el.currentSrc))')
+            assert page.locator('[data-agent-figure="kibo"] img').get_attribute('src') == 'assets/agents/kibo-pablito.webp'
+            assert page.locator('[data-agent-figure="hubito"] img').get_attribute('src') == 'assets/agents/hubito-luca.webp'
+            assert page.locator('.agent-lineup img').evaluate_all('''(els)=>els.every(el=>{
+                const canvas=document.createElement('canvas');canvas.width=canvas.height=1;
+                const context=canvas.getContext('2d');context.drawImage(el,0,0);
+                return context.getImageData(0,0,1,1).data[3]===0;
+            })''')
             assert page.locator('input, textarea').count() == 0
             assert page.locator('figure, img').evaluate_all('(nodes) => nodes.every(el => { const m = new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.b) < .0001 && Math.abs(m.c) < .0001; })')
             print(f'PASS {width}px: layout, working buttons, single agent, modal focus and keyboard')
