@@ -100,6 +100,7 @@ if (window.gsap && window.ScrollTrigger) {
       ];
       photos.forEach((image, index) => { image.style.transform = `scale(${galleryMotion ? zooms[index] : 1})`; });
       if (currentPhoto !== index) {
+        window.ecohubMedia?.setCredit(hero.querySelector('.hero__stage'), photos[index].getAttribute('src').split('/').pop());
         heroCount.textContent = `0${index + 1} / 03`;
         heroLabel.textContent = slides[index].dataset.photoLabel;
         bars.forEach((bar, barIndex) => bar.classList.toggle('is-current', barIndex === index));
@@ -180,7 +181,7 @@ if (window.gsap && window.ScrollTrigger) {
         const counter = chapters.querySelector('.chapters__counter span');
         const visual = document.createElement('figure');
         visual.className = 'chapters__visual';
-        visual.setAttribute('aria-hidden', 'true');
+        panels.forEach(panel => { panel.querySelector('figure').inert = true; panel.querySelector('figure').setAttribute('aria-hidden', 'true'); });
         const stack = document.createElement('div');
         stack.className = 'chapters__images';
         const images = panels.map(panel => {
@@ -210,6 +211,8 @@ if (window.gsap && window.ScrollTrigger) {
             image.style.transform = `scale(${1 + (limits[imageIndex] - 1) * local})`;
           });
           if (index !== current) {
+            window.ecohubMedia?.setCredit(stack, images[index].getAttribute('src').split('/').pop());
+            images.forEach((image, imageIndex) => image.setAttribute('aria-hidden', String(imageIndex !== index)));
             copies.forEach((copy, copyIndex) => { copy.style.opacity = copyIndex === index ? '1' : '0'; });
             caption.textContent = panels[index].querySelector('figcaption').textContent;
             counter.textContent = `0${index + 1}`;
@@ -241,6 +244,7 @@ if (window.gsap && window.ScrollTrigger) {
           stage.style.removeProperty('--chapter-height');
           copies.forEach(copy => { copy.style.removeProperty('opacity'); });
           visual.remove();
+          panels.forEach(panel => { panel.querySelector('figure').inert = false; panel.querySelector('figure').removeAttribute('aria-hidden'); });
           delete chapters.dataset.chapter;
           delete chapters.dataset.progress;
           counter.textContent = '01';
@@ -285,7 +289,7 @@ if (window.gsap && window.ScrollTrigger) {
     function updateTerritory() {
       if (disposed || !stack || !territoryImage) return false;
       const available = innerHeight - headerHeight();
-      const textHeight = territory.querySelector('.territory__copy').offsetHeight;
+      const textHeight = Math.max(territory.querySelector('.territory__copy').offsetHeight, territory.querySelector('.territory__aside').offsetHeight);
       const fits = desktop && innerHeight >= 740 && isReady(territoryImage) && textHeight <= available;
       const entry = agents.offsetHeight;
       const signature = [fits, available, textHeight, entry].join('/');

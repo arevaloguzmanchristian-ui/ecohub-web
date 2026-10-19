@@ -78,27 +78,16 @@ try:
                 assert page.locator('[role="tabpanel"]:visible').count() == 1
                 assert abs(page.locator('.agent-panels').bounding_box()['height'] - stage_height) < 1
                 assert page.locator(f'#panel-{name}').evaluate('(el) => getComputedStyle(el).transform') == 'none'
-                assert page.locator(f'[data-agent-figure="{name}"]').get_attribute('class').endswith('is-selected')
+                assert page.locator(f'[data-agent-figure="{name}"]').evaluate('(el)=>el.classList.contains("is-selected")')
                 assert page.locator('.agent-selector').evaluate('(el)=>getComputedStyle(el).getPropertyValue("--agent-index").trim()') == str(('kibo','hubito').index(name))
                 assert page.locator('.agent-figure:visible').count() == 1
                 assert page.locator('.agent-figure[hidden][inert]').count() == 1
-                trigger = page.locator(f'#panel-{name} .agent-example-link')
-                trigger.click()
-                assert page.locator('#agent-example').is_visible()
-                assert page.locator('#example-title').inner_text().lower() == name
-                assert page.locator('#agent-example .conversation blockquote > p').count() == 2
-                for key in ('Tab', 'Shift+Tab'):
-                    page.keyboard.press(key)
-                    assert page.evaluate('document.querySelector("#agent-example").contains(document.activeElement)')
-                if name == 'kibo':
-                    assert 'necesidad' in page.locator('#agent-example .conversation__answer').inner_text()
-                    page.keyboard.press('Escape')
-                else:
-                    assert 'entregas' in page.locator('#agent-example .conversation__answer').inner_text()
-                    page.locator('.dialog-close').click()
-                page.wait_for_function('!document.querySelector("#agent-example").open')
-                assert trigger.evaluate('(el)=>el===document.activeElement')
-                assert not page.locator('body').evaluate('(el)=>el.classList.contains("modal-open")')
+                assert page.locator(f'#example-{name}').is_visible()
+                assert page.locator('.agent-chat:visible').count() == 1
+                assert page.locator(f'#example-{name} .conversation blockquote > p').count() == 2
+                assert 'Ejemplo' in page.locator(f'#example-{name}').inner_text()
+                assert ('necesidad' if name == 'kibo' else 'entregas') in page.locator(f'#example-{name} .conversation__answer').inner_text()
+                assert page.locator('dialog').count() == 0
             page.locator('#tab-kibo').focus()
             page.keyboard.press('End')
             assert page.locator('#panel-hubito').is_visible()
@@ -115,7 +104,7 @@ try:
             })''')
             assert page.locator('input, textarea').count() == 0
             assert page.locator('figure, img').evaluate_all('(nodes) => nodes.every(el => { const m = new DOMMatrix(getComputedStyle(el).transform); return Math.abs(m.b) < .0001 && Math.abs(m.c) < .0001; })')
-            print(f'PASS {width}px: layout, working buttons, single agent, modal focus and keyboard')
+            print(f'PASS {width}px: layout, working buttons, single agent, inline conversation and keyboard')
 
         for progress in (0, .98, 0):
             page.evaluate('p => { const t = ScrollTrigger.getById("ecohub-hero"); scrollTo({top: t.start + (t.end-t.start)*p, behavior:"instant"}); }', progress)
@@ -216,10 +205,8 @@ try:
         motion.evaluate('()=>{for(let i=0;i<8;i++)document.querySelector(i%2?"#tab-hubito":"#tab-kibo").click()}')
         motion.wait_for_timeout(650)
         assert motion.locator('.agent-figure:visible').count() == 1
-        assert motion.locator('.agent-figure img,.agent-panel__copy,.agent-example-link').evaluate_all('(els)=>els.every(el=>!el.style.opacity&&!el.style.transform&&el.getAnimations().length===0)')
-        assert motion.evaluate('()=>{document.querySelector("#panel-hubito .agent-example-link").click();return document.querySelector("#agent-example").getAnimations().length>0}')
-        motion.keyboard.press('Escape')
-        assert motion.locator('#agent-example').evaluate('(el)=>!el.style.opacity&&!el.style.transform&&el.getAnimations().length===0')
+        assert motion.locator('.agent-figure img,.agent-panel__copy,.agent-chat').evaluate_all('(els)=>els.every(el=>!el.style.opacity&&!el.style.transform&&el.getAnimations().length===0)')
+        assert motion.locator('#example-hubito').is_visible()
         motion.emulate_media(reduced_motion='reduce')
         assert motion.evaluate('()=>{document.querySelector("#tab-kibo").click();return document.querySelector("[data-agent-figure=kibo] img").getAnimations().length===0}')
         motion.close()
@@ -228,9 +215,7 @@ try:
         fallback_effects.goto(base, wait_until='networkidle')
         fallback_effects.locator('#tab-hubito').click()
         assert fallback_effects.locator('#panel-hubito').is_visible()
-        fallback_effects.locator('#panel-hubito .agent-example-link').click()
-        assert fallback_effects.locator('#agent-example').is_visible()
-        fallback_effects.keyboard.press('Escape')
+        assert fallback_effects.locator('#example-hubito').is_visible()
         assert fallback_effects.locator('.gallery-copy').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).opacity==="1")')
         fallback_effects.close()
         print('PASS local Motion effects, rapid switching, cancellation, reduced motion and module failure')
@@ -283,17 +268,14 @@ try:
             if mode == 'no-js':
                 assert fallback.locator('.agent-panel:visible').count() == 2
                 assert fallback.locator('#navigation').is_visible()
-                assert fallback.locator('.agent-examples').is_visible()
+                assert fallback.locator('.agent-chat:visible').count() == 2
                 fallback.locator('#navigation a[href="#proyecto"]').click()
                 assert fallback.locator('.header').evaluate('(el)=>el.getBoundingClientRect().bottom<=0')
                 assert fallback.locator('#proyecto').evaluate('(el)=>el.getBoundingClientRect().top>=0')
             else:
                 fallback.locator('#tab-kibo').click()
                 assert fallback.locator('#panel-kibo').is_visible()
-                fallback.locator('#panel-kibo .agent-example-link').click()
-                assert fallback.locator('#agent-example').is_visible()
-                fallback.keyboard.press('Escape')
-                fallback.wait_for_function('!document.querySelector("#agent-example").open')
+                assert fallback.locator('#example-kibo').is_visible()
             if mode in ('no-js', 'no-gsap', 'save-data', 'reduced'):
                 assert fallback.locator('.hero__messages > div').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).display!=="none"&&Number(getComputedStyle(el).opacity)>.95)')
                 assert fallback.locator('.hero__messages > div[aria-hidden="true"]').count() == 0

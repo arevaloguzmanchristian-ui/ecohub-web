@@ -168,14 +168,8 @@ document.addEventListener('ecohub:agent', event => {
   const panel = document.querySelector(`[data-agent-panel="${name}"]`);
   reveal(figure, { group: 'agent', distance: 8 });
   reveal(panel?.querySelector('.agent-panel__copy'), { group: 'agent', delay: .04, distance: 6 });
-  reveal(panel?.querySelector('.agent-example-link'), { group: 'agent', delay: .08, distance: 4 });
+  reveal(panel?.querySelector('.agent-chat'), { group: 'agent', delay: .08, distance: 8 });
 });
 
-const dialog = document.querySelector('#agent-example');
-document.addEventListener('ecohub:example', () => {
-  cancelGroup('dialog');
-  reveal(dialog, { group: 'dialog', distance: 12, duration: .24 });
-});
-dialog?.addEventListener('close', () => cancelGroup('dialog'));
 reduced.addEventListener('change', () => { if (!enabled()) cancelGroup(); });
 connection?.addEventListener?.('change', () => { if (!enabled()) cancelGroup(); });

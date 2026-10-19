@@ -51,6 +51,7 @@ if (selector) {
       const clone = panel.cloneNode(true);
       clone.hidden = false;
       ['id', 'role', 'aria-labelledby', 'tabindex'].forEach(attribute => clone.removeAttribute(attribute));
+      clone.querySelectorAll('[id]').forEach(element => element.removeAttribute('id'));
       measure.appendChild(clone);
     });
     stage.appendChild(measure);
@@ -79,6 +80,7 @@ if (selector) {
     panels.forEach(panel => {
       const selected = panel.dataset.agentPanel === tab.dataset.agent;
       panel.hidden = !selected;
+      panel.toggleAttribute('inert', !selected);
     });
     document.dispatchEvent(new CustomEvent('ecohub:agent', { detail: { agent: tab.dataset.agent } }));
     if (focus) tab.focus();
@@ -104,7 +106,7 @@ if (selector) {
   });
   // No transition on first render.
   tabs.forEach((tab, index) => { tab.setAttribute('aria-selected', String(index === 0)); tab.tabIndex = index === 0 ? 0 : -1; });
-  panels.forEach((panel, index) => { panel.hidden = index !== 0; });
+  panels.forEach((panel, index) => { panel.hidden = index !== 0; panel.toggleAttribute('inert', index !== 0); });
   figures.forEach((figure, index) => {
     figure.hidden = index !== 0;
     figure.toggleAttribute('inert', index !== 0);
@@ -124,50 +126,13 @@ if (selector) {
       cancelAnimationFrame(heightFrame);
       heightFrame = requestAnimationFrame(reserveAgentHeight);
     });
-    panels.forEach(panel => textObserver.observe(panel.querySelector('.agent-panel__copy')));
+    panels.forEach(panel => {
+      textObserver.observe(panel.querySelector('.agent-panel__copy'));
+      textObserver.observe(panel.querySelector('.agent-chat'));
+    });
   } else {
     window.addEventListener('resize', reserveAgentHeight);
   }
-}
-
-// Native dialog provides top-layer isolation; examples remain anchor-linked
-// in the document when JavaScript or dialog support is unavailable.
-const exampleDialog = document.querySelector('#agent-example');
-const exampleArchive = document.querySelector('.agent-examples');
-if (exampleDialog?.showModal && exampleArchive) {
-  exampleArchive.hidden = true;
-  let origin;
-  const close = exampleDialog.querySelector('.dialog-close');
-  document.querySelectorAll('.agent-example-link').forEach(link => {
-    link.setAttribute('aria-haspopup', 'dialog');
-    link.setAttribute('aria-controls', exampleDialog.id);
-    link.addEventListener('click', event => {
-      event.preventDefault();
-      if (exampleDialog.open) return;
-      const source = exampleArchive.querySelector(`[data-example-content="${link.dataset.example}"]`);
-      if (!source) return;
-      origin = link;
-      exampleDialog.querySelector('#example-title').textContent = link.dataset.example === 'kibo' ? 'Kibo' : 'Hubito';
-      exampleDialog.querySelector('.example-content').replaceChildren(source.querySelector('.conversation').cloneNode(true));
-      document.body.classList.add('modal-open');
-      exampleDialog.showModal();
-      document.dispatchEvent(new Event('ecohub:example'));
-      close.focus();
-    });
-  });
-  close.addEventListener('click', () => exampleDialog.close());
-  exampleDialog.addEventListener('cancel', event => { event.preventDefault(); exampleDialog.close(); });
-  exampleDialog.addEventListener('close', () => {
-    document.body.classList.remove('modal-open');
-    origin?.focus({ preventScroll: true });
-  });
-  exampleDialog.addEventListener('keydown', event => {
-    if (event.key !== 'Tab') return;
-    const controls = [...exampleDialog.querySelectorAll('button, a[href], input, [tabindex="0"]')].filter(el => !el.disabled && !el.hidden);
-    const first = controls[0], last = controls.at(-1);
-    if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-    else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-  });
 }
 
 // Native details remain the fallback; enhancement animates only the opening height.
@@ -273,11 +238,23 @@ queueScreenScenes();
 // Only transform/attributes change during scroll; no geometry refresh is needed.
 const header = document.querySelector('.header');
 const readingProgress = header.querySelector('.reading-progress');
+const headerPreregister = header.querySelector('.header__preregister');
 let readingFrame;
 function updateReadingPosition() {
   readingFrame = 0;
   const projectTop = document.querySelector('#proyecto').getBoundingClientRect().top;
   header.classList.toggle('is-solid', projectTop <= header.offsetHeight + 16);
+  const heroBottom = document.querySelector('.hero').getBoundingClientRect().bottom;
+  const registrationTop = document.querySelector('#registro').getBoundingClientRect().top;
+  const showPreregister = heroBottom <= header.offsetHeight + 18 && registrationTop >= innerHeight;
+  if (headerPreregister.hidden === showPreregister) {
+    if (!showPreregister && document.activeElement === headerPreregister) {
+      const destination = document.querySelector(registrationTop < innerHeight ? '#registro' : '#imagina');
+      destination.tabIndex = -1;
+      destination.focus({ preventScroll: true });
+    }
+    headerPreregister.hidden = !showPreregister;
+  }
   const extent = document.documentElement.scrollHeight - innerHeight;
   const progress = extent > 0 ? Math.max(0, Math.min(1, scrollY / extent)) : 0;
   readingProgress.querySelector('span').style.transform = `scaleX(${progress})`;
@@ -298,13 +275,15 @@ function cancelButtonTravel() {
   if (!buttonTravel) return;
   cancelAnimationFrame(buttonTravel.frame);
   buttonTravel.link.classList.remove('is-travelling');
+  document.documentElement.classList.remove('is-navigating');
   buttonTravel = null;
 }
 ['wheel', 'touchstart', 'pointerdown', 'keydown', 'resize', 'popstate'].forEach(type => window.addEventListener(type, cancelButtonTravel, { passive: true }));
-document.querySelectorAll('.hero__actions a[href^="#"]').forEach(link => {
+document.querySelectorAll('.hero__actions a[href^="#"], #navigation a[href^="#"], .header__preregister, .footer a[href^="#"]').forEach(link => {
   link.addEventListener('click', event => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-    const target = document.querySelector(link.getAttribute('href'));
+    const anchorTarget = document.querySelector(link.getAttribute('href'));
+    const target = anchorTarget?.matches('.anchor-alias') ? anchorTarget.closest('section') : anchorTarget;
     if (!target) return;
     event.preventDefault();
     cancelButtonTravel();
@@ -316,6 +295,7 @@ document.querySelectorAll('.hero__actions a[href^="#"]').forEach(link => {
     const travel = { link, frame: 0 };
     buttonTravel = travel;
     link.classList.add('is-travelling');
+    document.documentElement.classList.add('is-navigating');
     history.pushState(null, '', link.hash);
     function step(now) {
       if (buttonTravel !== travel) return;

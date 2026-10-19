@@ -12,6 +12,8 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 
 ## Adaptación de identidad Bolivia EcoHub
 
+Actualización de interfaz (2026-10-19): navegación con smoke y desplazamiento interrumpible, prerregistro contextual en el header, propuesta centrada, ejemplos de agentes **inline (sin modal)**, cierre y footer redistribuidos. Créditos en cada imagen mediante hover/foco/toque. WebP también para el logo y skeletons locales no bloqueantes. Estas decisiones sustituyen las referencias históricas a los modales y créditos agrupados en el footer. Prueba adicional: `python tests/landing_connections.py`.
+
 - Paleta oficial: Azul Horizonte `#005a85`, Verde Brote `#72c594`, Amarillo Sol `#ffe22e` y Arena Suave `#edeae1`.
 - Logotipo original extraído del manual facilitado por el equipo; no se ha redibujado. Identidad visual: Gabriela Córdova, 2026.
 - Tipografía web Montserrat. Core Rhino 65 Bold queda pendiente de recibir su archivo y licencia web; no se distribuye una copia no autorizada.
@@ -27,8 +29,8 @@ Este repositorio contiene solo la web pública, no las notas del equipo.
 - Títulos seleccionados que se elevan por letras/palabras y quedan estables. Zoom en portada (hasta 1.08), capítulos y foto del proyecto (hasta 1.025), limitado por resolución; texto y botones nunca se escalan.
 - Territorio a sangre con sticky nativo acotado: el panel de agentes descubre la foto y el panel de valores la cubre al subir, también al retroceder. Sin fondo fijo global, márgenes negativos ni tercer pin de GSAP. La foto y su texto permanecen en el mismo escenario.
 - La propuesta fija encabezado, descripción, indicador, fotografía y capítulo juntos. Se mide todo el contenido antes de fijar y se aprovecha la altura disponible, sin cola azul vacía al salir.
-- Kibo: personas y primeros pasos. Hubito: empresas, organización y desarrollo del negocio. Nuevas imágenes individuales extraídas de los conceptos suministrados: Pablito → Kibo y Luca → Hubito, transparentes y optimizadas. Solo el seleccionado es visible; Kibo se presenta más pequeño. «Ver ejemplo» abre un modal accesible con Escape, cierre y retorno de foco. Vista previa sin chat conectado. Procedencia y límites: `assets/agents/README.md`. FAQ y ejemplos siguen disponibles sin JavaScript.
-- Exactamente dos botones en portada: «Descubre cómo participar» (amarillo) y «Conoce el proyecto» (azul), siempre funcionales; eliminado el enlace duplicado «Seguir explorando». `#registro` y `#participar` comparten el bloque que enlaza al prerregistro externo. La landing no recibe ni transmite datos del formulario.
+- Kibo: personas y primeros pasos. Hubito: empresas, organización y desarrollo del negocio. Nuevas imágenes individuales extraídas de los conceptos suministrados: Pablito → Kibo y Luca → Hubito, transparentes y optimizadas. Solo el seleccionado y su conversación inline son visibles; Kibo se presenta más pequeño. Son ejemplos escritos, no un chat conectado. Procedencia y límites: `assets/agents/README.md`. FAQ y ambos ejemplos siguen disponibles sin JavaScript.
+- Exactamente dos botones en portada: «Prerregistro» (amarillo) y «Conoce el proyecto» (azul), siempre funcionales. El acceso de prerregistro aparece en el encabezado entre portada y cierre. `#registro` y `#participar` comparten el bloque que enlaza al prerregistro externo. La landing no recibe ni transmite datos del formulario.
 - GSAP y ScrollTrigger 3.12.5 se sirven localmente desde `assets/vendor`, conservando sus avisos de licencia. Biblioteca original: [GSAP](https://gsap.com/); [licencia](https://gsap.com/standard-license/).
 
 Las decisiones de tipografía, animación, accesibilidad, imágenes, logo y co-branding pendiente se documentan en [DESIGN.md](DESIGN.md).

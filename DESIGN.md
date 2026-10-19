@@ -1,5 +1,19 @@
 # Bolivia EcoHub — criterios de implementación
 
+## Actualización de interfaz · 2026-10-19
+
+Estas decisiones sustituyen las referencias anteriores a modales, avisos extensos y créditos en el pie:
+
+- «Prerregistro» sustituye a «Descubre cómo participar». Su acceso al bloque final aparece en el encabezado cuando termina la portada y desaparece al entrar el bloque de prerregistro, también al retroceder. Se reserva el espacio del botón para no alterar la altura ni la geometría de los pins. El formulario externo no se modifica.
+- Menú, botones de portada y enlaces del footer comparten desplazamiento finito e interrumpible. Una nube decorativa de baja opacidad acompaña el viaje sin interceptar clics. Rueda, toque, teclado y resize cancelan el efecto; movimiento reducido conserva el salto nativo. Nunca se activa scroll suave global.
+- La propuesta tiene marco y escenario con anchura explícita, título y textos centrados y una cuadrícula fotográfica/textual equilibrada. El heading permanece en el pin. En flujo automático, las columnas se alinean arriba para evitar huecos al crecer el texto.
+- Las conversaciones se muestran dentro del panel del agente seleccionado, junto a su presentación, con una etiqueta corta «Ejemplo». No hay modal, chat operativo, formulario de conversación ni avisos largos de disponibilidad. Sin JS ambos perfiles y ejemplos quedan legibles. Selector, imagen y ejemplo permanecen sincronizados; el panel no seleccionado está oculto e inert. Se reserva el tamaño del panel más alto.
+- Se retiran los avisos generales de «imágenes de contexto» y «vista previa» del diseño visible; no se atribuyen las fotografías a EcoHub ni se alteran sus fuentes. La frase de territorio ocupa una composición inferior derecha, con contraste sobre la foto; móvil usa flujo vertical. Las cortinas se conservan.
+- Prerregistro: introducción izquierda y tarjeta Arena derecha, con icono, título, dos pasos, botón amarillo y aclaración breve de su alcance. El lema se presenta una sola vez en el nuevo footer. Pie en tres grupos: identidad/lema, navegación y botón azul de regreso al inicio; copyright debajo. La atribución de identidad y plantilla se conserva en los documentos del repositorio, no como enlaces visibles en el footer.
+- `media.js` coloca los créditos sobre cada imagen: autor/fuente, enlace de licencia y nota de adaptación. En portada y capítulos se sincronizan con la foto dominante. Las ilustraciones enlazan a su procedencia, sin inventar una licencia. Ratón, foco y botón táctil muestran el panel inferior; Escape permite cerrarlo. Los créditos generales previos se conservan inertes como procedencia en un template, sin interfaz de pie; sin JS existe un enlace al registro de licencias.
+- Todas las imágenes activas se sirven en WebP, incluido el logo convertido sin pérdida, sin modificar sus proporciones ni colores. Se conserva el PNG original. Skeletons locales reservan el encuadre mientras llega/decodifica cada imagen; no hay loader que bloquee toda la web ni secuencia ficticia de agentes. El shimmer se pausa fuera de vista, no se ejecuta con ahorro de datos y es estático con movimiento reducido. Un fallo muestra una alternativa estable, no un loader infinito.
+- `tests/landing_connections.py` comprueba menú/smoke, destinos y foco, visibilidad reversible del botón de header, chats inline, créditos por teclado y carga lenta/fallida. Se ejecuta secuencialmente junto a smoke, scroll y visual_effects. Auditoría automática y capturas en Chromium; sin comprobación en Safari/iOS físico ni lector de pantalla real.
+
 ## Relato y sistema visual
 
 ### Efectos con Motion (2026-10-17)
