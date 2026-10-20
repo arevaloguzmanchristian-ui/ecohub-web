@@ -1,4 +1,4 @@
-"""Official co-branding, plain-text credits and manually controlled partner carousel."""
+"""Official identity, centered proposal and every partner visible without a carousel."""
 from functools import partial
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -17,7 +17,7 @@ Thread(target=server.serve_forever, daemon=True).start()
 try:
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        for width, height in ((1366, 768), (390, 844), (320, 740)):
+        for width, height in ((1920, 1080), (1366, 768), (768, 900), (390, 844), (320, 740)):
             page = browser.new_page(viewport={'width': width, 'height': height})
             errors = []
             page.on('pageerror', lambda error: errors.append(str(error)))
@@ -36,6 +36,8 @@ try:
             page.wait_for_timeout(900)
             assert page.locator('#chapters-title').evaluate('(el)=>Math.abs(el.getBoundingClientRect().left+el.getBoundingClientRect().width/2-innerWidth/2)<12')
             page.screenshot(path=str(shots / f'proposal-{width}.png'))
+            if width > 760:
+                assert page.locator('#chapters-title').evaluate('(el)=>{const boxes=[...el.children].map(x=>x.getBoundingClientRect());return Math.max(...boxes.map(x=>x.top))-Math.min(...boxes.map(x=>x.top))<2}')
             assert page.locator('.image-credit a').count() == 0
             page.locator('.partners').scroll_into_view_if_needed()
             page.wait_for_timeout(400)
@@ -43,15 +45,20 @@ try:
             page.wait_for_function('[...document.querySelectorAll(".partners img")].every(el=>el.complete&&el.naturalWidth>0)')
             assert page.locator('.partners .image-credit').count() == 0
             page.screenshot(path=str(shots / f'partners-{width}.png'))
-            page.locator('[data-partner-direction="1"]').click()
-            page.wait_for_timeout(700)
-            assert page.locator('.partners__track').evaluate('(el)=>el.scrollLeft>0')
+            assert page.locator('.partners button,.partners__track,.partners__hint').count() == 0
+            assert page.locator('.partners__grid').evaluate('(el)=>getComputedStyle(el).display==="grid"&&el.scrollWidth<=el.clientWidth')
+            assert page.locator('.partners img').evaluate_all('(images)=>images.every(image=>{const r=image.getBoundingClientRect();return r.width>0&&r.left>=0&&r.right<=innerWidth})')
+            if width <= 760:
+                assert page.locator('.partners').evaluate('(el)=>el.getBoundingClientRect().height<innerHeight')
             assert page.evaluate('document.documentElement.scrollWidth<=innerWidth')
-            page.locator('.partners__track').focus()
-            page.keyboard.press('ArrowRight')
+            page.locator('#para-quien').evaluate('(el)=>el.scrollIntoView()')
+            page.wait_for_timeout(1100)
+            assert page.locator('#audience-title').get_attribute('data-letter-effect') == 'words'
+            assert page.locator('.audience__situations article').evaluate_all('(els)=>els.every(el=>getComputedStyle(el).opacity==="1"&&getComputedStyle(el).transform==="none")')
+            page.screenshot(path=str(shots / f'audience-{width}.png'))
             assert not errors, errors
             page.close()
-            print('PASS branding, constant header geometry, centered proposal and carousel:', width)
+            print('PASS branding, centered proposal, all logos without scrolling and audience reveal:', width)
         live = browser.new_page(viewport={'width':390,'height':844})
         live.goto('https://ecohub.mittril.com/form/?branding-check=20261019', wait_until='networkidle')
         logo = live.locator('.marca img')

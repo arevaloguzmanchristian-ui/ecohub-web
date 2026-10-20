@@ -176,10 +176,6 @@ if (window.gsap && window.ScrollTrigger && !connection?.saveData && !/(^|-)2g$/.
   gsap.registerPlugin(ScrollTrigger);
   gsap.matchMedia().add({ motion: '(prefers-reduced-motion: no-preference)', mobile: '(max-width: 760px)' }, context => {
     if (!context.conditions.motion) return;
-    gsap.from('.audience__situations article', {
-      y: 10, stagger: .06, duration: .35, ease: 'power1.out',
-      scrollTrigger: { trigger: '.audience__situations', start: 'top 92%', once: true },
-    });
     const image = document.querySelector('.purpose__main img');
     function photoLimit() {
       if (!image?.naturalWidth) return 1;
@@ -322,26 +318,6 @@ document.querySelectorAll('.hero__actions a[href^="#"], #navigation a[href^="#"]
   });
 });
 matchMedia('(prefers-reduced-motion: reduce)').addEventListener('change', cancelButtonTravel);
-
-// A user-controlled horizontal logo carousel, never an automatic ticker.
-const partnerTrack = document.querySelector('.partners__track');
-if (partnerTrack) {
-  document.querySelector('.partners__controls').hidden = false;
-  function movePartners(direction) {
-    const max = partnerTrack.scrollWidth - partnerTrack.clientWidth;
-    const step = Math.max(partnerTrack.firstElementChild.offsetWidth + 20, partnerTrack.clientWidth * .7);
-    let left = partnerTrack.scrollLeft + direction * step;
-    if (direction > 0 && partnerTrack.scrollLeft >= max - 2) left = 0;
-    if (direction < 0 && partnerTrack.scrollLeft <= 2) left = max;
-    partnerTrack.scrollTo({ left, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
-  }
-  document.querySelectorAll('[data-partner-direction]').forEach(button => button.addEventListener('click', () => movePartners(Number(button.dataset.partnerDirection))));
-  partnerTrack.addEventListener('keydown', event => {
-    if (event.target !== partnerTrack || !['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
-    event.preventDefault();
-    movePartners(event.key === 'ArrowRight' ? 1 : -1);
-  });
-}
 
 // A section-location underline, not an activity or availability indicator.
 if (navigation) {

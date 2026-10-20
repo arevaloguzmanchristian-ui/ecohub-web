@@ -42,7 +42,7 @@ try:
             assert page.locator('.reading-progress').get_attribute('aria-valuenow') == '0'
             assert page.locator('.hero__stage').bounding_box()['y'] == 0
             assert page.locator('#hero-title').get_attribute('aria-label') == 'Tus ideas. El futuro de Bolivia.'
-            assert page.locator('[data-letter-effect]').count() == 9
+            assert page.locator('[data-letter-effect]').count() == 10
             assert page.locator('.type-char').count() > 100
             assert page.locator('.hero h1 > em').evaluate('(el)=>getComputedStyle(el).color==="rgb(255, 226, 46)"')
             capture(page, f'hero-{width}')

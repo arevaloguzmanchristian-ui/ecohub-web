@@ -45,7 +45,7 @@ try:
                 else:
                     assert page.locator('.header__preregister').is_visible()
                 if actual == 'propuesta':
-                    assert page.locator('#chapters-title').evaluate('(el)=>{const r=el.getBoundingClientRect(),f=document.querySelector(".chapters__frame").getBoundingClientRect();return Math.abs((r.left+r.right-f.left-f.right)/2)<2&&["center","space-evenly"].includes(getComputedStyle(el).justifyContent)}')
+                    assert page.locator('#chapters-title').evaluate('(el)=>{const r=el.getBoundingClientRect(),f=document.querySelector(".chapters__frame").getBoundingClientRect();return Math.abs((r.left+r.right-f.left-f.right)/2)<2&&getComputedStyle(el).display==="grid"&&getComputedStyle(el).textAlign==="center"}')
                 if actual == 'agentes':
                     for name in ('kibo', 'hubito'):
                         page.locator('#tab-' + name).click()

@@ -9,6 +9,6 @@ Fuente: carpeta `IDENTIDAD VISUAL ECOHUB/IDENTIDAD VISUAL ECOHUB`.
 - `mision-alianza.webp`: `Logotipo/Barra Logos_Folder/Links/MA logo 3 ESP.png`.
 - `ahk.webp`, `barnfonden.webp`, `diaconia.webp`: extracción de cada marca de `Logotipo/Barra Logos_Folder/Barra Logos2.png`, original de 5314 × 973. No se han redibujado los logotipos.
 
-Los logotipos de organizaciones se ajustan proporcionalmente a lienzos blancos de 600 × 240 con espacio alrededor; conversión WebP sin pérdida después del ajuste. Se conservan los colores originales. El carrusel sigue el orden de la barra suministrada, es manual (controles, teclado y gesto táctil) y no implica nuevas categorías de patrocinio o convenios.
+Los logotipos de organizaciones se ajustan proporcionalmente a lienzos blancos de 600 × 240 con espacio alrededor; conversión WebP sin pérdida después del ajuste. Se conservan los colores originales. La cuadrícula sigue el orden de la barra suministrada: las siete marcas se muestran juntas, sin carrusel, flechas ni scroll interno. Se reorganizan en varias filas en pantallas pequeñas. No implica nuevas categorías de patrocinio o convenios.
 
 Estas marcas no están cubiertas por las licencias Creative Commons del registro fotográfico. Su uso se limita a la identidad facilitada para Bolivia EcoHub.

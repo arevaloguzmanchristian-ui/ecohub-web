@@ -40,7 +40,7 @@ function cancelGroup(group) {
 // visible character spans are decorative, not separately spoken letters.
 const titleStyles = new Map([
   ['#hero-title', 'chars'], ['.hero__headline', 'chars'],
-  ['#purpose-title', 'words'], ['#chapters-title', 'words'],
+  ['#purpose-title', 'words'], ['#chapters-title', 'words'], ['#audience-title', 'words'],
   ['#sustainability-title', 'chars'], ['#agents-title', 'chars'],
   ['#territory-title', 'words'], ['#registration-title', 'chars'],
 ]);
@@ -153,6 +153,28 @@ queueEditorialCurtain();
 
 // Original, restrained editorial reveals inspired by component-gallery patterns;
 // no Skiper component code or premium assets are copied.
+// Audience copy and photograph enter separately; no pin, scaling or hidden
+// fallback content. Motion is the sole owner of these card transitions.
+if ('IntersectionObserver' in window) {
+  const audienceReveal = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      audienceReveal.unobserve(entry.target);
+      const group = 'audience';
+      entry.target.querySelectorAll('.reading-copy p').forEach((paragraph, index) => {
+        reveal(paragraph, { group, delay: index * .09, distance: 12, duration: .48 });
+      });
+      entry.target.querySelectorAll('.audience__situations article').forEach((card, index) => {
+        reveal(card, { group, delay: .12 + index * .1, distance: 16, duration: .5 });
+      });
+      reveal(entry.target.querySelector('.audience__photo .scene-photo__frame'), { group, delay: .08, distance: 20, duration: .62 });
+      reveal(entry.target.querySelector('.audience__photo figcaption'), { group, delay: .2, distance: 8 });
+      reveal(entry.target.querySelector('.editorial-note'), { group, delay: .35, distance: 8 });
+    });
+  }, { threshold: .12 });
+  const audience = document.querySelector('.audience');
+  if (audience) audienceReveal.observe(audience);
+}
 if ('IntersectionObserver' in window) {
   const gallery = new IntersectionObserver(entries => {
     entries.forEach(entry => {
