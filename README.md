@@ -10,6 +10,18 @@ Para verla localmente con todos sus efectos, ejecuta `npx serve .` (los módulos
 
 Este repositorio contiene solo la web pública, no las notas del equipo.
 
+## Pablito — consultas sobre la landing
+
+La burbuja **«Pregúntale a Pablito»** permite consultar qué es EcoHub, para quién es, su propuesta y cómo acceder al prerregistro. Responde con información de la landing y enlaces a sus secciones. No rellena ni envía formularios; el bot del formulario es independiente.
+
+- Frontend público: `assets/pablito-landing-v1/chat.js` y `chat.css`.
+- Backend PHP y conexión MiniMax: servidor de `ecohub.mittril.com`, no GitHub Pages. **No hay claves API en este repo.**
+- Preguntas e historial reciente se envían al servidor y a MiniMax al pulsar Enviar. No compartir datos personales ni contraseñas. Conversación solo en memoria del navegador; se borra al recargar.
+- El modelo puede equivocarse: verificar las secciones enlazadas. Si el backend no responde o se alcanza el límite temporal, muestra un aviso y permite reintentar.
+- Las conversaciones inline de Pablito y Luca siguen siendo ejemplos escritos; el popup es un componente aparte.
+
+Prueba sin consumir MiniMax: `python tests/pablito_landing_browser.py` (requiere Playwright). La opción `--live` verifica el frontend publicado de producción, simulando las respuestas.
+
 ## Adaptación de identidad Bolivia EcoHub
 
 Actualización de interfaz (2026-10-19): navegación con smoke y desplazamiento interrumpible, prerregistro contextual en el header, propuesta centrada, ejemplos de agentes **inline (sin modal)**, cierre y footer redistribuidos. Créditos en cada imagen mediante hover/foco/toque. WebP también para el logo y skeletons locales no bloqueantes. Estas decisiones sustituyen las referencias históricas a los modales y créditos agrupados en el footer. Prueba adicional: `python tests/landing_connections.py`.

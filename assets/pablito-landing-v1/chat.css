@@ -1,0 +1,46 @@
+/* Isolated, optional landing helper. No global selectors or scroll effects. */
+#pablito-landing { --pl-blue:#005a85;--pl-green:#72c594;--pl-sand:#edeae1;--pl-ink:#153e50;font:14px/1.5 Montserrat,system-ui,sans-serif;color:var(--pl-ink);position:relative;z-index:10000; }
+#pablito-landing *,#pablito-landing *::before,#pablito-landing *::after { box-sizing:border-box; }
+#pablito-landing [hidden] { display:none!important; }
+#pablito-landing button,#pablito-landing textarea { font:inherit; }
+#pablito-landing button { cursor:pointer; }
+#pablito-landing button:disabled { cursor:wait;opacity:.65; }
+#pablito-landing :focus-visible { outline:3px solid #005a85;outline-offset:3px; }
+#pablito-landing .pl-launch { position:fixed;bottom:max(20px,env(safe-area-inset-bottom));right:20px;display:flex;align-items:center;gap:10px;padding:8px 16px 8px 10px;min-height:60px;border:2px solid var(--pl-blue);border-radius:999px;background:var(--pl-green);color:var(--pl-ink);box-shadow:0 8px 28px #00334d35;text-align:left; }
+#pablito-landing .pl-launch img { width:40px;height:48px;object-fit:contain;object-position:bottom;background:var(--pl-sand);border-radius:50%; }
+#pablito-landing .pl-launch>span { font-weight:700;font-size:13px; }
+#pablito-landing .pl-launch span span { display:block;font-size:11px;font-weight:500; }
+#pablito-landing .pl-launch svg { width:24px;height:24px; }
+#pablito-landing .pl-dialog { position:fixed;right:20px;bottom:max(20px,env(safe-area-inset-bottom));width:min(400px,calc(100% - 24px));height:min(660px,calc(100dvh - 40px));display:flex;flex-direction:column;border:1px solid #005a8535;border-radius:20px;background:white;box-shadow:0 14px 60px #00334d40;overflow:hidden; }
+#pablito-landing .pl-head { display:flex;gap:12px;align-items:center;padding:14px 16px;background:var(--pl-blue);color:white;flex:none; }
+#pablito-landing .pl-head img { width:44px;height:52px;object-fit:contain;background:var(--pl-green);border-radius:14px; }
+#pablito-landing .pl-head div { flex:1;min-width:0; }
+#pablito-landing .pl-head h2 { margin:0;font:700 19px/1.3 Montserrat,system-ui,sans-serif;letter-spacing:0; }
+#pablito-landing .pl-head p { margin:2px 0 0;font-size:11px; }
+#pablito-landing .pl-close { background:transparent;border:1px solid #ffffff80;color:white;border-radius:50%;width:44px;height:44px;font-size:28px;line-height:1;flex:none; }
+#pablito-landing .pl-close:focus-visible { outline-color:#ffe22e; }
+#pablito-landing .pl-content { padding:16px;overflow-y:auto;overscroll-behavior:contain;flex:1;min-height:0;background:#f7f6f2; }
+#pablito-landing .pl-intro { font-size:13px;margin:0 0 10px; }
+#pablito-landing .pl-privacy { font-size:11px;line-height:1.5;color:#455c66;margin:0 0 14px; }
+#pablito-landing .pl-suggestions { display:flex;gap:7px;flex-wrap:wrap;margin:0 0 14px; }
+#pablito-landing .pl-suggestions button { border:1px solid #005a8560;border-radius:16px;padding:8px 10px;min-height:40px;background:white;color:var(--pl-blue);font-size:11px; }
+#pablito-landing .pl-log { display:flex;flex-direction:column;gap:12px; }
+#pablito-landing .pl-message { border:1px solid #005a8525;border-radius:14px;background:white;padding:12px;max-width:94%;overflow-wrap:anywhere;align-self:flex-start; }
+#pablito-landing .pl-message--user { background:var(--pl-blue);color:white;align-self:flex-end; }
+#pablito-landing .pl-message strong { display:block;font-size:11px;margin-bottom:4px; }
+#pablito-landing .pl-message p { white-space:pre-wrap;margin:0;font-size:13px;line-height:1.6; }
+#pablito-landing .pl-sources { display:flex;gap:6px;flex-wrap:wrap;margin-top:10px; }
+#pablito-landing .pl-sources a { font-size:11px;color:var(--pl-blue);text-decoration:underline;padding:5px 0; }
+#pablito-landing .pl-status { font-size:12px;margin:10px 0 0;color:var(--pl-blue); }
+#pablito-landing .pl-status:empty { display:none; }
+#pablito-landing .pl-form { padding:12px 16px;background:white;border-top:1px solid #005a8525;flex:none; }
+#pablito-landing .pl-form label { display:block;font-weight:600;font-size:12px;margin-bottom:5px; }
+#pablito-landing textarea { width:100%;resize:vertical;min-height:64px;max-height:120px;padding:10px;border:1px solid #005a8560;border-radius:10px;color:var(--pl-ink);background:white;font-size:16px; }
+#pablito-landing .pl-actions { display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px; }
+#pablito-landing .pl-actions a { color:var(--pl-blue);font-size:11px;text-decoration:underline; }
+#pablito-landing .pl-actions button { background:#ffe22e;color:#004565;border:0;border-radius:999px;min-height:44px;padding:9px 22px;font-weight:700; }
+#pablito-landing .pl-form>p { margin:6px 0 0;color:#455c66;font-size:10px; }
+@media(max-width:480px) {
+  #pablito-landing .pl-launch { right:12px;bottom:max(12px,env(safe-area-inset-bottom)); }
+  #pablito-landing .pl-dialog { right:12px;bottom:max(12px,env(safe-area-inset-bottom));height:min(640px,calc(100dvh - 24px)); }
+}
