@@ -19,6 +19,7 @@ La burbuja **«Pregúntale a Pablito»** permite consultar qué es EcoHub, para 
 - Preguntas e historial reciente se envían al servidor y a MiniMax al pulsar Enviar. No compartir datos personales ni contraseñas. Conversación solo en memoria del navegador; se borra al recargar.
 - El modelo puede equivocarse: verificar las secciones enlazadas. Si el backend no responde o se alcanza el límite temporal, muestra un aviso y permite reintentar.
 - Las conversaciones inline de Pablito y Luca siguen siendo ejemplos escritos; el popup es un componente aparte.
+- El servidor filtra insultos antes de MiniMax y pide reformular con respeto, sin responder la consulta. Las tareas ajenas y la generación de ideas/planes de negocio están fuera de alcance, aunque mencionen EcoHub. Los filtros locales se complementan con la clasificación del modelo; no son infalibles.
 
 Prueba sin consumir MiniMax: `python tests/pablito_landing_browser.py` (requiere Playwright). La opción `--live` verifica el frontend publicado de producción, simulando las respuestas.
 
